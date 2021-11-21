@@ -1,44 +1,31 @@
 {
   "name": "smart-crowdfunding",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "@truffle/hdwallet-provider": "^1.5.1",
-    "dotenv": "^10.0.0",
-    "fs-extra": "^10.0.0",
-    "mongoose": "^6.0.12",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
-    "solc": "^0.8.9",
-    "web-vitals": "^1.1.2",
-    "web3": "^1.6.0"
-  },
+  "version": "1.0.0",
+  "description": "We have proposed a Smart Crowdfunding application based on Blockchain technology i.e. a decentralized application that replaces a middle-man (like a Bank or a human) with a smart block of code ,or so we call it a smart contract, that handles all the functioning related to the donations.  With this Project and the help of blockchain smart-contracts, donors would be informed about the payments to be processed by the Fundraiser through request money forms. A smart contract helps to block the funds within the Blockchain until the campaign contributors agrees to release them to the organizing entity. We have proposed a Smart Crowdfunding application based on Blockchain technology i.e. a decentralized application that replaces a middle-man (like a Bank or a human) with a smart block of code ,or so we call it a smart contract, that handles all the functioning related to the donations.  With this Project and the help of blockchain smart-contracts, donors would be informed about the payments to be processed by the Fundraiser through request money forms. A smart contract helps to block the funds within the Blockchain until the campaign contributors agrees to release them to the organizing entity. ",
+  "main": "server.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start-dev": "nodemon server.js"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimitriBelikov/smart-crowdfunding.git"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "author": "Urmil Chandarana, Harshvardhan Talele, Niha Shaikh and Dhairya Mehta",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DimitriBelikov/smart-crowdfunding/issues"
+  },
+  "homepage": "https://github.com/DimitriBelikov/smart-crowdfunding#readme",
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.7.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "fs-extra": "^10.0.0",
+    "mongoose": "^6.0.13",
+    "solc": "^0.8.10",
+    "web3": "^1.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }

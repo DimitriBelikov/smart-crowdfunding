@@ -3,11 +3,13 @@ const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3 = require('web3');
 require('dotenv').config({path: '../.env'});
 
-const provider = new HDWalletProvider(process.env.GANACHE_API_KEY, 
+exports.provider = () => {
+    return new HDWalletProvider(process.env.GANACHE_API_KEY, 
                     'HTTP://127.0.0.1:7545',0,2);
+                }
 // console.log(provider); --> Output: E:\Development\Web-Dev\smart-crowdfunding\ETHBackend\Sample-Tests\hdwallet-provider.txt
 
-async function deployContract(provider){
+exports.deployContract = async (provider) => {
     var web3 = new Web3(provider);
     var account = await web3.eth.getAccounts();
     console.log('Starting Deployment of Contract from account: ', account[0]);
