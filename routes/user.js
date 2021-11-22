@@ -4,7 +4,7 @@ const router = express.Router();
 //User model
 const User = require('../models/User');
 
-//Get all Users
+// GET('/') - Get List of all Users
 router.get('/', (req, res) => {
     User.find().then(
         users => res.json(users)
@@ -13,7 +13,8 @@ router.get('/', (req, res) => {
     );
 });
 
-//Create a new User
+
+// POST('/') - Create A New User
 router.post('/', (req, res) => {
     console.log(req.body);
     const {userName, password, fullName, dob, emailId, currentCity, state} = req.body;
@@ -36,6 +37,25 @@ router.post('/', (req, res) => {
         err => console.log("Error while creating new User: " + err)
     );
 });
+
+
+// GET('/:id') - Get a Particular User's Details
+
+
+
+// PATCH('/:id') - Update a Particular User Details
+
+
+
+// DELETE('/:id') - Delete a Particular User
+
+
+
+// POST('/login') - Login a User
+
+
+
+// POST('/logout') - Logout a User
 
 
 

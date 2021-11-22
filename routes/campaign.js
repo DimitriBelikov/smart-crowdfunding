@@ -4,15 +4,16 @@ const router = express.Router();
 //Campaign model
 const Campaign = require('../models/Campaign');
 
-//Get all Campaigns
+
+// GET('/') - Get list of all Campaigns
 router.get("/", (req, res) => {
     Campaign.find().then(
         campaigns => res.json(campaigns)
     );
 });
 
-//Create a new Campaign
-//619b3e236135cd4fab42cd64
+
+// POST('/') - Create a new Campaign
 router.post("/", (req, res) => {
     const {campaignName, campaignDescription, campaignOrganiser, requiredFunding} = req.body;
 
@@ -32,5 +33,38 @@ router.post("/", (req, res) => {
         err => console.log("Error while creating new Campaign: " + err)
     );
 })
+
+
+// GET('/:id') - Get Details of a Particular Campaign
+
+
+
+// PATCH('/:id') - Update a Particular Campaign
+
+
+
+// DELETE('/:id') - Delete a Particular Campaign
+
+
+
+// POST('/:id/request') - Create a New Request for a particular Campaign
+
+
+
+// PATCH('/:id/request/:rid') - Update Details of a particular Request for a Particular Campaign
+
+
+
+// DELETE('/:id/request/:rid') - Delete Details of a particular Request for a Particular Campaign
+
+
+
+// POST('/:id/vote') - Add's a Contributor's Vote for a Particular Request for a Particular Campaign
+
+
+
+// POST('/:id/donate') - Let a Contributor gets added to the Donors List and Interact with Smart Contract to add Donation amount
+
+
 
 module.exports = router;
