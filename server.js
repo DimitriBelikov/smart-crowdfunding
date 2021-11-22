@@ -4,15 +4,16 @@ require('dotenv').config({ path: __dirname + '/.env' })
 
 const app = express();
 
-mongoose.connect(process.env.MONGOOSE_URL, {user: process.env.API_USER, pass: process.env.API_KEY});
-conn = mongoose.connection;
-conn.once("open", () => console.log('Connected to Database...'));
-conn.on("error", console.error.bind(console, "connection error:"));
+mongoose.connect(process.env.MONGOOSE_URL, {user: process.env.API_USER, pass: process.env.API_KEY}).then(
+    () => console.log('Connected to Database...')
+).catch(
+    err => console.log("Database Connection Error: " + err)
+)
 
-app.get('/', function(req, res){
-    res.send('Server GET at /...');
-})
+app.use(express.json());
+app.use('/api/user', require('./routes/user'));
+app.use('/api/campaign', require('./routes/campaign'));
 
 app.listen(process.env.PORT, ()=> {
     console.log(`Server Running on Port ${process.env.PORT}`);
-})
+});
