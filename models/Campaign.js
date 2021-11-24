@@ -54,7 +54,10 @@ const campaignSchema = new Schema({
             type: String
         }],
         upVotePercentage: Schema.Types.Decimal128,
-        camapignStatus: String
+        campaignStatus: {
+            type: String,
+            enum: ['Success&Disbursed', 'Cancelled', 'Denied']
+        }
     }],
     donors: [{
         userId: {

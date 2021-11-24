@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const cookie = require('cookie-parser');
 const jwt = require('jsonwebtoken');
-const auth = require('../middlewares/auth');
 require('dotenv').config({ path: __dirname + '/.env' })
 
 //User model
@@ -13,8 +11,8 @@ const User = require('../models/User');
 router.get('/', (req, res) => {
     User.find().then(users => 
         res.status(200).json(users)
-    ).catch(err => 
-        res.status(400).json({msg: "Error while getting users"})
+    ).catch(error => 
+        res.status(400).json({msg: "Error while getting users: "+ error})
     );
 });
 
@@ -43,33 +41,39 @@ router.post('/', (req, res) => {
             state
         });
     
-        bcrypt.genSalt(parseInt(process.env.SALT), (err, salt) => {
-            if(err) {
+        bcrypt.genSalt(parseInt(process.env.SALT), (error, salt) => {
+            if(error) {
                 console.log('Bcrypt Error: Error Creating Salt');
-                res.status(500).json({ msg: "Error while adding user to Database"});
+                res.status(500).json({ msg: "Error while adding user to Database"+ error});
             }
-            bcrypt.hash(newUser.password, salt, (err, hash) => {
-                if(err) {
+            bcrypt.hash(newUser.password, salt, (error, hash) => {
+                if(error) {
                     console.log('Bcrypt Error: Error Generating Hash');
-                    res.status(500).json({ msg: "Error while adding user to Database"});
+                    res.status(500).json({ msg: "Error while adding user to Database: "+ error});
                 }
                 newUser.password = hash;
                 newUser.save().then(user => {
                     console.log('--> New User Created. Document Saved on Database.');
                     res.status(200).json(user);
-                }).catch(err => 
-                    res.status(500).json({ msg: "Error while adding user to Database"})
+                }).catch(error => 
+                    res.status(500).json({ msg: "Error while adding user to Database: "+ error})
                 );
             })
         });
     }).catch(
-        err => console.log("Error while creating new User: " + err)
+        error => res.status(400).json({msg: "Error while creating new User: " + error})
     );
 });
 
 
 // GET('/:id') - Get a Particular User's Details
-
+router.get('/:id', (req, res) => {
+    User.findById(req.params.id).then(user => {
+        res.status(200).json(user);
+    }).catch(
+        error => res.status(400).json({msg: 'Cannot Find User Details: '+ error})
+    );
+});
 
 
 // PUT('/:id') - Update a Particular User Details
@@ -77,11 +81,16 @@ router.post('/', (req, res) => {
 
 
 // DELETE('/:id') - Delete a Particular User
-
+router.delete('/:id', (req, res)=>{
+    User.findByIdAndDelete(req.params.id, {returnDocument:'after'}, (error, response)=>{
+        if (error) res.status(400).json({msg: 'Error Deleting User: '+ error});
+        res.status(200).json(response);
+    });
+});
 
 
 // POST('/login') - Login a User
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
     const { emailId, password } = req.body;
     if(!emailId || !password){
         res.status(400).json({ msg: "Please enter all fields" });
@@ -93,8 +102,8 @@ router.post("/login", (req, res) => {
         bcrypt.compare(password, user.password).then(isMatch => {
             if(!isMatch) res.status(400).json({ msg: "Invalid credentials" });
 
-            jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, (err, token) => {
-                if(err) res.status(400).json({ msg: "Error while creating JWT" });
+            jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, (error, token) => {
+                if(error) res.status(400).json({ msg: "Error while creating JWT: "+ error});
                 
                 console.log("JWT Token: " + token + "\nUser: " + user);
                 let options = {
@@ -105,19 +114,19 @@ router.post("/login", (req, res) => {
                 res.cookie('jwt', token, options);
                 res.status(200).json({ msg: "Cookie Generated" });
             })
-        }).catch(err => res.status(400).json({ msg: "Error in login" }))
-    }).catch(err => res.status(400).json({ msg: "Error in login" }));
+        }).catch(error => res.status(400).json({ msg: "Error in login: "+ error }))
+    }).catch(error => res.status(400).json({ msg: "Error in login: "+ error }));
 })
 
 
 // POST('/logout') - Logout a User
-router.post("/logout", (req, res) => {
+router.post('/logout', (req, res) => {
     res.clearCookie('jwt');
     res.status(200).json({ msg: "Cookie Deleted" });
 })
 
-//Trials
-router.get("/trial", (req, res) => {
+// GET('/trial') - Trial Route for Testing
+router.get('/trial', (req, res) => {
     
 })
 

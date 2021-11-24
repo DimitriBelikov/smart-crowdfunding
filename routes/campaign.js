@@ -4,11 +4,12 @@ const router = express.Router();
 //Campaign model
 const Campaign = require('../models/Campaign');
 
-
 // GET('/') - Get list of all Campaigns
 router.get("/", (req, res) => {
     Campaign.find().then(
         campaigns => res.status(200).json(campaigns)
+    ).catch(
+        error => res.status(400).json({msg: 'Error Fetching Campaigns: '+ error})
     );
 });
 
@@ -30,7 +31,7 @@ router.post("/", (req, res) => {
             res.status(200).json(campaignObject);
         }
     ).catch(
-        err => console.log("Error while creating new Campaign: " + err)
+        error => res.status(400).json({msg: "Error while creating new Campaign: " + error})
     );
 })
 
@@ -40,7 +41,7 @@ router.get('/:id', (req,res) => {
     Campaign.findById(req.params.id).then(
         campaignData => res.status(200).json(campaignData)
     ).catch(
-        err => console.log('Details Fetch Error : '+ err)
+        error => res.status(400).json({msg: 'Error Fetching Campaign Details: ' + error})
     );
 });
 
@@ -57,7 +58,7 @@ router.put('/:id', (req, res) => {
     };
 
     Campaign.findByIdAndUpdate(req.params.id, updatedCampaign, {returnDocument:'after'}, (error, response)=> {
-        if (error) console.log(error);
+        if (error) res.status(400).json({msg: 'Error Updating Campaign Details: '+ error});
         res.status(200).json(response);
     });
 });
@@ -66,17 +67,16 @@ router.put('/:id', (req, res) => {
 // DELETE('/:id') - Delete a Particular Campaign
 router.delete('/:id', (req, res) => {
     Campaign.findByIdAndDelete(req.params.id, (error, response) => {
-        if (error) console.log(error);
+        if (error) res.status(400).json({msg: 'Error Deleting Campaign: '+ error});
         res.status(200).json(response);
     });
 });
 
-
-// POST('/:id/request') - Create a New Request for a particular Campaign
-router.post('/:id/request', (req, res) => {
+// Common Function for POST and PATCH for /:id/request and /:id/request/current
+const campaignRequestAPI = (req, res, msg) => {
     const {requestNumber, requestTitle, requestDescription, requestResources} = req.body;
 
-    const newRequest = {
+    const request = {
         campaignRequest: {
             requestNumber,
             requestTitle,
@@ -85,21 +85,47 @@ router.post('/:id/request', (req, res) => {
         }
     }
 
-    Campaign.findByIdAndUpdate(req.params.id, newRequest, {returnDocument:'after'}, (error, response)=>{
-        if (error) res.send(400).json({msg: 'Error Creating a New Request'});
+    Campaign.findByIdAndUpdate('k', request, {returnDocument:'after'}, (error, response)=>{
+        if (error) res.status(400).json({msg: msg + error});
         res.status(200).json(response);
     });
+}
+
+// POST('/:id/request') - Create a New Request for a particular Campaign
+router.post('/:id/request', (req, res) => {
+    campaignRequestAPI(req, res, 'Error Creating a new Request: ');
 });
 
 
-// PUT('/:id/request/:rid') - Update Details of a particular Request for a Particular Campaign
-router.put('/:id/request/:rid', (req, res)=> {
-    
+// PUT('/:id/request/current') - Update Details of a current Request for a Particular Campaign
+router.put('/:id/request/current', (req, res)=> {
+    campaignRequestAPI(req, res, 'Error Updating the current Request: ');
 });
 
 
-// DELETE('/:id/request/:rid') - Delete Details of a particular Request for a Particular Campaign
+// DELETE('/:id/request/current') - Delete Details of a current Request for a Particular Campaign
+router.delete('/:id/request/current', (req, res) => {
+    Campaign.findById(req.params.id).then(campaign => {
+        const request = {
+            requestNumber: campaign.campaignRequest.requestNumber,
+            requestTitle: campaign.campaignRequest.requestTitle,
+            requestDescription: campaign.campaignRequest.requestDescription,
+            requestResources: campaign.campaignRequest.requestResources,
+            upVotePercentage: 0.0,
+            campaignStatus: 'Cancelled'
+        }
 
+        campaign.campaignRequest = {"requestResources": []}
+        campaign.requestVotingHistory.push(request);
+
+        Campaign.findByIdAndUpdate(req.params.id, campaign, {returnDocument:'after'}, (error, response)=>{
+            if (error) res.status(400).json({msg: 'Error Deleting Request: '+ error});
+            res.status(200).json(response);
+        });
+    }).catch(
+        error => res.status(400).json({msg: "Error Fetching Campaign Details: "+ error})
+    );
+});
 
 
 // POST('/:id/vote') - Add's a Contributor's Vote for a Particular Request for a Particular Campaign
