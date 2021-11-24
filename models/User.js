@@ -21,7 +21,8 @@ const userSchema = new Schema({
     },
     emailId: { 
         type: String, 
-        required: true 
+        required: true,
+        index: { unique: true } 
     },
     currentCity: { 
         type: String 

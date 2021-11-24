@@ -8,7 +8,7 @@ const Campaign = require('../models/Campaign');
 // GET('/') - Get list of all Campaigns
 router.get("/", (req, res) => {
     Campaign.find().then(
-        campaigns => res.json(campaigns)
+        campaigns => res.status(200).json(campaigns)
     );
 });
 
@@ -27,7 +27,7 @@ router.post("/", (req, res) => {
     campaign.save().then(
         campaignObject => {
             console.log('--> New Campaign Created. Document Saved on Database.');
-            res.json(campaignObject);
+            res.status(200).json(campaignObject);
         }
     ).catch(
         err => console.log("Error while creating new Campaign: " + err)
@@ -36,22 +36,48 @@ router.post("/", (req, res) => {
 
 
 // GET('/:id') - Get Details of a Particular Campaign
+router.get('/:id', (req,res) => {
+    Campaign.findById(req.params.id).then(
+        campaignData => res.status(200).json(campaignData)
+    ).catch(
+        err => console.log('Details Fetch Error : '+ err)
+    );
+});
 
 
+// PUT('/:id') - Update a Particular Campaign
+router.put('/:id', (req, res) => {
+    const {campaignName, campaignDescription, campaignOrganiser, requiredFunding} = req.body;
 
-// PATCH('/:id') - Update a Particular Campaign
+    const updatedCampaign = {
+        campaignName,
+        campaignDescription,
+        campaignOrganiser,
+        requiredFunding
+    };
 
+    Campaign.findByIdAndUpdate(req.params.id, updatedCampaign, {returnDocument:'after'}, (error, response)=> {
+        if (error) console.log(error);
+        res.status(200).json(response);
+    });
+});
 
 
 // DELETE('/:id') - Delete a Particular Campaign
+router.delete('/:id', (req, res) => {
+    Campaign.findByIdAndDelete(req.params.id, (error, response) => {
+        if (error) console.log(error);
+        res.status(200).json(response);
+    });
+});
+
+
+// POST('/:id/request'o) k- Create a New R,equest for a particular Campaig
 
 
 
-// POST('/:id/request') - Create a New Request for a particular Campaign
 
-
-
-// PATCH('/:id/request/:rid') - Update Details of a particular Request for a Particular Campaign
+// PUT('/:id/request/:rid') - Update Details of a particular Request for a Particular Campaign
 
 
 
