@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const cookie = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const auth = require('../middlewares/auth');
 require('dotenv').config({ path: __dirname + '/.env' })
 
 //User model
@@ -78,11 +81,40 @@ router.post('/', (req, res) => {
 
 
 // POST('/login') - Login a User
+router.post("/login", (req, res) => {
+    const { emailId, password } = req.body;
+    if(!emailId || !password){
+        res.status(400).json({ msg: "Please enter all fields" });
+    }
 
+    User.findOne({emailId}).then( user => {
+        if(!user) res.status(400).json({ msg: "User does not exist" });
+
+        bcrypt.compare(password, user.password).then(isMatch => {
+            if(!isMatch) res.status(400).json({ msg: "Invalid credentials" });
+
+            jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, (err, token) => {
+                if(err) res.status(400).json({ msg: "Error while creating JWT" });
+                
+                console.log("JWT Token: " + token + "\nUser: " + user);
+                let options = {
+                    maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+                    httpOnly: true, // The cookie only accessible by the web server
+                }
+
+                res.cookie('jwt', token, options);
+                res.status(200).json({ msg: "Cookie Generated" });
+            })
+        }).catch(err => res.status(400).json({ msg: "Error in login" }))
+    }).catch(err => res.status(400).json({ msg: "Error in login" }));
+})
 
 
 // POST('/logout') - Logout a User
-
+router.post("/logout", (req, res) => {
+    res.clearCookie('jwt');
+    res.status(200).json({ msg: "Cookie Deleted" });
+})
 
 //Trials
 router.get("/trial", (req, res) => {

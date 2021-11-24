@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 require('dotenv').config({ path: __dirname + '/.env' })
 
 const app = express();
@@ -13,6 +14,7 @@ mongoose.connect(process.env.MONGOOSE_URL, {user: process.env.API_USER, pass: pr
 
 // Routing Policies
 app.use(express.json());
+app.use(cookieParser());
 app.use('/api/user', require('./routes/user'));
 app.use('/api/campaign', require('./routes/campaign'));
 

@@ -72,13 +72,30 @@ router.delete('/:id', (req, res) => {
 });
 
 
-// POST('/:id/request'o) k- Create a New R,equest for a particular Campaig
+// POST('/:id/request') - Create a New Request for a particular Campaign
+router.post('/:id/request', (req, res) => {
+    const {requestNumber, requestTitle, requestDescription, requestResources} = req.body;
 
+    const newRequest = {
+        campaignRequest: {
+            requestNumber,
+            requestTitle,
+            requestDescription,
+            requestResources
+        }
+    }
 
+    Campaign.findByIdAndUpdate(req.params.id, newRequest, {returnDocument:'after'}, (error, response)=>{
+        if (error) res.send(400).json({msg: 'Error Creating a New Request'});
+        res.status(200).json(response);
+    });
+});
 
 
 // PUT('/:id/request/:rid') - Update Details of a particular Request for a Particular Campaign
-
+router.put('/:id/request/:rid', (req, res)=> {
+    
+});
 
 
 // DELETE('/:id/request/:rid') - Delete Details of a particular Request for a Particular Campaign
