@@ -19,6 +19,9 @@ const campaignSchema = new Schema({
         type: Number,
         required: true
     },
+    amountCollected: {
+        type: Number,
+    },
     smartContractAddress: {
         type: String,
         default: null
@@ -30,6 +33,7 @@ const campaignSchema = new Schema({
         requestResources: [{
             type: String
         }],
+        requestAmount: Number,
         upVotePercentage: Schema.Types.Decimal128
     },
     currentVote:{
@@ -53,6 +57,7 @@ const campaignSchema = new Schema({
         requestResources: [{
             type: String
         }],
+        requestAmount: Number,
         upVotePercentage: Schema.Types.Decimal128,
         campaignStatus: {
             type: String,

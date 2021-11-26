@@ -72,20 +72,22 @@ router.delete('/:id', (req, res) => {
     });
 });
 
+
 // Common Function for POST and PATCH for /:id/request and /:id/request/current
 const campaignRequestAPI = (req, res, msg) => {
-    const {requestNumber, requestTitle, requestDescription, requestResources} = req.body;
+    const {requestNumber, requestTitle, requestDescription, requestResources, requestAmount} = req.body;
 
     const request = {
         campaignRequest: {
             requestNumber,
             requestTitle,
             requestDescription,
-            requestResources
+            requestResources,
+            requestAmount
         }
     }
 
-    Campaign.findByIdAndUpdate('k', request, {returnDocument:'after'}, (error, response)=>{
+    Campaign.findByIdAndUpdate(req.params.id, request, {returnDocument:'after'}, (error, response)=>{
         if (error) res.status(400).json({msg: msg + error});
         res.status(200).json(response);
     });
