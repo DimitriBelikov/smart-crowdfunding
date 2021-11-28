@@ -85,7 +85,7 @@ const campaignRequestAPI = (req, res, msg) => {
         }
     }
 
-    Campaign.findByIdAndUpdate('k', request, {returnDocument:'after'}, (error, response)=>{
+    Campaign.findByIdAndUpdate(req.params.id, request, {returnDocument:'after'}, (error, response)=>{
         if (error) res.status(400).json({msg: msg + error});
         res.status(200).json(response);
     });
@@ -129,10 +129,46 @@ router.delete('/:id/request/current', (req, res) => {
 
 
 // POST('/:id/vote') - Add's a Contributor's Vote for a Particular Request for a Particular Campaign
-
+router.post('/:id/vote', (req, res) => {
+    
+    const {yes, no} = req.body;
+    const vote = {
+        currentVote: {
+            yes,
+            no
+        }
+    }
+    Campaign.findByIdAndUpdate(req.params.id, vote, {returnDocument:'after'}, (error, response)=>{
+        if (error) res.status(400).json({error});
+        res.status(200).json(response);
+    });
+    
+});
 
 
 // POST('/:id/donate') - Let a Contributor gets added to the Donors List and Interact with Smart Contract to add Donation amount
+router.post('/:id/donor', (req, res) => {
+    Campaign.findById(req.params.id).then(campaign => {
+
+        const donorDetails = {
+            donors:{
+                userId: req.body.userId,
+                donationAmount: req.body.donationAmount,
+                donationDate: req.body.donationDate
+            }
+        }
+        // donorDetails.date instanceof Date;
+        // campaign.donors.push(donorDetails);
+
+        Campaign.findByIdAndUpdate(req.params.id, {$push: donorDetails}, {returnDocument:'after'}, (error, response)=>{
+            if (error) res.status(400).json({msg: 'Error Voting: '+ error});
+            res.status(200).json(response);
+        });
+    }).catch(
+        error => res.status(400).json({msg: "Error Fetching Campaign Details: "+ error})
+    );
+});
+
 
 
 
