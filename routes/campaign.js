@@ -132,19 +132,19 @@ router.delete('/:id/request/current', (req, res) => {
 
 // POST('/:id/vote') - Add's a Contributor's Vote for a Particular Request for a Particular Campaign
 router.post('/:id/vote', (req, res) => {
-    
-    const {yes, no} = req.body;
-    const vote = {
-        currentVote: {
-            yes,
-            no
+    Campaign.findById(req.params.id).then(campaign => {
+        if(req.body.vote == 'yes') {
+            campaign.currentVote.yes.push(req.body.userId);
+        } else if(req.body.vote == 'no') {
+            campaign.currentVote.no.push(req.body.userId);
         }
-    }
-    Campaign.findByIdAndUpdate(req.params.id, vote, {returnDocument:'after'}, (error, response)=>{
-        if (error) res.status(400).json({error});
-        res.status(200).json(response);
-    });
-    
+        Campaign.findByIdAndUpdate(req.params.id, campaign, {returnDocument:'after'}, (error, response)=>{
+            if (error) res.status(400).json({msg: 'Error voting for a campaign: '+ error});
+            res.status(200).json(response);
+        });
+    }).catch(
+        error => res.status(400).json({msg: "Error Fetching Campaign Details: "+ error})
+    );
 });
 
 
