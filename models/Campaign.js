@@ -38,16 +38,12 @@ const campaignSchema = new Schema({
     },
     currentVote:{
         yes: [{
-            userId: {
-                type: Schema.Types.ObjectId,
-                ref: 'User'
-            }
+            type: Schema.Types.ObjectId,
+            ref: 'User'
         }],
         no:[{
-            userId: {
-                type:Schema.Types.ObjectId,
-                ref: 'User'
-            }
+            type: Schema.Types.ObjectId,
+            ref: 'User'
         }]
     },
     requestVotingHistory: [{
@@ -70,7 +66,7 @@ const campaignSchema = new Schema({
             ref: 'User'
         },
         donationAmount: Schema.Types.Decimal128,
-        donatedOn: Date
+        donationDate: Date
     }]
 });
 
