@@ -10,6 +10,24 @@ const campaignSchema = new Schema({
         type: String,
         required: true
     },
+    campaignCoverMedia: {
+        type: String,
+    },
+    campaignResources: [{
+        type: String
+    }],
+    campaignCategory: {
+        type: String,
+        required: true
+    },
+    campaignCreatedOn: {
+        type: Date,
+        required: true
+    },
+    campaignLastEditedOn: {
+        type: Date,
+        required: true
+    },
     campaignOrganiser: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -34,7 +52,10 @@ const campaignSchema = new Schema({
             type: String
         }],
         requestAmount: Number,
-        upVotePercentage: Schema.Types.Decimal128
+        upVotePercentage: Schema.Types.Decimal128,
+        requestCreatedOn: Date,
+        requestLastEditedOn: Date,
+        deadline: Date
     },
     currentVote:{
         yes: [{
@@ -55,9 +76,12 @@ const campaignSchema = new Schema({
         }],
         requestAmount: Number,
         upVotePercentage: Schema.Types.Decimal128,
-        campaignStatus: {
+        requestCreatedOn: Date,
+        requestLastEditedOn: Date,
+        deadline: Date,
+        requestStatus: {
             type: String,
-            enum: ['Success&Disbursed', 'Cancelled', 'Denied']
+            enum: ['FundsDisbursed', 'Cancelled', 'FundsDenied']
         }
     }],
     donors: [{
