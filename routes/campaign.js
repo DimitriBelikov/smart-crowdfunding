@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const eth = require('../ETHBackend/deploy-contract');
 
 //Models
 const Campaign = require('../models/Campaign');
@@ -21,27 +22,31 @@ router.post("/", (req, res) => {
     // const campaignResources = ["./img/img1.jpg"];
     // const campaignCoverMedia = './img/hshs.jpg';
 
-    const smartContractAddress = 'trial_address' || deployContract();
-
-    const campaign = new Campaign({
-        campaignName,
-        campaignDescription,
-        // campaignCoverMedia,
-        // campaignResources,
-        campaignCategory,
-        campaignOrganiser,
-        requiredFunding,
-        smartContractAddress,
-        campaignCreatedOn: new Date(Date.now()),
-        campaignLastEditedOn: new Date(Date.now())
-    });
-
-    campaign.save().then(
-        campaignObject => {
-            console.log('--> New Campaign Created. Document Saved on Database.');
-            res.status(200).json(campaignObject);
-        }
-    ).catch(
+    const walletProvider = eth.provider();
+    eth.deployContract(walletProvider).then(
+        smartContractAddress => {
+            const campaign = new Campaign({
+                campaignName,
+                campaignDescription,
+                // campaignCoverMedia,
+                // campaignResources,
+                campaignCategory,
+                campaignOrganiser,
+                requiredFunding,
+                smartContractAddress,
+                campaignCreatedOn: new Date(Date.now()),
+                campaignLastEditedOn: new Date(Date.now())
+            });
+        
+            campaign.save().then(
+                campaignObject => {
+                    console.log('--> New Campaign Created. Document Saved on Database.\n');
+                    res.status(200).json(campaignObject);
+                }
+            ).catch(
+                error => res.status(400).json({msg: "Error while creating new Campaign: " + error})
+            );
+    }).catch(
         error => res.status(400).json({msg: "Error while creating new Campaign: " + error})
     );
 })

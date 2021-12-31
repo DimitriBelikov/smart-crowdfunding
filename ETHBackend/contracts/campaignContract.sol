@@ -16,11 +16,16 @@ contract campaignContract {
         _contractOwner = msg.sender;
     }
     
-    // Event - Logs Received Amount 
+    // Event & Modifiers- Logs Received Amount 
     event _logReceiveMoneyEvent (address _sendersAddress, uint256 _amount);
     modifier onlyOwner{
         require(msg.sender == _contractOwner, 'Owner Specific Function');
         _;
+    }
+
+    // Function - View Function - Returns the current contract Balance
+    function _contractBalance() view public returns (uint256 amount){
+        amount = address(this).balance;
     }
     
     // Function - Sends Requested Money to campaignCreator
@@ -36,9 +41,11 @@ contract campaignContract {
     }
     
     // Function - RollBack Contributor's Remaining Funds
-    // function _rollbackFunds() private onlyOwner{
-    //     for(uint32 index=0; index<_nContributors; index++){
-    //         payable(_addresses[index]).transfer((_addressETHmap[_addresses[index]]/_totalContributionAmount)*address(this).balance);
+    // function _rollbackFunds() internal onlyOwner{
+    //     uint256 totalBalance = address(this).balance;
+    //     for(uint32 index=1; index<=_nContributors; index++){
+    //         emit _logReceiveMoneyEvent(_addresses[index], (_addressETHmap[_addresses[index]]/_totalContributionAmount));
+    //         payable(_addresses[index]).transfer(_addressETHmap[_addresses[index]]*totalBalance/_totalContributionAmount);
     //     }
     // }
     
