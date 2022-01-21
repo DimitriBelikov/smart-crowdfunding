@@ -215,7 +215,7 @@ router.post('/:id/donate', (req, res) => {
             donationDate: new Date(Date.now())
         }
         campaign.donors.push(donor);
-
+        campaign.amountCollected +=  donationAmount;
         Campaign.findByIdAndUpdate(req.params.id, campaign, {returnDocument:'after'}, (error, response)=>{
             if (error) res.status(400).json({msg: 'Error Voting: '+ error});
             
