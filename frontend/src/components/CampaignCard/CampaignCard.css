@@ -1,0 +1,44 @@
+.card {
+  width: 95%;
+}
+
+.card-img-top {
+  height: 35%;
+}
+
+.card-text-container {
+  -webkit-column-width: 150vw;
+  -moz-column-width: 150vw;
+  column-width: 150vw;
+}
+
+.progress {
+  position: relative;
+  height: 25px;
+}
+
+.progress > .progress-completed {
+  position: absolute;
+  right: 2%;
+  font-weight: 800;
+  height: 100%;
+  vertical-align: middle;
+  float: right;
+  margin-top: 8px;
+}
+
+.raised-capital {
+  font-size: 16px;
+}
+
+@media only screen and (max-width: 600px) {
+  .card {
+    width: 98%;
+  }
+}
+
+@media only screen and (min-device-width: 600px) and (max-device-width: 820px) {
+  .card {
+    width: 100%;
+  }
+}
