@@ -10,6 +10,7 @@
   -webkit-column-width: 150vw;
   -moz-column-width: 150vw;
   column-width: 150vw;
+  text-align-last: justify;
 }
 
 .progress {

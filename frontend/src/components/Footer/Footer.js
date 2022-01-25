@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Footer = () => {
-    return <footer clasName='page-footer'>
+    return <footer className='page-footer'>
         <div className='container-fluid mt-5'>
             <div className='row'>
                 <div className='col-md-3 border border-primary'>

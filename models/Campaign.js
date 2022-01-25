@@ -33,12 +33,18 @@ const campaignSchema = new Schema({
         ref: 'User',
         required: true
     },
+    campaignStatus: {
+        type: String,
+        default: 'Active',
+        enum: ['Active', 'Finished', 'Cancelled']
+    },
     requiredFunding: {
         type: Number,
         required: true
     },
     amountCollected: {
         type: Number,
+        default: 0
     },
     smartContractAddress: {
         type: String,
@@ -57,12 +63,12 @@ const campaignSchema = new Schema({
         requestLastEditedOn: Date,
         deadline: Date
     },
-    currentVote:{
+    currentVote: {
         yes: [{
             type: Schema.Types.ObjectId,
             ref: 'User'
         }],
-        no:[{
+        no: [{
             type: Schema.Types.ObjectId,
             ref: 'User'
         }]

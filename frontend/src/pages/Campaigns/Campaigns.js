@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 //Components
 import Pagination from '../../components/Pagination/Pagination';
 import CampaignCard from '../../components/CampaignCard/CampaignCard';
 
+//Controllers
+import { useFetch } from '../../controllers/useFetch';
+
 //Data
-import { data } from './testdata';
+//import { data } from './testdata';
 
 const Campaigns = () => {
-  const [posts, setPosts] = useState(data);
+  const { loading, data: campaigns } = useFetch("http://localhost:4545/api/campaign");
+  console.log(campaigns);
+
   const [showPerPage, setShowPerPage] = useState(6);
   const [pagination, setPagination] = useState({
     start: 0,
@@ -34,19 +40,19 @@ const Campaigns = () => {
       </div>
 
       <div id='campaigns' className="row">
-        {posts.slice(pagination.start, pagination.end).map((post) => (
-          <div className="col-md-4 mt-4 border border-primary d-flex justify-content-center" key={post.id}>
-            <CampaignCard title={post.title} body={post.body} />
+        {campaigns.slice(pagination.start, pagination.end).map((campaign) => (
+          <div className="col-md-4 mt-4 border border-primary d-flex justify-content-center" key={campaign.id}>
+            <CampaignCard campaign={campaign} />
           </div>
         ))}
       </div>
 
       <div className="row">
-        <div className="col text-center border border-primary mt-3">
+        <div className="col text-center border border-primary mt-3 pt-3">
           <Pagination
             showPerPage={showPerPage}
             onPaginationChange={onPaginationChange}
-            total={posts.length}
+            total={campaigns.length}
           />
         </div>
       </div>
