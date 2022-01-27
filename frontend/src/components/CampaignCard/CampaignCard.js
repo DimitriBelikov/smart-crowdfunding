@@ -14,11 +14,12 @@ const CampaignCard = ({ campaign }) => {
 
     return (
         <>
-            <div className="card" onClick={clickOnCard}>
+            <div className="card">
                 <img
                     className="card-img-top"
                     src={campaign.campaignCoverMedia}
                     alt="Card image cap"
+                    onClick={clickOnCard}
                 />
                 <div className="card-body">
                     <h5 className="card-title text-truncate">
@@ -29,7 +30,7 @@ const CampaignCard = ({ campaign }) => {
                         lines={5}
                         more="Show more"
                         className="card-text-container h-40 border border-success mx-auto"
-                        //onClick={() => executeOnClick()}
+                        onClick={() => clickOnCard()}
                         expanded={false}
                         expandByClick={false}
                         //width={280}

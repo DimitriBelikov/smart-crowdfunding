@@ -8,13 +8,12 @@ import CampaignCard from '../../components/CampaignCard/CampaignCard';
 //Controllers
 import { useFetch } from '../../controllers/useFetch';
 
-//Data
-//import { data } from './testdata';
-
 const Campaigns = () => {
   const { loading, data: campaigns } = useFetch("http://localhost:4545/api/campaign");
   console.log(campaigns);
+  console.log(loading);
 
+  const [category, setCategory] = useState("all");
   const [showPerPage, setShowPerPage] = useState(6);
   const [pagination, setPagination] = useState({
     start: 0,
@@ -25,6 +24,15 @@ const Campaigns = () => {
     setPagination({ start: start, end: end });
   };
 
+  const filterCampaigns = (category) => {
+    setCategory(category);
+  }
+
+  if (loading) {
+    return (
+      <h1>Loading...</h1>
+    )
+  }
   return <>
     <div className="container-fluid">
       <div className="row">
@@ -35,14 +43,36 @@ const Campaigns = () => {
 
       <div className="row">
         <div className="col border border-primary">
-          <h3 className='text-center'>Categories Menu</h3>
+          <ul className="nav nav-pills nav-fill">
+            <li className="nav-item">
+              <a className="nav-link active" aria-current="page" onClick={() => filterCampaigns("all")}>All</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" onClick={() => filterCampaigns("Education")}>Education</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" onClick={() => filterCampaigns("Medical")}>Medical</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link" onClick={() => filterCampaigns("Human Rights")}>Human Rights</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link " onClick={() => filterCampaigns("Disaster Relief")}>Disaster Relief</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link " onClick={() => filterCampaigns("Animal Care")}>Animal Care</a>
+            </li>
+            <li className="nav-item">
+              <a className="nav-link " onClick={() => filterCampaigns("Environment")}>Environment</a>
+            </li>
+          </ul>
         </div>
       </div>
 
       <div id='campaigns' className="row">
-        {campaigns.slice(pagination.start, pagination.end).map((campaign) => (
-          <div className="col-md-4 mt-4 border border-primary d-flex justify-content-center" key={campaign.id}>
-            <CampaignCard campaign={campaign} />
+        {(category === 'all' ? campaigns : campaigns.filter(campaign => campaign.campaignCategory === category)).slice(pagination.start, pagination.end).map((filteredCampaign) => (
+          <div className="col-md-4 mt-4 border border-primary d-flex justify-content-center" key={filteredCampaign._id}>
+            <CampaignCard campaign={filteredCampaign} />
           </div>
         ))}
       </div>
