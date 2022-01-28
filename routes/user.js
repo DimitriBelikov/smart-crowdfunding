@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const auth = require('../middlewares/auth');
 require('dotenv').config({ path: __dirname + '/.env' })
 
 //User model
@@ -35,7 +36,7 @@ router.post('/', (req, res) => {
             userName,
             password,
             fullName,
-            dob,
+            dob: new Date(dob),
             emailId,
             currentCity,
             state
