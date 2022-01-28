@@ -1,0 +1,11 @@
+.campaign-header-image {
+  height: calc(50 * 1vh);
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+@media only screen and (max-device-width: 414px) {
+  .fadeshow {
+    display: none;
+  }
+}

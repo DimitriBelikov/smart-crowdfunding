@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 //Components
 import Pagination from '../../components/Pagination/Pagination';
 import CampaignCard from '../../components/CampaignCard/CampaignCard';
+import CampaignDescriptionList from '../../components/CampaignDescriptionList/CampaignDescriptionList';
 
 //Controllers
 import { useFetch } from '../../controllers/useFetch';
@@ -13,13 +14,15 @@ const Campaigns = () => {
   console.log(campaigns);
   console.log(loading);
 
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState("All");
   const [showPerPage, setShowPerPage] = useState(6);
   const [pagination, setPagination] = useState({
     start: 0,
     end: showPerPage,
   });
   const [total, setTotal] = useState(0);
+  const [categoryList, setCategoryList] = useState(['All','Education', 'Medical', 'Human Rights','Disaster Relief','Animal Care','Environment']);
+
 
   useEffect(() => {
     setTotal(campaigns.length);
@@ -31,7 +34,7 @@ const Campaigns = () => {
 
   const filterCampaigns = (category) => {
     setCategory(category);
-    setTotal((category === 'all' ? campaigns : campaigns.filter(campaign => campaign.campaignCategory === category)).length)
+    setTotal((category === 'All' ? campaigns : campaigns.filter(campaign => campaign.campaignCategory === category)).length)
   }
 
   if (loading) {
@@ -47,38 +50,12 @@ const Campaigns = () => {
         </div>
       </div>
 
-      <div className="row">
-        <div className="col border border-primary">
-          <ul className="nav nav-pills nav-fill">
-            <li className="nav-item">
-              <a className={`nav-link ${category === "all" ? "active" : null}`} aria-current="page" onClick={() => filterCampaigns("all")}>All</a>
-            </li>
-            <li className="nav-item">
-              <a className={`nav-link ${category === "Education" ? "active" : null}`} onClick={() => filterCampaigns("Education")}>Education</a>
-            </li>
-            <li className="nav-item">
-              <a className={`nav-link ${category === "Medical" ? "active" : null}`} onClick={() => filterCampaigns("Medical")}>Medical</a>
-            </li>
-            <li className="nav-item">
-              <a className={`nav-link ${category === "Human Rights" ? "active" : null}`} onClick={() => filterCampaigns("Human Rights")}>Human Rights</a>
-            </li>
-            <li className="nav-item">
-              <a className={`nav-link ${category === "Disaster Relief" ? "active" : null}`} onClick={() => filterCampaigns("Disaster Relief")}>Disaster Relief</a>
-            </li>
-            <li className="nav-item">
-              <a className={`nav-link ${category === "Animal Care" ? "active" : null}`} onClick={() => filterCampaigns("Animal Care")}>Animal Care</a>
-            </li>
-            <li className="nav-item">
-              <a className={`nav-link ${category === "Environment" ? "active" : null}`} onClick={() => filterCampaigns("Environment")}>Environment</a>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <CampaignDescriptionList itemsList={categoryList} currentActive={category} clickFunction={filterCampaigns}/>
 
       <div id='campaigns' className="row">
-        {(category === 'all' ? campaigns : campaigns.filter(campaign => campaign.campaignCategory === category)).slice(pagination.start, pagination.end).map((filteredCampaign) => (
+        {(category === 'All' ? campaigns : campaigns.filter(campaign => campaign.campaignCategory === category)).slice(pagination.start, pagination.end).map((filteredCampaign) => (
           <div className="col-md-4 mt-4 border border-primary d-flex justify-content-center" key={filteredCampaign._id}>
-            <CampaignCard campaign={filteredCampaign} />
+            <CampaignCard campaign={filteredCampaign}/>
           </div>
         ))}
       </div>
