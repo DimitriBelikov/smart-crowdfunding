@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 
-const Pagination = ({ showPerPage, onPaginationChange, total }) => {
+const Pagination = ({ showPerPage, onPaginationChange, totalCards }) => {
     const [counter, setCounter] = useState(1);
-    const [numberOfButtons, setNumberOfButtons] = useState(Math.ceil((total / showPerPage)));
+    const [numberOfButtons, setNumberOfButtons] = useState(Math.ceil((totalCards / showPerPage)));
 
     console.log("counter: " + counter);
-    console.log("number of buttons: " + Math.ceil((total / showPerPage)));
-    console.log("total:" + total);
+    console.log("number of buttons: " + Math.ceil((totalCards / showPerPage)));
+    console.log("total:" + totalCards);
     console.log("spp:" + showPerPage);
 
     useEffect(() => {

@@ -19,6 +19,11 @@ const Campaigns = () => {
     start: 0,
     end: showPerPage,
   });
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    setTotal(campaigns.length);
+  })
 
   const onPaginationChange = (start, end) => {
     setPagination({ start: start, end: end });
@@ -26,6 +31,7 @@ const Campaigns = () => {
 
   const filterCampaigns = (category) => {
     setCategory(category);
+    setTotal((category === 'all' ? campaigns : campaigns.filter(campaign => campaign.campaignCategory === category)).length)
   }
 
   if (loading) {
@@ -45,25 +51,25 @@ const Campaigns = () => {
         <div className="col border border-primary">
           <ul className="nav nav-pills nav-fill">
             <li className="nav-item">
-              <a className="nav-link active" aria-current="page" onClick={() => filterCampaigns("all")}>All</a>
+              <a className={`nav-link ${category === "all" ? "active" : null}`} aria-current="page" onClick={() => filterCampaigns("all")}>All</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" onClick={() => filterCampaigns("Education")}>Education</a>
+              <a className={`nav-link ${category === "Education" ? "active" : null}`} onClick={() => filterCampaigns("Education")}>Education</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" onClick={() => filterCampaigns("Medical")}>Medical</a>
+              <a className={`nav-link ${category === "Medical" ? "active" : null}`} onClick={() => filterCampaigns("Medical")}>Medical</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" onClick={() => filterCampaigns("Human Rights")}>Human Rights</a>
+              <a className={`nav-link ${category === "Human Rights" ? "active" : null}`} onClick={() => filterCampaigns("Human Rights")}>Human Rights</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link " onClick={() => filterCampaigns("Disaster Relief")}>Disaster Relief</a>
+              <a className={`nav-link ${category === "Disaster Relief" ? "active" : null}`} onClick={() => filterCampaigns("Disaster Relief")}>Disaster Relief</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link " onClick={() => filterCampaigns("Animal Care")}>Animal Care</a>
+              <a className={`nav-link ${category === "Animal Care" ? "active" : null}`} onClick={() => filterCampaigns("Animal Care")}>Animal Care</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link " onClick={() => filterCampaigns("Environment")}>Environment</a>
+              <a className={`nav-link ${category === "Environment" ? "active" : null}`} onClick={() => filterCampaigns("Environment")}>Environment</a>
             </li>
           </ul>
         </div>
@@ -82,7 +88,7 @@ const Campaigns = () => {
           <Pagination
             showPerPage={showPerPage}
             onPaginationChange={onPaginationChange}
-            total={campaigns.length}
+            totalCards={total}
           />
         </div>
       </div>
