@@ -15,9 +15,7 @@ import CampaignDocumentList from '../../components/CampaignDocumentList/Campaign
 
 const Campaign = () => {
   const { id } = useParams();
-  console.log(id);
   const { loading, data: campaignData } = useFetch(`http://localhost:4545/api/campaign/${id}`)
-  console.log(campaignData);
 
   const [descriptionList, setDescriptionList] = useState(['Campaign', 'Updates', 'Request History', 'Documents']);
   const [selectedTab, setSelectedTab] = useState('Campaign');
@@ -35,7 +33,9 @@ const Campaign = () => {
     <CampaignDescriptionList itemsList={descriptionList} currentActive={selectedTab} clickFunction={changeTab} />
     {selectedTab === 'Campaign' && <CampaignDescription campaignDescription={campaignData.campaignDescription} />}
     {selectedTab === 'Updates' && <CampaignUpdates updates={[1, 2, 3]} />}
-    {selectedTab === 'Request History' && <CampaignRequestHistory requestHistory={[1, 2, 3]} />}
+    {console.log("isArray: " + Array.isArray(campaignData.requestVotingHistory))}
+    {console.log(campaignData.requestVotingHistory[0].requestTitle)}
+    {selectedTab === 'Request History' && <CampaignRequestHistory currentRequest={campaignData.currentRequest} requestVotingHistory={campaignData.requestVotingHistory} />}
     {selectedTab === 'Documents' && <CampaignDocumentList documents={[1, 2, 3, 4]} />}
   </>;
 };

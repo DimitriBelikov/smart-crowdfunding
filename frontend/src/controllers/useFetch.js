@@ -7,7 +7,7 @@ export const useFetch = (url) => {
     const getData = useCallback(async () => {
         const response = await fetch(url);
         const jsonData = await response.json();
-        //console.log(jsonData);
+        console.log(response);
         setData(jsonData);
         setLoading(false);
     }, [url]);
