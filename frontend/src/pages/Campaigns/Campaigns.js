@@ -11,8 +11,8 @@ import { useFetch } from '../../controllers/useFetch';
 
 const Campaigns = () => {
   const { loading, data: campaigns } = useFetch("http://localhost:4545/api/campaign");
-  console.log(campaigns);
-  console.log(loading);
+  // console.log("Campaigns: " + campaigns);
+  // console.log(loading);
 
   const [category, setCategory] = useState("All");
   const [showPerPage, setShowPerPage] = useState(6);
@@ -21,12 +21,14 @@ const Campaigns = () => {
     end: showPerPage,
   });
   const [total, setTotal] = useState(0);
-  const [categoryList, setCategoryList] = useState(['All','Education', 'Medical', 'Human Rights','Disaster Relief','Animal Care','Environment']);
+  const [categoryList, setCategoryList] = useState(['All', 'Education', 'Medical', 'Human Rights', 'Disaster Relief', 'Animal Care', 'Environment']);
 
 
   useEffect(() => {
+    // console.log("Inside UseEffect");
+    // console.log("Campaigns Length: " + campaigns.length);
     setTotal(campaigns.length);
-  })
+  }, [loading])
 
   const onPaginationChange = (start, end) => {
     setPagination({ start: start, end: end });
@@ -50,23 +52,24 @@ const Campaigns = () => {
         </div>
       </div>
 
-      <CampaignDescriptionList itemsList={categoryList} currentActive={category} clickFunction={filterCampaigns}/>
+      <CampaignDescriptionList itemsList={categoryList} currentActive={category} clickFunction={filterCampaigns} />
 
       <div id='campaigns' className="row">
         {(category === 'All' ? campaigns : campaigns.filter(campaign => campaign.campaignCategory === category)).slice(pagination.start, pagination.end).map((filteredCampaign) => (
           <div className="col-md-4 mt-4 border border-primary d-flex justify-content-center" key={filteredCampaign._id}>
-            <CampaignCard campaign={filteredCampaign}/>
+            <CampaignCard campaign={filteredCampaign} />
           </div>
         ))}
       </div>
 
       <div className="row">
         <div className="col text-center border border-primary mt-3 pt-3">
-          <Pagination
+          {/* {console.log("Before Pagination - total: " + total)} */}
+          {(total > 0) && <Pagination
             showPerPage={showPerPage}
             onPaginationChange={onPaginationChange}
-            totalCards={total}
-          />
+            total={total}
+          />}
         </div>
       </div>
     </div>

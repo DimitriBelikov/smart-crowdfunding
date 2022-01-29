@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
 
-const Pagination = ({ showPerPage, onPaginationChange, totalCards }) => {
+const Pagination = ({ showPerPage, onPaginationChange, total }) => {
     const [counter, setCounter] = useState(1);
-    const [numberOfButtons, setNumberOfButtons] = useState(Math.ceil((totalCards / showPerPage)));
+    const [numberOfButtons, setNumberOfButtons] = useState(Math.ceil((total / showPerPage)));
 
-    console.log("counter: " + counter);
-    console.log("number of buttons: " + Math.ceil((totalCards / showPerPage)));
-    console.log("total:" + totalCards);
-    console.log("spp:" + showPerPage);
+    // console.log("counter: " + counter);
+    // console.log("number of buttons: " + Math.ceil((total / showPerPage)));
+    // console.log("total:" + total);
+    // console.log("spp:" + showPerPage);
+
+    useEffect(() => {
+        // console.log("Pagination useEffect");
+        setNumberOfButtons(Math.ceil((total / showPerPage)));
+        setCounter(1);
+    }, [total])
 
     useEffect(() => {
         const value = showPerPage * counter;
@@ -31,30 +37,30 @@ const Pagination = ({ showPerPage, onPaginationChange, totalCards }) => {
     };
     return (
         <div className="d-flex justify-content-center">
+            {/* {console.log("Pagination - Number of buttons: " + numberOfButtons)} */}
             <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item">
+                <ul className="pagination" key={numberOfButtons}>
+                    <li className="page-item">
                         <a
-                            class="page-link"
+                            className="page-link"
                             onClick={() => onButtonClick("prev")}
                         >
                             Previous
                         </a>
                     </li>
-
                     {new Array(numberOfButtons).fill("").map((el, index) => (
-                        <li class={`page-item ${index + 1 === counter ? "active" : null}`} >
+                        <li className={`page-item ${index + 1 === counter ? "active" : null}`} key={index}>
                             <a
-                                class="page-link"
+                                className="page-link"
                                 onClick={() => setCounter(index + 1)}
                             >
                                 {index + 1}
                             </a>
                         </li>
                     ))}
-                    <li class="page-item">
+                    <li className="page-item">
                         <a
-                            class="page-link"
+                            className="page-link"
                             onClick={() => onButtonClick("next")}
                         >
                             Next

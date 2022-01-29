@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFetch } from '../../controllers/useFetch';
 import CampaignHeader from '../../components/CampaignHeader/CampaignHeader';
@@ -22,7 +22,7 @@ const Campaign = () => {
     </>;
   }
   return <>
-    <CampaignHeader coverImage={campaignData.campaignCoverMedia}/>
+    <CampaignHeader coverImage={campaignData.campaignCoverMedia} />
     <CampaignDescriptionList itemsList={descriptionList} currentActive={descriptionList[0]} clickFunction={TestFunction} />
   </>;
 };
