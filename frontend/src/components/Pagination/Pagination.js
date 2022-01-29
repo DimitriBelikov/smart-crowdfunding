@@ -35,6 +35,7 @@ const Pagination = ({ showPerPage, onPaginationChange, total }) => {
             }
         }
     };
+
     return (
         <div className="d-flex justify-content-center">
             {/* {console.log("Pagination - Number of buttons: " + numberOfButtons)} */}
