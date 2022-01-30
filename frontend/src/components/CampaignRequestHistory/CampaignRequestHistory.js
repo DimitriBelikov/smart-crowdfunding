@@ -5,7 +5,6 @@ import './CampaignRequestHistory.css';
 
 const CampaignRequestHistory = ({ currentRequest, requestVotingHistory }) => {
     return <>
-        {console.log(typeof (requestVotingHistory))}
         <div className="container">
             {requestVotingHistory.map((request, index) => (
                 <div className="row m-3" key={index}>
@@ -42,7 +41,7 @@ const CampaignRequestHistory = ({ currentRequest, requestVotingHistory }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-2 border border-success">
+                    <div className="col-md-2 border border-success pt-5">
                         <div className="row  mb-3 mt-3 border border-warning">
                             <div className="col-sm-12 text-center">
                                 <h6>Request Status</h6>
@@ -64,7 +63,7 @@ const CampaignRequestHistory = ({ currentRequest, requestVotingHistory }) => {
                                 <h6>upVote Percentage</h6>
                             </div>
                             <div className="col-sm-12 text-center">
-                                <h6>{request.upVotePercentage} %</h6>
+                                <h6>{request.upVotePercentage.$numberDecimal*100} %</h6>
                             </div>
                         </div>
                     </div>
