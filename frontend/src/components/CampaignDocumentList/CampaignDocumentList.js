@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const CampaignDocumentList = ({ documents }) => {
     return <>
@@ -15,7 +16,17 @@ const CampaignDocumentList = ({ documents }) => {
                     <h6 className='text-right d-flex inline-block float-right'>Last Updated: 16 Oct 2021</h6>
                 </div>
             </div>
-
+            <div className="row border border-secondary m-3 p-3">
+                <div className="col-md-1">
+                    <Link to="/CampaignDocuments/61ef97ff15c79ee7fb3c7b87/documents/Initial Abstract.pdf" target="_blank" download><span className='font-weight-bold'>&#8595;</span></Link>
+                </div>
+                <div className="col-md-9">
+                    <h5>Trial Download</h5>
+                </div>
+                <div className="col-md-2">
+                    <h6>Size: 2.45MB</h6>
+                </div>
+            </div>
             {documents.map((document, index) => (
                 <div className="row border border-secondary m-3 p-3">
                     <div className="col-md-1">
