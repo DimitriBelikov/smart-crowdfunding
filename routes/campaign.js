@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const eth = require('../ETHBackend/deploy-contract');
+const multer = require('multer');
+const upload = multer();
 
 //Models
 const Campaign = require('../models/Campaign');
@@ -17,38 +19,42 @@ router.get("/", (req, res) => {
 
 
 // POST('/') - Create a new Campaign (Deploy Smart Contract for this campaign ang get its address)
-router.post("/", (req, res) => {
-    const { campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding, campaignCoverMedia } = req.body;
+const cpUpload = upload.fields([{ name: 'campaignCoverMedia', maxCount: 1 }, { name: 'campaignResources', maxCount: 15 }])
+router.post("/", cpUpload, (req, res) => {
+    console.log(req.body);
+    console.log(req.files);
+    res.status(200).json({ msg: "Done" });
+    // const { campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding, campaignCoverMedia } = req.body;
     // const campaignResources = ["./img/img1.jpg"];
     // const campaignCoverMedia = './img/hshs.jpg';
 
-    const walletProvider = eth.provider();
-    eth.deployContract(walletProvider).then(
-        smartContractAddress => {
-            const campaign = new Campaign({
-                campaignName,
-                campaignDescription,
-                campaignCoverMedia,
-                // campaignResources,
-                campaignCategory,
-                campaignOrganiser,
-                requiredFunding,
-                smartContractAddress,
-                campaignCreatedOn: new Date(Date.now()),
-                campaignLastEditedOn: new Date(Date.now())
-            });
+    // const walletProvider = eth.provider();
+    // eth.deployContract(walletProvider).then(
+    //     smartContractAddress => {
+    //         const campaign = new Campaign({
+    //             campaignName,
+    //             campaignDescription,
+    //             campaignCoverMedia,
+    //             // campaignResources,
+    //             campaignCategory,
+    //             campaignOrganiser,
+    //             requiredFunding,
+    //             smartContractAddress,
+    //             campaignCreatedOn: new Date(Date.now()),
+    //             campaignLastEditedOn: new Date(Date.now())
+    //         });
 
-            campaign.save().then(
-                campaignObject => {
-                    console.log('--> New Campaign Created. Document Saved on Database.\n');
-                    res.status(200).json(campaignObject);
-                }
-            ).catch(
-                error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-            );
-        }).catch(
-            error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-        );
+    //     campaign.save().then(
+    //         campaignObject => {
+    //             console.log('--> New Campaign Created. Document Saved on Database.\n');
+    //             res.status(200).json(campaignObject);
+    //         }
+    //     ).catch(
+    //         error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+    //     );
+    // }).catch(
+    //     error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+    // );
 })
 
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return <footer className='page-footer'>
@@ -8,7 +9,7 @@ const Footer = () => {
                     <h1 className='text-center'>Get Started</h1>
                     <p className='ml-5'>
                         Dashboard <br />
-                        Create Your Campaign <br />
+                        <Link to='create-campaign'>Create Your Campaign </Link> <br />
                         Donate <br />
                         User Guide <br />
                     </p>

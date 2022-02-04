@@ -9,6 +9,7 @@ import Campaign from './pages/Campaign/Campaign';
 import Login from './pages/Login/Login';
 import Profile from './pages/Profile/Profile';
 import Error from './pages/Error/Error';
+import CreateCampaign from './pages/CreateCampaign/CreateCampaign';
 
 //Components
 import Navigationbar from './components/Navigationbar/Navigationbar';
@@ -28,6 +29,7 @@ function App() {
         <Route path="campaign/:id" element={<Campaign />} />
         <Route path="login" element={<Login />} />
         <Route path="profile/:userName" element={<Profile />} />
+        <Route path="create-campaign" element={<CreateCampaign />} />
         <Route path="*" element={<Error />} />
       </Routes>
       <Footer />
