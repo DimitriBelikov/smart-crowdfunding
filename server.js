@@ -14,10 +14,11 @@ mongoose.connect(process.env.MONGOOSE_URL, { user: process.env.API_USER, pass: p
 )
 
 // Routing Policies
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(express.static(__dirname + '/campaign documents'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/campaign', require('./routes/campaign'));
 

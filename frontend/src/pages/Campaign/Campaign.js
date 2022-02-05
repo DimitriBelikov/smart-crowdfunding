@@ -34,7 +34,7 @@ const Campaign = () => {
     {selectedTab === 'Campaign' && <CampaignDescription campaignDescription={campaignData.campaignDescription} />}
     {selectedTab === 'Updates' && <CampaignUpdates updates={[1, 2, 3]} />}
     {selectedTab === 'Request History' && <CampaignRequestHistory currentRequest={campaignData.campaignRequest} requestVotingHistory={campaignData.requestVotingHistory} />}
-    {selectedTab === 'Documents' && <CampaignDocumentList documents={[1, 2, 3, 4]} />}
+    {selectedTab === 'Documents' && <CampaignDocumentList documents={campaignData.campaignResources} />}
   </>;
 };
 

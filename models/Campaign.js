@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const campaignSchema = new Schema({
+    _id: {
+        type: mongoose.Types.ObjectId,
+        required: true
+    },
     campaignName: {
         type: String,
         required: true

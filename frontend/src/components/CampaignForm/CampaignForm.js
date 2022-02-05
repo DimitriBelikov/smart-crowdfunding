@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ObjectID } from 'bson';
 
 const CampaignForm = () => {
     const [campaign, setCampaign] = useState({
@@ -25,7 +26,9 @@ const CampaignForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const campaignId = new ObjectID();
         const formData = new FormData();
+        formData.append('campaignId', campaignId);
         formData.append('campaignCoverMedia', campaign.campaignCoverMedia[0]);
         for (var i = 0; i < campaign.campaignResources.length; i++)
             formData.append('campaignResources', campaign.campaignResources[i]);

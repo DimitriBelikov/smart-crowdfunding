@@ -2,16 +2,44 @@ const express = require('express');
 const router = express.Router();
 const eth = require('../ETHBackend/deploy-contract');
 const multer = require('multer');
-const upload = multer();
+const path = require('path');
+const fs = require('fs');
+const mongoose = require('mongoose');
 
 //Models
 const Campaign = require('../models/Campaign');
 const User = require('../models/User');
+const { dirxml } = require('console');
+const rootDocumentPath = 'documents'
+
+//Storage Configuration
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const dir = path.join('./campaign documents', req.body.campaignId);
+        //const dir = `./campaign documents/${req.body.campaignId}`
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir);
+            fs.mkdirSync(path.join(dir, 'documents'));
+        }
+        cb(null, path.join(dir, 'documents'));
+    },
+    filename: function (req, file, cb) {
+        console.log(file.originalname);
+        if (file.fieldname == 'campaignCoverMedia')
+            cb(null, file.fieldname + path.extname(file.originalname))
+        else
+            cb(null, file.originalname)
+    }
+});
+const upload = multer({ storage: storage });
+
 
 // GET('/') - Get list of all Campaigns
 router.get("/", (req, res) => {
     Campaign.find().then(
-        campaigns => res.status(200).json(campaigns)
+        campaigns => {
+            res.status(200).json(campaigns)
+        }
     ).catch(
         error => res.status(400).json({ msg: 'Error Fetching Campaigns: ' + error })
     );
@@ -23,39 +51,42 @@ const cpUpload = upload.fields([{ name: 'campaignCoverMedia', maxCount: 1 }, { n
 router.post("/", cpUpload, (req, res) => {
     console.log(req.body);
     console.log(req.files);
-    res.status(200).json({ msg: "Done" });
-    // const { campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding, campaignCoverMedia } = req.body;
-    // const campaignResources = ["./img/img1.jpg"];
-    // const campaignCoverMedia = './img/hshs.jpg';
+    const { campaignId, campaignName, campaignDescription, campaignCategory, /*campaignOrganiser,*/ requiredFunding } = req.body;
+    const campaignResources = req.files.campaignResources.map(({ originalname }) => path.join('campaign documents', campaignId, rootDocumentPath, originalname));
+    const campaignCoverMedia = path.join('campaign documents', campaignId, rootDocumentPath, req.files.campaignCoverMedia[0].originalname);
 
-    // const walletProvider = eth.provider();
-    // eth.deployContract(walletProvider).then(
-    //     smartContractAddress => {
-    //         const campaign = new Campaign({
-    //             campaignName,
-    //             campaignDescription,
-    //             campaignCoverMedia,
-    //             // campaignResources,
-    //             campaignCategory,
-    //             campaignOrganiser,
-    //             requiredFunding,
-    //             smartContractAddress,
-    //             campaignCreatedOn: new Date(Date.now()),
-    //             campaignLastEditedOn: new Date(Date.now())
-    //         });
+    console.log(campaignCoverMedia);
+    console.log(campaignResources);
 
-    //     campaign.save().then(
-    //         campaignObject => {
-    //             console.log('--> New Campaign Created. Document Saved on Database.\n');
-    //             res.status(200).json(campaignObject);
-    //         }
-    //     ).catch(
-    //         error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-    //     );
-    // }).catch(
-    //     error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-    // );
-})
+    const walletProvider = eth.provider();
+    eth.deployContract(walletProvider).then(
+        smartContractAddress => {
+            const campaign = new Campaign({
+                _id: mongoose.Types.ObjectId(campaignId),
+                campaignName,
+                campaignDescription,
+                campaignCoverMedia,
+                campaignResources,
+                campaignCategory,
+                campaignOrganiser: mongoose.Types.ObjectId('619b3e236135cd4fab42cd64'),
+                requiredFunding,
+                smartContractAddress,
+                campaignCreatedOn: new Date(Date.now()),
+                campaignLastEditedOn: new Date(Date.now())
+            });
+
+            campaign.save().then(
+                campaignObject => {
+                    console.log('--> New Campaign Created. Document Saved on Database.\n');
+                    res.status(200).json(campaignObject);
+                }
+            ).catch(
+                error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+            );
+        }).catch(
+            error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+        );
+});
 
 
 // GET('/:id') - Get Details of a Particular Campaign
@@ -244,6 +275,5 @@ router.post('/:id/donate', (req, res) => {
         error => res.status(400).json({ msg: "Error Fetching Campaign Details: " + error })
     );
 });
-
 
 module.exports = router;
