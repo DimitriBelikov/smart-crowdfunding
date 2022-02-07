@@ -18,7 +18,8 @@ const campaignSchema = new Schema({
         type: String,
     },
     campaignResources: [{
-        type: String
+        filePath: String,
+        fileSize: String
     }],
     campaignCategory: {
         type: String,
