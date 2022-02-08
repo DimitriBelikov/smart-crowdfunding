@@ -6,6 +6,7 @@ const CampaignForm = () => {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState({ value: false, msg: '' });
     const [campaign, setCampaign] = useState({
         campaignName: '',
         campaignDescription: '',
@@ -18,6 +19,20 @@ const CampaignForm = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === 'campaignResources' || name === 'campaignCoverMedia') {
+            const filesArray = Array.from(e.target.files);
+            if (filesArray.length > 10) {
+                setIsError({ value: true, msg: 'You can upload maximum 10 files' });
+                return;
+            } else {
+                for (var i = 0; i < filesArray.length; i++) {
+                    if (filesArray[i].size > 10500000) {
+                        setIsError({ value: true, msg: 'One of your files have exceded the limit of 10MB' });
+                        return;
+                    }
+                }
+
+            }
+            setIsError({ value: false, msg: '' });
             setCampaign({ ...campaign, [name]: Array.from(e.target.files) });
         }
         else {
@@ -98,10 +113,15 @@ const CampaignForm = () => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="campaign-resources">Campaign Resources</label> <br />
-                    <input type="file" id="campaign-resources" name="campaignResources" multiple onChange={handleChange} />
+                    <input type="file" id="campaign-resources" name="campaignResources" multiple onChange={handleChange} data-max-size='1024' />
+                    {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
                 </div>
                 <div className="text-center">
-                    <button className="btn btn-primary align-center" type="submit" onClick={handleSubmit}>Create Campaign</button>
+                    {isError.value ?
+                        <button className="btn btn-secondary align-center" type="submit" onClick={handleSubmit} disabled>Create Campaign</button> :
+                        <button className="btn btn-primary align-center" type="submit" onClick={handleSubmit} >Create Campaign</button>
+                    }
+
                 </div>
             </form>
         </div>
