@@ -97,7 +97,7 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="request-deadline">Deadline <span className='text-danger'>*</span></label> <br />
-                        <input type="datetime-local" name="deadline" id='request-deadline' value={request.deadline} onChange={handleChange} required min={"2022-01-27"} />
+                        <input type="datetime-local" name="deadline" id='request-deadline' value={request.deadline} onChange={handleChange} required min={new Date(Date.now()+2*24*60*60*1000).toISOString().split('.')[0]} max={new Date(Date.now()+3*30*24*60*60*1000).toISOString().split('.')[0]}/>
                         {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
                     </div>
                     <div className="form-group">
