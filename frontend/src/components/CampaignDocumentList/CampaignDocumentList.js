@@ -4,7 +4,6 @@ import { download } from 'downloadjs';
 
 const CampaignDocumentList = ({ documents }) => {
     return <>
-        {console.log(documents)}
         <div className="container border border-primary">
             <div className="row border-bottom border-secondary m-3">
                 <div className="col">
@@ -18,9 +17,9 @@ const CampaignDocumentList = ({ documents }) => {
                     <h6 className='text-right d-flex inline-block float-right'>Last Updated: 16 Oct 2021</h6>
                 </div>
             </div>
-            <div className="row border border-secondary m-3 p-3">
+            {/* <div className="row border border-secondary m-3 p-3">
                 <div className="col-md-1">
-                    <a href='http://localhost:4545/61fe26366412c6162456f603/documents/Harsh Recording Part 1.mp4' target='_blank' download><span className='font-weight-bold'>&#8595;</span></a>
+                    <a href='http://localhost:4545/61fe6576d93a75c430ff4b94/documents/Undertaking-2021-22-compressed (1).pdf' target='_blank' download><span className='font-weight-bold'>&#8595;</span></a>
                 </div>
                 <div className="col-md-9">
                     <h5>Trial Download</h5>
@@ -28,21 +27,20 @@ const CampaignDocumentList = ({ documents }) => {
                 <div className="col-md-2">
                     <h6>Size: 2.45MB</h6>
                 </div>
-            </div>
+            </div> */}
             {documents.map((document, index) => (
-                <div className="row border border-secondary m-3 p-3">
+                <div className="row border border-secondary m-3 p-3" key={index}>
                     <div className="col-md-1">
-                        <h5><span className='font-weight-bold'>&#8595;</span></h5>
+                        <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download><span className='font-weight-bold'>&#8595;</span></a>
                     </div>
                     <div className="col-md-9">
-                        <h5>{document.split('\\').pop()}</h5>
+                        <h5>{document.filePath.split('\\').pop()}</h5>
                     </div>
                     <div className="col-md-2">
-                        <h6>Size: 2.45MB</h6>
+                        <h6>Size: {document.fileSize}</h6>
                     </div>
                 </div>
             ))}
-
         </div>
     </>;
 };

@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+
+//Components
+import RequestForm from '../RequestForm/RequestForm';
 
 // Custom-CSS
 import './CampaignHeader.css';
 
 const CampaignHeader = ({ campaignHeaderData }) => {
+    const [showRequestForm, setShowRequestForm] = useState(false);
+
+    const handleShow = () => {
+        setShowRequestForm(true);
+    }
+    const handleSubmit = () => {
+        //Send post & if success then close form
+        setShowRequestForm(false);
+    }
+    const handleClose = () => {
+        setShowRequestForm(false);
+    }
+
     return <>
         <div className='container-fluid border border-success'>
             <div className='row p-2 border border-secondary campaign-header-image' style={{ backgroundImage: `url(${campaignHeaderData.campaignCoverMedia})` }}>
@@ -65,6 +82,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                             <div className="row">
                                 <div className="col text-center mb-3">
                                     <button type="button" className="btn btn-success">Donate Now</button>
+                                    <button type="button" className="btn btn-primary" onClick={handleShow}>Create Request</button>
                                 </div>
                             </div>
                         </div>
@@ -72,6 +90,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                 </div>
             </div>
         </div>
+        <RequestForm show={showRequestForm} handleClose={handleClose} requestNumber={campaignHeaderData.requestVotingHistory.length + 1} campaignId={campaignHeaderData._id} />
     </>
 };
 

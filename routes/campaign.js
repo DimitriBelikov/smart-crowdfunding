@@ -24,7 +24,6 @@ const storage = multer.diskStorage({
         cb(null, path.join(dir, 'documents'));
     },
     filename: function (req, file, cb) {
-        console.log(file.originalname);
         if (file.fieldname == 'campaignCoverMedia')
             cb(null, file.fieldname + path.extname(file.originalname))
         else
@@ -48,44 +47,51 @@ router.get("/", (req, res) => {
 
 // POST('/') - Create a new Campaign (Deploy Smart Contract for this campaign ang get its address)
 const cpUpload = upload.fields([{ name: 'campaignCoverMedia', maxCount: 1 }, { name: 'campaignResources', maxCount: 15 }])
-router.post("/", cpUpload, (req, res) => {
-    console.log(req.body);
-    console.log(req.files);
-    const { campaignId, campaignName, campaignDescription, campaignCategory, /*campaignOrganiser,*/ requiredFunding } = req.body;
-    const campaignResources = req.files.campaignResources.map(({ originalname }) => path.join('campaign documents', campaignId, rootDocumentPath, originalname));
-    const campaignCoverMedia = path.join('campaign documents', campaignId, rootDocumentPath, req.files.campaignCoverMedia[0].originalname);
+router.post("/", (req, res) => {
+    // console.log(req.body);
+    // console.log(req.files);
+    // const { campaignId, campaignName, campaignDescription, campaignCategory, /*campaignOrganiser,*/ requiredFunding } = req.body;
+    // const campaignResources = req.files.campaignResources.map(({ originalname, size }) => {
+    //     if (size / 1024 < 1000)
+    //         fileSize = (size / 1024).toFixed(1) + " KB";
+    //     else
+    //         fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
+    //     return { filePath: path.join(campaignId, rootDocumentPath, originalname), fileSize }
+    // });
+    // const campaignCoverMedia = path.join(campaignId, rootDocumentPath, req.files.campaignCoverMedia[0].originalname);
 
-    console.log(campaignCoverMedia);
-    console.log(campaignResources);
+    // console.log(campaignCoverMedia);
+    // console.log(campaignResources);
+    res.status(200).json({ _id: "61ef97ff15c79ee7fb3c7b87" });
 
-    const walletProvider = eth.provider();
-    eth.deployContract(walletProvider).then(
-        smartContractAddress => {
-            const campaign = new Campaign({
-                _id: mongoose.Types.ObjectId(campaignId),
-                campaignName,
-                campaignDescription,
-                campaignCoverMedia,
-                campaignResources,
-                campaignCategory,
-                campaignOrganiser: mongoose.Types.ObjectId('619b3e236135cd4fab42cd64'),
-                requiredFunding,
-                smartContractAddress,
-                campaignCreatedOn: new Date(Date.now()),
-                campaignLastEditedOn: new Date(Date.now())
-            });
+    // const walletProvider = eth.provider();
+    // eth.deployContract(walletProvider).then(
+    //     smartContractAddress => {
+    //         const campaign = new Campaign({
+    //             _id: mongoose.Types.ObjectId(campaignId),
+    //             campaignName,
+    //             campaignDescription,
+    //             campaignCoverMedia,
+    //             campaignResources,
+    //             campaignCategory,
+    //             campaignOrganiser: mongoose.Types.ObjectId('619b3e236135cd4fab42cd64'),
+    //             requiredFunding: requiredFunding * Math.pow(10, 18),
+    //             smartContractAddress,
+    //             campaignCreatedOn: new Date(Date.now()),
+    //             campaignLastEditedOn: new Date(Date.now())
+    //         });
 
-            campaign.save().then(
-                campaignObject => {
-                    console.log('--> New Campaign Created. Document Saved on Database.\n');
-                    res.status(200).json(campaignObject);
-                }
-            ).catch(
-                error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-            );
-        }).catch(
-            error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-        );
+    //         campaign.save().then(
+    //             campaignObject => {
+    //                 console.log('--> New Campaign Created. Document Saved on Database.\n');
+    //                 res.status(200).json(campaignObject);
+    //             }
+    //         ).catch(
+    //             error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+    //         );
+    //     }).catch(
+    //         error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+    //     );
 });
 
 
