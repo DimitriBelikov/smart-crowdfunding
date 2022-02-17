@@ -39,7 +39,7 @@ const CampaignForm = () => {
 
         const requestOptions = {
             method: 'POST',
-            body: formData
+            body: JSON.stringify(formData)
         };
 
         const response = await fetch('http://localhost:4545/api/campaign', requestOptions);
