@@ -13,7 +13,7 @@ const { dirxml } = require('console');
 const rootDocumentPath = 'documents'
 
 //Configurations
-const {campaignUpload, requestUpload} = require('../config/multerConfig')
+const { campaignUpload, requestUpload } = require('../config/multerConfig')
 
 // GET('/') - Get list of all Campaigns
 router.get("/", (req, res) => {
@@ -29,51 +29,50 @@ router.get("/", (req, res) => {
 
 // POST('/') - Create a new Campaign (Deploy Smart Contract for this campaign ang get its address)
 const cpUpload = campaignUpload.fields([{ name: 'campaignCoverMedia', maxCount: 1 }, { name: 'campaignResources', maxCount: 15 }])
-router.post("/", (req, res) => {
-    // console.log(req.body);
-    // console.log(req.files);
-    // const { campaignId, campaignName, campaignDescription, campaignCategory, /*campaignOrganiser,*/ requiredFunding } = req.body;
-    // const campaignResources = req.files.campaignResources.map(({ originalname, size }) => {
-    //     if (size / 1024 < 1000)
-    //         fileSize = (size / 1024).toFixed(1) + " KB";
-    //     else
-    //         fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
-    //     return { filePath: path.join(campaignId, 'documents', originalname), fileSize }
-    // });
-    // const campaignCoverMedia = path.join(campaignId, 'documents', req.files.campaignCoverMedia[0].originalname);
+router.post("/", cpUpload, (req, res) => {
+    console.log(req.body);
+    console.log(req.files);
+    const { campaignId, campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding } = req.body;
+    const campaignResources = req.files.campaignResources.map(({ originalname, size }) => {
+        if (size / 1024 < 1000)
+            fileSize = (size / 1024).toFixed(1) + " KB";
+        else
+            fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
+        return { filePath: path.join(campaignId, 'documents', originalname), fileSize }
+    });
+    const campaignCoverMedia = path.join(campaignId, 'documents', req.files.campaignCoverMedia[0].originalname);
 
-    // console.log(campaignCoverMedia);
-    // console.log(campaignResources);
-    res.status(200).json({ _id: "61ef97ff15c79ee7fb3c7b87" });
+    console.log(campaignCoverMedia);
+    console.log(campaignResources);
 
-    // const walletProvider = eth.provider();
-    // eth.deployContract(walletProvider).then(
-    //     smartContractAddress => {
-    //         const campaign = new Campaign({
-    //             _id: mongoose.Types.ObjectId(campaignId),
-    //             campaignName,
-    //             campaignDescription,
-    //             campaignCoverMedia,
-    //             campaignResources,
-    //             campaignCategory,
-    //             campaignOrganiser: mongoose.Types.ObjectId('619b3e236135cd4fab42cd64'),
-    //             requiredFunding: requiredFunding * Math.pow(10, 18),
-    //             smartContractAddress,
-    //             campaignCreatedOn: new Date(Date.now()),
-    //             campaignLastEditedOn: new Date(Date.now())
-    //         });
+    const walletProvider = eth.provider();
+    eth.deployContract(walletProvider).then(
+        smartContractAddress => {
+            const campaign = new Campaign({
+                _id: mongoose.Types.ObjectId(campaignId),
+                campaignName,
+                campaignDescription,
+                campaignCoverMedia,
+                campaignResources,
+                campaignCategory,
+                campaignOrganiser,
+                requiredFunding: requiredFunding * Math.pow(10, 18),
+                smartContractAddress,
+                campaignCreatedOn: new Date(Date.now()),
+                campaignLastEditedOn: new Date(Date.now())
+            });
 
-    //         campaign.save().then(
-    //             campaignObject => {
-    //                 console.log('--> New Campaign Created. Document Saved on Database.\n');
-    //                 res.status(200).json(campaignObject);
-    //             }
-    //         ).catch(
-    //             error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-    //         );
-    //     }).catch(
-    //         error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-    //     );
+            campaign.save().then(
+                campaignObject => {
+                    console.log('--> New Campaign Created. Document Saved on Database.\n');
+                    res.status(200).json(campaignObject);
+                }
+            ).catch(
+                error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+            );
+        }).catch(
+            error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+        );
 });
 
 
@@ -122,27 +121,33 @@ router.delete('/:id', (req, res) => {
 
 
 // POST('/:id/request') - Create a New Request for a particular Campaign
-router.post('/:id/request', requestUpload.fields([{name: 'requestResources', maxCount: 5}]), (req, res) => {
+router.post('/:id/request', requestUpload.fields([{ name: 'requestResources', maxCount: 5 }]), (req, res) => {
     const { requestNumber, requestTitle, requestDescription, requestAmount, deadline } = req.body;
-    const requestResources = req.files.requestResources.map(({ originalname, size }) => {
-        if (size / 1024 < 1000)
-            fileSize = (size / 1024).toFixed(1) + " KB";
-        else
-            fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
-        return { filePath: path.join(req.params.id, 'requests', requestNumber, originalname), fileSize }
-    });
+    // const requestResources = req.files.requestResources.map(({ originalname, size }) => {
+    //     if (size / 1024 < 1000)
+    //         fileSize = (size / 1024).toFixed(1) + " KB";
+    //     else
+    //         fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
+    //     return { filePath: path.join(req.params.id, 'requests', requestNumber, originalname), fileSize }
+    // });
     // console.log(req.files);
     // console.log(req.body);
-    console.log(requestResources);
+    //console.log(requestResources);
     console.log(requestAmount);
     // return res.status(200).json({msg: "Done"});
+
+
+    Campaign.findById(req.params.id, (error, campaign) => {
+        if (campaign.campaignRequest.requestTitle != null) return res.status(400).json({ msg: "Your campaign's already has an existing active request" });
+    })
+
     const request = {
         campaignRequest: {
             requestNumber,
             requestTitle,
             requestDescription,
-            requestResources,
-            requestAmount: requestAmount * Math.pow(10,18),
+            //requestResources,
+            requestAmount: requestAmount * Math.pow(10, 18),
             requestCreatedOn: new Date(Date.now()),
             requestLastEditedOn: new Date(Date.now()),
             deadline: new Date(deadline)

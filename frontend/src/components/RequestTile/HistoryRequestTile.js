@@ -58,7 +58,8 @@ const HistoryRequestTile = ({ request }) => {
                         <h6>upVote Percentage</h6>
                     </div>
                     <div className="col-sm-12 text-center">
-                        <h6>{request.upVotePercentage.$numberDecimal * 100} %</h6>
+                        {/* <h6>{request.upVotePercentage} %</h6> */}
+                        <h6>{33} %</h6>
                     </div>
                 </div>
             </div>

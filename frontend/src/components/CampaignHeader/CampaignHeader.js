@@ -82,7 +82,10 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                             <div className="row">
                                 <div className="col text-center mb-3">
                                     <button type="button" className="btn btn-success">Donate Now</button>
-                                    <button type="button" className="btn btn-primary" onClick={handleShow}>Create Request</button>
+                                    {campaignHeaderData.campaignRequest.requestTitle == null ?
+                                        <button type="button" className="btn btn-primary" onClick={handleShow} >Create Request</button> :
+                                        <button type="button" className="btn btn-secondary" onClick={handleShow} disabled>Create Request</button>
+                                    }
                                 </div>
                             </div>
                         </div>
