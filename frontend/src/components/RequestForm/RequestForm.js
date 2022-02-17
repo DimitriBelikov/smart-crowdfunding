@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import {useNavigate} from 'react-router-dom';
 
 
 const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: true, msg: '' });
     const [request, setRequest] = useState({
         requestNumber: requestNumber,
         requestTitle: '',
         requestDescription: '',
-        requiredAmount: 0,
+        requestAmount: 0,
         requestResources: [],
         deadline: null
-    })
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -42,35 +44,38 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
         e.preventDefault();
         setIsLoading(true);
         console.log(request);
-        // const formData = new FormData();
-        // formData.append('requestNumber', request.requestNumber);
-        // for (var i = 0; i < request.requestResources.length; i++)
-        //     formData.append('requestResources', request.requestResources[i]);
-        // formData.append('requestTitle', request.requestTitle);
-        // formData.append('requestDescription', request.requestDescription);
-        // formData.append('requiredAmount', request.requiredAmount);
-        // formData.append('deadline', request.deadline);
 
-        // const requestOptions = {
-        //     method: 'POST',
-        //     body: formData
-        // };
+        const formData = new FormData();
+        formData.append('requestNumber', request.requestNumber);
+        for (var i = 0; i < request.requestResources.length; i++)
+            formData.append('requestResources', request.requestResources[i]);
+        formData.append('requestTitle', request.requestTitle);
+        formData.append('requestDescription', request.requestDescription);
+        formData.append('requestAmount', request.requestAmount);
+        formData.append('deadline', request.deadline);
 
-        // const response = await fetch(`http://localhost:4545/api/${campaignId}/request`, requestOptions);
-        // const result = await response.json();
-        // if (response.status !== 200) {
-        //     setRequest({
-        //         requestNumber: requestNumber,
-        //         requestTitle: '',
-        //         requestDescription: '',
-        //         requiredFunding: 0,
-        //         requestResources: [],
-        //         deadline: null
-        //     })
-        //     setIsLoading(false);
-        // } else {
-        //     handleClose();
-        // }
+        const requestOptions = {
+            method: 'POST',
+            body: formData
+        };
+
+        const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/request`, requestOptions);
+        const result = await response.json(); 
+        setRequest({
+            requestNumber: requestNumber,
+            requestTitle: '',
+            requestDescription: '',
+            requestAmount: 0,
+            requestResources: [],
+            deadline: null
+        });
+        setIsLoading(false);
+        if (response.status !== 200) {
+            setIsError({value: true, msg: result.msg});
+        } else {
+            handleClose();
+            navigate(`/campaign/${campaignId}`);
+        }
     }
 
     return <>
@@ -93,7 +98,7 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="request-amount">Request Amount <span className='text-danger'>*</span></label>
-                        <input type="number" className="form-control" id="request-amount" name='requiredAmount' placeholder="Enter Request Amount Needed" min={1} value={request.requiredFunding === 0 ? null : request.requiredFunding} onChange={handleChange} required />
+                        <input type="number" className="form-control" id="request-amount" name='requestAmount' placeholder="Enter Request Amount Needed" min={1} value={request.requestAmount === 0 ? null : request.requestAmount} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="request-deadline">Deadline <span className='text-danger'>*</span></label> <br />
@@ -108,7 +113,7 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
                 </form>
             </Modal.Body>
             <Modal.Footer>
-                {isLoading && <h6 className='center'>Loading...</h6>}
+                {isLoading && <h6>Loading...</h6>}
                 {isError.value ?
                     <Button variant="secondary" onClick={handleSubmit} disabled>
                         Submit Request

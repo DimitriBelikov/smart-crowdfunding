@@ -10,7 +10,7 @@ import './CampaignRequestHistory.css';
 const CampaignRequestHistory = ({ currentRequest, requestVotingHistory }) => {
     return <>
         <div className="container">
-            <CurrentRequestTile request={currentRequest} />
+            {/* <CurrentRequestTile request={currentRequest} /> */}
             {[...requestVotingHistory].reverse().map((request, index) => (
                 <HistoryRequestTile request={request} key={index} />
             ))}

@@ -12,26 +12,8 @@ const User = require('../models/User');
 const { dirxml } = require('console');
 const rootDocumentPath = 'documents'
 
-//Storage Configuration
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const dir = path.join('./campaign documents', req.body.campaignId);
-        //const dir = `./campaign documents/${req.body.campaignId}`
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir);
-            fs.mkdirSync(path.join(dir, 'documents'));
-        }
-        cb(null, path.join(dir, 'documents'));
-    },
-    filename: function (req, file, cb) {
-        if (file.fieldname == 'campaignCoverMedia')
-            cb(null, file.fieldname + path.extname(file.originalname))
-        else
-            cb(null, file.originalname)
-    }
-});
-const upload = multer({ storage: storage });
-
+//Configurations
+const {campaignUpload, requestUpload} = require('../config/multerConfig')
 
 // GET('/') - Get list of all Campaigns
 router.get("/", (req, res) => {
@@ -46,7 +28,7 @@ router.get("/", (req, res) => {
 
 
 // POST('/') - Create a new Campaign (Deploy Smart Contract for this campaign ang get its address)
-const cpUpload = upload.fields([{ name: 'campaignCoverMedia', maxCount: 1 }, { name: 'campaignResources', maxCount: 15 }])
+const cpUpload = campaignUpload.fields([{ name: 'campaignCoverMedia', maxCount: 1 }, { name: 'campaignResources', maxCount: 15 }])
 router.post("/", (req, res) => {
     // console.log(req.body);
     // console.log(req.files);
@@ -56,9 +38,9 @@ router.post("/", (req, res) => {
     //         fileSize = (size / 1024).toFixed(1) + " KB";
     //     else
     //         fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
-    //     return { filePath: path.join(campaignId, rootDocumentPath, originalname), fileSize }
+    //     return { filePath: path.join(campaignId, 'documents', originalname), fileSize }
     // });
-    // const campaignCoverMedia = path.join(campaignId, rootDocumentPath, req.files.campaignCoverMedia[0].originalname);
+    // const campaignCoverMedia = path.join(campaignId, 'documents', req.files.campaignCoverMedia[0].originalname);
 
     // console.log(campaignCoverMedia);
     // console.log(campaignResources);
@@ -140,25 +122,36 @@ router.delete('/:id', (req, res) => {
 
 
 // POST('/:id/request') - Create a New Request for a particular Campaign
-router.post('/:id/request', (req, res) => {
+router.post('/:id/request', requestUpload.fields([{name: 'requestResources', maxCount: 5}]), (req, res) => {
     const { requestNumber, requestTitle, requestDescription, requestAmount, deadline } = req.body;
-    // const requestResources = req.files;
-
+    const requestResources = req.files.requestResources.map(({ originalname, size }) => {
+        if (size / 1024 < 1000)
+            fileSize = (size / 1024).toFixed(1) + " KB";
+        else
+            fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
+        return { filePath: path.join(req.params.id, 'requests', requestNumber, originalname), fileSize }
+    });
+    // console.log(req.files);
+    // console.log(req.body);
+    console.log(requestResources);
+    console.log(requestAmount);
+    // return res.status(200).json({msg: "Done"});
     const request = {
         campaignRequest: {
             requestNumber,
             requestTitle,
             requestDescription,
-            //requestResources,
-            requestAmount,
+            requestResources,
+            requestAmount: requestAmount * Math.pow(10,18),
             requestCreatedOn: new Date(Date.now()),
             requestLastEditedOn: new Date(Date.now()),
             deadline: new Date(deadline)
         }
     }
+    console.log(request);
 
     Campaign.findByIdAndUpdate(req.params.id, request, { returnDocument: 'after' }, (error, response) => {
-        if (error) res.status(400).json({ msg: 'Error Creating a new Request: ' + error });
+        if (error) return res.status(400).json({ msg: 'Error Creating a new Request: ' + error });
         //Notify donor that new request is created and its deadline to vote
         res.status(200).json(response);
     });
