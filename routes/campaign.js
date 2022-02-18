@@ -190,6 +190,7 @@ function processRequest(req, res) {
             requestTitle: campaign.campaignRequest.requestTitle,
             requestDescription: campaign.campaignRequest.requestDescription,
             requestResources: campaign.campaignRequest.requestResources,
+            requestAmount: campaign.campaignRequest.requestAmount,
             upVotePercentage: campaign.campaignRequest.upVotePercentage,
             requestStatus: req.params.status,
             requestCreatedOn: campaign.campaignRequest.requestCreatedOn,

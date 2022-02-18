@@ -13,14 +13,11 @@ const CampaignHeader = ({ campaignHeaderData }) => {
     const handleShow = () => {
         setShowRequestForm(true);
     }
-    const handleSubmit = () => {
-        //Send post & if success then close form
-        setShowRequestForm(false);
-    }
+
     const handleClose = () => {
         setShowRequestForm(false);
     }
-    //localhost:3000/cmapaign documents/{campaignHeaderData.campaignCoverMedia}
+
     return <>
         <div className='container-fluid border border-success'>
             <div className='row p-2 border border-secondary campaign-header-image' style={{ backgroundImage: `url("http://localhost:4545/${campaignHeaderData.campaignCoverMedia}")` }}>
@@ -70,7 +67,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                                             aria-valuemin="0"
                                             aria-valuemax="100"
                                             style={{
-                                                width: `${Math.round((campaignHeaderData.amountCollected / campaignHeaderData.requiredFunding) * 100)}%`,
+                                                width: `${Math.round((campaignHeaderData.amountCollected / campaignHeaderData.requiredFunding) * 100)}%`
                                             }}
                                         ></div>
                                         <span className="progress-completed text-black">

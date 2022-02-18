@@ -1,6 +1,6 @@
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs'); 
+const fs = require('fs');
 
 //Storage Configuration for campaign documents
 const campaignStorage = multer.diskStorage({
@@ -30,6 +30,8 @@ const requestStorage = multer.diskStorage({
             fs.mkdirSync(dir);
             fs.mkdirSync(path.join(dir, req.body.requestNumber));
         }
+        if (!fs.existsSync(path.join(dir, req.body.requestNumber)))
+            fs.mkdirSync(path.join(dir, req.body.requestNumber));
         cb(null, path.join(dir, req.body.requestNumber));
     },
     filename: function (req, file, cb) {

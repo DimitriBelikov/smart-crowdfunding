@@ -1,4 +1,5 @@
 import React from 'react';
+import ShowMoreText from "react-show-more-text";
 
 //CSS
 import '../CampaignRequestHistory.css';
@@ -18,7 +19,16 @@ const CurrentRequestTile = ({ request }) => {
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <p>{request.requestDescription}</p>
+                        <ShowMoreText
+                            lines={5}
+                            more="Show more"
+                            className="border border-success mx-auto p-1"
+                            expanded={false}
+                            expandByClick={true}
+                            truncatedEndingComponent={"... "}
+                        >
+                            <p>{request.requestDescription}</p>
+                        </ShowMoreText>
                     </div>
                 </div>
                 <div className="row">
@@ -27,15 +37,22 @@ const CurrentRequestTile = ({ request }) => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-12">
-                        {request.requestResources.map((document, index) => {
-                            return <button className='m-2' key={index}>
-                                <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
-                                    <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
-                                </a>
-                            </button>
-                        })}
-
+                    <div className="col-md-12" >
+                        {request.requestResources.map((document, index) => (
+                            <div className="row border border-secondary m-1 p-1" key={index}>
+                                <div className="col-md-1">
+                                    <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                    </a>
+                                </div>
+                                <div className="col-md-8">
+                                    <span>{document.filePath.split('/').pop()}</span>
+                                </div>
+                                <div className="col-md-3 text-right">
+                                    <span>{document.fileSize}</span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

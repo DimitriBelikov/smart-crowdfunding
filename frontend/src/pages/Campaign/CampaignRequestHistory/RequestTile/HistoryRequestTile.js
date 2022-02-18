@@ -1,4 +1,8 @@
 import React from 'react';
+import ShowMoreText from "react-show-more-text";
+
+//CSS
+import '../CampaignRequestHistory.css';
 
 const HistoryRequestTile = ({ request }) => {
     return <>
@@ -14,7 +18,16 @@ const HistoryRequestTile = ({ request }) => {
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <p>{request.requestDescription}</p>
+                        <ShowMoreText
+                            lines={5}
+                            more="Show more"
+                            className="border border-success mx-auto p-1"
+                            expanded={false}
+                            expandByClick={true}
+                            truncatedEndingComponent={"... "}
+                        >
+                            <p>{request.requestDescription}</p>
+                        </ShowMoreText>
                     </div>
                 </div>
                 <div className="row">
@@ -23,16 +36,22 @@ const HistoryRequestTile = ({ request }) => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-12">
-                        <button className='m-2'>
-                            <img className='pdf-icon ' src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png" />
-                        </button>
-                        <button className='m-2'>
-                            <img className='pdf-icon' src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png" />
-                        </button>
-                        <button className='m-2'>
-                            <img className='pdf-icon' src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png" />
-                        </button>
+                    <div className="col-md-12" >
+                        {request.requestResources.map((document, index) => (
+                            <div className="row border border-secondary m-1 p-1" key={index}>
+                                <div className="col-md-1">
+                                    <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                    </a>
+                                </div>
+                                <div className="col-md-8">
+                                    <span>{document.filePath.split('/').pop()}</span>
+                                </div>
+                                <div className="col-md-3 text-right">
+                                    <span>{document.fileSize}</span>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -58,8 +77,7 @@ const HistoryRequestTile = ({ request }) => {
                         <h6>upVote Percentage</h6>
                     </div>
                     <div className="col-sm-12 text-center">
-                        {/* <h6>{request.upVotePercentage} %</h6> */}
-                        <h6>{33} %</h6>
+                        <h6>{request.upVotePercentage.$numberDecimal} %</h6>
                     </div>
                 </div>
             </div>

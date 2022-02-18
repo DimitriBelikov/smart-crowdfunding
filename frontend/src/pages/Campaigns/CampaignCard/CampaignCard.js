@@ -17,7 +17,7 @@ const CampaignCard = ({ campaign }) => {
             <div className="card">
                 <img
                     className="card-img-top"
-                    src={campaign.campaignCoverMedia}
+                    src={`http://localhost:4545/${campaign.campaignCoverMedia}`}
                     alt="Card image cap"
                     onClick={clickOnCard}
                 />
@@ -33,7 +33,6 @@ const CampaignCard = ({ campaign }) => {
                         onClick={() => clickOnCard()}
                         expanded={false}
                         expandByClick={false}
-                        //width={280}
                         truncatedEndingComponent={"... "}
                     >
                         <p className="card-text">{campaign.campaignDescription}</p>
@@ -47,11 +46,11 @@ const CampaignCard = ({ campaign }) => {
                             aria-valuemin="0"
                             aria-valuemax="100"
                             style={{
-                                width: (campaign.amountCollected / (campaign.requiredFunding / Math.pow(10, 18))) * 100,
+                                width: `${Math.round((campaign.amountCollected / campaign.requiredFunding) * 100)}%`
                             }}
                         ></div>
                         <span className="progress-completed text-black">
-                            {Math.round((campaign.amountCollected / (campaign.requiredFunding / Math.pow(10, 18))) * 100)}%
+                            {Math.round((campaign.amountCollected / campaign.requiredFunding) * 100)}%
                         </span>
                     </div>
 
@@ -61,7 +60,7 @@ const CampaignCard = ({ campaign }) => {
                                 <span className="raised-capital text-left">Raised Funds</span>
                                 <br />
                                 <span className="raised-capital text-left">
-                                    {campaign.amountCollected} ETH
+                                    {campaign.amountCollected / Math.pow(10, 18)} ETH
                                 </span>
                             </div>
                             <div className="col border-secondary border-top">

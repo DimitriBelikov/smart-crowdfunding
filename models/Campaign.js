@@ -87,7 +87,8 @@ const campaignSchema = new Schema({
         requestTitle: String,
         requestDescription: String,
         requestResources: [{
-            type: String
+            filePath: String,
+            fileSize: String
         }],
         requestAmount: Number,
         upVotePercentage: Schema.Types.Decimal128,
