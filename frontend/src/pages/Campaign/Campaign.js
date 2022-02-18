@@ -5,12 +5,12 @@ import { useParams } from 'react-router-dom';
 import { useFetch } from '../../controllers/useFetch';
 
 //Components
-import CampaignHeader from '../../components/CampaignHeader/CampaignHeader';
+import CampaignHeader from './CampaignHeader/CampaignHeader';
 import CampaignDescriptionList from '../../components/CampaignDescriptionList/CampaignDescriptionList';
-import CampaignDescription from '../../components/CampaignDescription/CampaignDescription';
-import CampaignUpdates from '../../components/CampaignUpdates/CampaignUpdates';
-import CampaignRequestHistory from '../../components/CampaignRequestHistory/CampaignRequestHistory';
-import CampaignDocumentList from '../../components/CampaignDocumentList/CampaignDocumentList'
+import CampaignDescription from './CampaignDescription/CampaignDescription';
+import CampaignUpdates from './CampaignUpdates/CampaignUpdates';
+import CampaignRequestHistory from './CampaignRequestHistory/CampaignRequestHistory';
+import CampaignDocumentList from './CampaignDocumentList/CampaignDocumentList'
 
 
 const Campaign = () => {

@@ -64,7 +64,10 @@ const campaignSchema = new Schema({
             fileSize: String
         }],
         requestAmount: Number,
-        upVotePercentage: Schema.Types.Decimal128,
+        upVotePercentage: {
+            type: Schema.Types.Decimal128,
+            default: 0
+        },
         requestCreatedOn: Date,
         requestLastEditedOn: Date,
         deadline: Date
@@ -101,7 +104,7 @@ const campaignSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        donationAmount: Schema.Types.Decimal128,
+        donationAmount: Number,
         donationDate: Date
     }]
 });

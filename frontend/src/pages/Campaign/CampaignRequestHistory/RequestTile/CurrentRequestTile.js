@@ -1,8 +1,11 @@
 import React from 'react';
 
+//CSS
+import '../CampaignRequestHistory.css';
+
 const CurrentRequestTile = ({ request }) => {
     return <>
-        {console.log(request)}
+        {console.log(request.requestResources)}
         <div className="row m-3">
             <div className="col-md-1 d-flex align-items-center text-center border border-success">
                 <h4 className='p-4'>{request.requestNumber}</h4>
@@ -25,15 +28,14 @@ const CurrentRequestTile = ({ request }) => {
                 </div>
                 <div className="row">
                     <div className="col-md-12">
-                        <button className='m-2'>
-                            <img className='pdf-icon ' src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png" />
-                        </button>
-                        <button className='m-2'>
-                            <img className='pdf-icon' src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png" />
-                        </button>
-                        <button className='m-2'>
-                            <img className='pdf-icon' src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/833px-PDF_file_icon.svg.png" />
-                        </button>
+                        {request.requestResources.map((document, index) => {
+                            return <button className='m-2' key={index}>
+                                <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
+                                    <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                </a>
+                            </button>
+                        })}
+
                     </div>
                 </div>
             </div>
@@ -52,6 +54,14 @@ const CurrentRequestTile = ({ request }) => {
                     </div>
                     <div className="col-sm-12 text-center">
                         <h6>{request.requestAmount / Math.pow(10, 18)} ETH</h6>
+                    </div>
+                </div>
+                <div className="row mb-3 mt-3 border border-warning">
+                    <div className="col-sm-12 text-center">
+                        <h6>upVote Percentage</h6>
+                    </div>
+                    <div className="col-sm-12 text-center">
+                        <h6>{request.upVotePercentage.$numberDecimal} %</h6>
                     </div>
                 </div>
             </div>

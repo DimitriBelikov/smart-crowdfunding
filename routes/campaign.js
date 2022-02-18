@@ -5,6 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
+const { Decimal128 } = require('bson');
 
 //Models
 const Campaign = require('../models/Campaign');
@@ -13,7 +14,7 @@ const { dirxml } = require('console');
 const rootDocumentPath = 'documents'
 
 //Configurations
-const { campaignUpload, requestUpload } = require('../config/multerConfig')
+const { campaignUpload, requestUpload } = require('../config/multerConfig');
 
 // GET('/') - Get list of all Campaigns
 router.get("/", (req, res) => {
@@ -32,15 +33,15 @@ const cpUpload = campaignUpload.fields([{ name: 'campaignCoverMedia', maxCount: 
 router.post("/", cpUpload, (req, res) => {
     console.log(req.body);
     console.log(req.files);
-    const { campaignId, campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding } = req.body;
+    const { campaignId, campaignName, campaignDescription, campaignCategory, /*campaignOrganiser*/ requiredFunding } = req.body;
     const campaignResources = req.files.campaignResources.map(({ originalname, size }) => {
         if (size / 1024 < 1000)
             fileSize = (size / 1024).toFixed(1) + " KB";
         else
             fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
-        return { filePath: path.join(campaignId, 'documents', originalname), fileSize }
+        return { filePath: path.join(campaignId, 'documents', originalname).replace(/\\/g, "/"), fileSize }
     });
-    const campaignCoverMedia = path.join(campaignId, 'documents', req.files.campaignCoverMedia[0].originalname);
+    const campaignCoverMedia = path.join(campaignId, 'documents', 'campaignCoverMedia' + path.extname(req.files.campaignCoverMedia[0].originalname)).replace(/\\/g, "/");
 
     console.log(campaignCoverMedia);
     console.log(campaignResources);
@@ -55,7 +56,7 @@ router.post("/", cpUpload, (req, res) => {
                 campaignCoverMedia,
                 campaignResources,
                 campaignCategory,
-                campaignOrganiser,
+                campaignOrganiser: mongoose.Types.ObjectId('619b3e236135cd4fab42cd64'),
                 requiredFunding: requiredFunding * Math.pow(10, 18),
                 smartContractAddress,
                 campaignCreatedOn: new Date(Date.now()),
@@ -123,16 +124,16 @@ router.delete('/:id', (req, res) => {
 // POST('/:id/request') - Create a New Request for a particular Campaign
 router.post('/:id/request', requestUpload.fields([{ name: 'requestResources', maxCount: 5 }]), (req, res) => {
     const { requestNumber, requestTitle, requestDescription, requestAmount, deadline } = req.body;
-    // const requestResources = req.files.requestResources.map(({ originalname, size }) => {
-    //     if (size / 1024 < 1000)
-    //         fileSize = (size / 1024).toFixed(1) + " KB";
-    //     else
-    //         fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
-    //     return { filePath: path.join(req.params.id, 'requests', requestNumber, originalname), fileSize }
-    // });
-    // console.log(req.files);
-    // console.log(req.body);
-    //console.log(requestResources);
+    const requestResources = req.files.requestResources.map(({ originalname, size }) => {
+        if (size / 1024 < 1000)
+            fileSize = (size / 1024).toFixed(1) + " KB";
+        else
+            fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
+        return { filePath: path.join(req.params.id, 'requests', requestNumber, originalname).replace(/\\/g, "/"), fileSize }
+    });
+    console.log(req.files);
+    console.log(req.body);
+    console.log(requestResources);
     console.log(requestAmount);
     // return res.status(200).json({msg: "Done"});
 
@@ -146,7 +147,7 @@ router.post('/:id/request', requestUpload.fields([{ name: 'requestResources', ma
             requestNumber,
             requestTitle,
             requestDescription,
-            //requestResources,
+            requestResources,
             requestAmount: requestAmount * Math.pow(10, 18),
             requestCreatedOn: new Date(Date.now()),
             requestLastEditedOn: new Date(Date.now()),
@@ -158,7 +159,7 @@ router.post('/:id/request', requestUpload.fields([{ name: 'requestResources', ma
     Campaign.findByIdAndUpdate(req.params.id, request, { returnDocument: 'after' }, (error, response) => {
         if (error) return res.status(400).json({ msg: 'Error Creating a new Request: ' + error });
         //Notify donor that new request is created and its deadline to vote
-        res.status(200).json(response);
+        return res.status(200).json(response);
     });
 });
 
@@ -233,10 +234,10 @@ router.post('/:id/vote', (req, res) => {
         else if (req.body.vote == 'no')
             campaign.currentVote.no.push(req.body.userId);
 
-        campaign.campaignRequest.upVotePercentage = (campaign.currentVote.yes.length / campaign.donors.length) * 100;
+        campaign.campaignRequest.upVotePercentage = Decimal128.fromString(((campaign.currentVote.yes.length / campaign.donors.length) * 100).toFixed(2));
         Campaign.findByIdAndUpdate(req.params.id, campaign, { returnDocument: 'after' }, (error, response) => {
-            if (error) res.status(400).json({ msg: 'Error voting for a campaign: ' + error });
-            res.status(200).json(response);
+            if (error) return res.status(400).json({ msg: 'Error voting for a campaign: ' + error });
+            return res.status(200).json(response);
         });
     }).catch(
         error => res.status(400).json({ msg: "Error Fetching Campaign Details: " + error })
@@ -246,7 +247,8 @@ router.post('/:id/vote', (req, res) => {
 
 // POST('/:id/donate') - Let a Contributor gets added to the Donors List and Interact with Smart Contract to add Donation amount
 router.post('/:id/donate', (req, res) => {
-    const { userId, donationAmount } = req.body;
+    const userId = req.body.userId;
+    const donationAmount = req.body.donationAmount * Math.pow(10, 18);
     // Call to smart contract for donation of amount
 
     Campaign.findById(req.params.id).then(campaign => {
@@ -258,7 +260,7 @@ router.post('/:id/donate', (req, res) => {
         campaign.donors.push(donor);
         campaign.amountCollected += donationAmount;
         Campaign.findByIdAndUpdate(req.params.id, campaign, { returnDocument: 'after' }, (error, response) => {
-            if (error) res.status(400).json({ msg: 'Error Voting: ' + error });
+            if (error) return res.status(400).json({ msg: 'Error Voting: ' + error });
 
             User.findById(userId).then(user => {
                 user.donatedCampaigns.push({
@@ -267,13 +269,13 @@ router.post('/:id/donate', (req, res) => {
                     donatedOn: new Date(Date.now())
                 })
                 User.findByIdAndUpdate(userId, user, { returnDocument: 'after' }, (error, response) => {
-                    if (error) res.status(400).json({ msg: 'Error updating user details: ' + error });
-                    res.status(200).json(response);
+                    if (error) return res.status(400).json({ msg: 'Error updating user details: ' + error });
+                    // return res.status(200).json(response);
                 });
             }).catch(
                 error => res.status(400).json({ msg: "Error Fetching User Details: " + error })
             );
-            res.status(200).json(response);
+            return res.status(200).json(response);
         });
     }).catch(
         error => res.status(400).json({ msg: "Error Fetching Campaign Details: " + error })

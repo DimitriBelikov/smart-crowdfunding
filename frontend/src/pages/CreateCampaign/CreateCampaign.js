@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Components
-import CampaignForm from "../../components/CampaignForm/CampaignForm";
+import CampaignForm from "./CampaignForm/CampaignForm";
 
 const CreateCampaign = () => {
     return <>

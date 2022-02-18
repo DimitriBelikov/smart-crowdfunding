@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 
 //Components
-import RequestForm from '../RequestForm/RequestForm';
+import RequestForm from './RequestForm/RequestForm';
 
 // Custom-CSS
 import './CampaignHeader.css';
@@ -20,10 +20,10 @@ const CampaignHeader = ({ campaignHeaderData }) => {
     const handleClose = () => {
         setShowRequestForm(false);
     }
-
+    //localhost:3000/cmapaign documents/{campaignHeaderData.campaignCoverMedia}
     return <>
         <div className='container-fluid border border-success'>
-            <div className='row p-2 border border-secondary campaign-header-image' style={{ backgroundImage: `url(${campaignHeaderData.campaignCoverMedia})` }}>
+            <div className='row p-2 border border-secondary campaign-header-image' style={{ backgroundImage: `url("http://localhost:4545/${campaignHeaderData.campaignCoverMedia}")` }}>
                 <div className="fadeshow col-md-6 col-lg-8 border border-danger">
                     <h2>Empty Space</h2>
                 </div>
@@ -56,7 +56,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
 
                             <div className="row">
                                 <div className="col">
-                                    <h5 className='text-center mt-3'>Raised Funds: {campaignHeaderData.amountCollected} ETH</h5>
+                                    <h5 className='text-center mt-3'>Raised Funds: {campaignHeaderData.amountCollected / Math.pow(10, 18)} ETH</h5>
                                 </div>
                             </div>
 
@@ -66,15 +66,15 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                                         <div
                                             className="progress-bar"
                                             role="progressbar"
-                                            aria-valuenow="60"
+                                            aria-valuenow={`${Math.round((campaignHeaderData.amountCollected / campaignHeaderData.requiredFunding) * 100)}`}
                                             aria-valuemin="0"
                                             aria-valuemax="100"
                                             style={{
-                                                width: (campaignHeaderData.amountCollected / (campaignHeaderData.requiredFunding / Math.pow(10, 18))) * 100,
+                                                width: `${Math.round((campaignHeaderData.amountCollected / campaignHeaderData.requiredFunding) * 100)}%`,
                                             }}
                                         ></div>
                                         <span className="progress-completed text-black">
-                                            {Math.round((campaignHeaderData.amountCollected / (campaignHeaderData.requiredFunding / Math.pow(10, 18))) * 100)}%
+                                            {Math.round((campaignHeaderData.amountCollected / campaignHeaderData.requiredFunding) * 100)}%
                                         </span>
                                     </div>
                                 </div>

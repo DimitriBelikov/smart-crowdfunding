@@ -1,8 +1,8 @@
 import React from 'react';
 
 //Components
-import CurrentRequestTile from '../RequestTile/CurrentRequestTile';
-import HistoryRequestTile from '../RequestTile/HistoryRequestTile';
+import CurrentRequestTile from './RequestTile/CurrentRequestTile';
+import HistoryRequestTile from './RequestTile/HistoryRequestTile';
 
 //CSS
 import './CampaignRequestHistory.css';

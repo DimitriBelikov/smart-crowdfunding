@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-
   const navigate = useNavigate();
   const [isError, setIsError] = useState({ value: false, msg: '' });
   const [user, setUser] = useState({
