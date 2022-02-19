@@ -3,19 +3,29 @@ import React, { useState } from 'react';
 
 //Components
 import RequestForm from './RequestForm/RequestForm';
+import UpdateCampaignForm from './UpdateCampaignForm/UpdateCampaignForm';
 
 // Custom-CSS
 import './CampaignHeader.css';
 
 const CampaignHeader = ({ campaignHeaderData }) => {
     const [showRequestForm, setShowRequestForm] = useState(false);
+    const [showUpdateCampaignForm, setShowUpdateCampaignForm] = useState(false);
 
-    const handleShow = () => {
+    const handleShowRequestForm = () => {
         setShowRequestForm(true);
     }
 
-    const handleClose = () => {
+    const handleCloseRequestForm = () => {
         setShowRequestForm(false);
+    }
+
+    const handleShowUpdateCampaignForm = () => {
+        setShowUpdateCampaignForm(true);
+    }
+
+    const handleCloseUpdateCampaignForm = () => {
+        setShowUpdateCampaignForm(false);
     }
 
     return <>
@@ -80,9 +90,10 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                                 <div className="col text-center mb-3">
                                     <button type="button" className="btn btn-success">Donate Now</button>
                                     {campaignHeaderData.campaignRequest.requestTitle == null ?
-                                        <button type="button" className="btn btn-primary" onClick={handleShow} >Create Request</button> :
-                                        <button type="button" className="btn btn-secondary" onClick={handleShow} disabled>Create Request</button>
+                                        <button type="button" className="btn btn-primary" onClick={handleShowRequestForm} >Create Request</button> :
+                                        <button type="button" className="btn btn-secondary" disabled>Create Request</button>
                                     }
+                                    <button type="button" className="btn btn-danger" onClick={handleShowUpdateCampaignForm}>Update Campaign</button>
                                 </div>
                             </div>
                         </div>
@@ -90,7 +101,8 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                 </div>
             </div>
         </div>
-        <RequestForm show={showRequestForm} handleClose={handleClose} requestNumber={campaignHeaderData.requestVotingHistory.length + 1} campaignId={campaignHeaderData._id} />
+        <RequestForm show={showRequestForm} handleClose={handleCloseRequestForm} requestNumber={campaignHeaderData.requestVotingHistory.length + 1} campaignId={campaignHeaderData._id} />
+        <UpdateCampaignForm show={showUpdateCampaignForm} handleClose={handleCloseUpdateCampaignForm} campaignId={campaignHeaderData._id} campaignData={campaignHeaderData} />
     </>
 };
 

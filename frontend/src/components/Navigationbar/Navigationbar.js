@@ -16,6 +16,7 @@ const Navigationbar = () => {
                         <Nav.Link href='/campaigns'>Campaigns</Nav.Link>
                         <Nav.Link href='/about'>About</Nav.Link>
                         <Nav.Link href='/login'>Register/Login</Nav.Link>
+                        <Nav.Link href='/profile'>My Acocunt</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

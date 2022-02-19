@@ -24,7 +24,7 @@ const CampaignDocumentList = ({ documents }) => {
                         <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download><span className='font-weight-bold'>&#8595;</span></a>
                     </div>
                     <div className="col-md-9">
-                        <h5>{document.filePath.split('/').pop()}</h5>
+                        <h6>{document.filePath.split('/').pop()}</h6>
                     </div>
                     <div className="col-md-2">
                         <h6>Size: {document.fileSize}</h6>

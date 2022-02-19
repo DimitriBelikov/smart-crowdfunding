@@ -61,7 +61,7 @@ const HistoryRequestTile = ({ request }) => {
                         <h6>Request Status</h6>
                     </div>
                     <div className="col-sm-12 text-center">
-                        <h6>Active</h6>
+                        <h6>{request.requestStatus}</h6>
                     </div>
                 </div>
                 <div className="row mb-3 mt-3 border border-warning">

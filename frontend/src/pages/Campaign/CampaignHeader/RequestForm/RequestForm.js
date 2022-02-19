@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import {useNavigate} from 'react-router-dom';
-
 
 const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: true, msg: '' });
     const [request, setRequest] = useState({
@@ -60,7 +57,7 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
         };
 
         const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/request`, requestOptions);
-        const result = await response.json(); 
+        const result = await response.json();
         setRequest({
             requestNumber: requestNumber,
             requestTitle: '',
@@ -71,10 +68,10 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
         });
         setIsLoading(false);
         if (response.status !== 200) {
-            setIsError({value: true, msg: result.msg});
+            setIsError({ value: true, msg: result.msg });
         } else {
             handleClose();
-            navigate(`/campaign/${campaignId}`);
+            window.location.reload(true);
         }
     }
 
@@ -102,7 +99,7 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="request-deadline">Deadline <span className='text-danger'>*</span></label> <br />
-                        <input type="datetime-local" name="deadline" id='request-deadline' value={request.deadline} onChange={handleChange} required min={new Date(Date.now()+2*24*60*60*1000).toISOString().split('.')[0]} max={new Date(Date.now()+3*30*24*60*60*1000).toISOString().split('.')[0]}/>
+                        <input type="datetime-local" name="deadline" id='request-deadline' value={request.deadline} onChange={handleChange} required min={new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('.')[0]} max={new Date(Date.now() + 3 * 30 * 24 * 60 * 60 * 1000).toISOString().split('.')[0]} />
                         {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
                     </div>
                     <div className="form-group">

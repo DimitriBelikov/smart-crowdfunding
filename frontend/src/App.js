@@ -30,7 +30,7 @@ function App() {
         <Route path="campaign/:id" element={<Campaign />} />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
-        <Route path="profile/:userName" element={<Profile />} />
+        <Route path="profile" element={<Profile />} />
         <Route path="create-campaign" element={<CreateCampaign />} />
         <Route path="*" element={<Error />} />
       </Routes>
