@@ -24,7 +24,7 @@ const Profile = () => {
   return <>
     {/* <h1>{userData.userName}</h1> */}
     <div className="row">
-      <div className="left-panel border-right border-primary">
+      <div className="left-panel border-right border-primary col-md-2">
         <nav className="nav flex-column">
           <a className="nav-link active disabled" >Profile Settings </a>
           <a className="nav-link" href="#">My Campaigns</a>
@@ -32,7 +32,7 @@ const Profile = () => {
           <a className="nav-link ">Notifications</a>
         </nav>
       </div>
-      <div className='right-panel'>
+      <div className='right-panel col-md-6'>
         {/* <h1 className='text-primary '>Profile</h1> */}
         <form>
           <div className="form-group col-md-4">
@@ -41,12 +41,12 @@ const Profile = () => {
           </div>
           <div className="form-group col-md-4">
             <label >Email Address</label>
-            <input type="email" name='emailId' className="form-control" value={userData.emailId} placeholder="Email" disabled={disabled} />
+            <input type="email" name='emailId' className="form-control" value={userData.emailId} placeholder="Email" disabled={true} />
           </div>
-          <div className="row col-md-9">
+          <div className="row">
             <div className="form-group col-md-4">
               <label >Date Of Birth</label>
-              <input type="text" value={userData.dob.substring(0, 10)} className="form-control" disabled={disabled} />
+              <input type={disabled? "text": "date"} value={userData.dob.substring(0, 10)} className="form-control" disabled={disabled} />
             </div>
             <div className="form-group col-md-6">
               <label>Full Name</label>
@@ -62,8 +62,14 @@ const Profile = () => {
             <input type="text" className="form-control" value={userData.state} disabled={disabled} />
           </div>
 
-          <div className="text-center">
+          <div className="row">
+            <div className="col-md-1">
             <button type="button" onClick={editFields} className="btn btn-primary">{disabled == false ? "Save" : "Edit"}</button>
+            </div>
+            <div className="col-md-1">
+            {disabled? null:<button type="button" className="btn btn-primary">Cancel</button>}
+            </div>
+            
           </div>
         </form>
       </div>

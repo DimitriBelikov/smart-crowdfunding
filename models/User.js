@@ -37,7 +37,10 @@ const userSchema = new Schema({
         },
         donationAmount: Number,
         donatedOn: Date
-    }]
+    }],
+    token: {
+        type: String
+    },
 });
 
 module.exports = mongoose.model('User', userSchema);

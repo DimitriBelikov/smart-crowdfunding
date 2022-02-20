@@ -85,23 +85,26 @@ router.get('/:id', (req, res) => {
 router.post('/:id', (req, res) => {
     const { userName, password, fullName, dob, emailId, currentCity, state } = req.body;
 
-    User.findOne({ userName }).then(user => {
-        if (user) return res.status(400).json({ msg: "User already exists" });
-        const updatedUser = {
-            userName,
-            password,
-            fullName,
-            dob: new Date(dob),
-            emailId,
-            currentCity,
-            state
-        }
+    const updatedUser = {
+        userName,
+        password,
+        fullName,
+        dob: new Date(dob),
+        emailId,
+        currentCity,
+        state
+    }
 
-        User.findOneAndUpdate(req.params.id, updatedUser, { returnDocument: 'after' }, (error, response) => {
+    User.find({ userName }).then(user => {
+        console.log(user.length);
+        if (user.length==1) return res.status(400).json({ msg: "User already exists" });
+        else
+        User.findByIdAndUpdate(req.params.id, updatedUser, { returnDocument: 'after' }, (error, response) => {
             if (error) res.status(400).json({ msg: 'Error Updating User Details: ' + error });
             return res.status(200).json(response);
         });
     });
+    
 });
 
 
