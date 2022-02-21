@@ -1,81 +1,152 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import jsonwebtoken from 'jsonwebtoken';
+import { useNavigate } from 'react-router-dom';
 
 //CSS
 import './Profile.css';
 
 //Controllers
 import { useFetch } from '../../controllers/useFetch';
+import Navigationbar from '../../components/Navigationbar/Navigationbar';
 
 const Profile = () => {
-
+  const navigate = useNavigate();
   const [disabled, setDisabled] = useState('true');
-  const { loading, data: userData } = useFetch(`http://localhost:4545/api/user/61cea52b523aa14de4cb5597`)
+  const cookie = Cookies.get('jwt');
+  const userId = jsonwebtoken.decode(cookie).id;
+  const { loading, data: userData } = useFetch(`http://localhost:4545/api/user/${userId}`)
+  const [isError, setIsError] = useState({ value: false, msg: '' });
+
+  const [user, setUser] = useState({
+    userName: '',
+    emailId: '',
+    password: '',
+    fullName: '',
+    dob: '',
+    currentCity: '',
+    state: ''
+  });
+
+  useEffect(() => {
+    onCancel();
+  }, [loading])
+
+  const onCancel = () => {
+    setUser({
+      userName: userData.userName,
+      emailId: userData.emailId,
+      password: userData.password,
+      fullName: userData.fullName,
+      dob: loading ? '' : userData.dob.split('T')[0],
+      currentCity: userData.currentCity,
+      state: userData.state
+    })
+    setDisabled(true);
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('userName', user.userName);
+    formData.append('password', user.password);
+    formData.append('fullName', user.fullName);
+    formData.append('dob', user.dob);
+    formData.append('emailId', user.emailId);
+    formData.append('currentCity', user.currentCity);
+    formData.append('state', user.state);
+
+    const requestOptions = {
+      method: 'PUT',
+      body: formData
+    };
+    const response = await fetch(`http://localhost:4545/api/user/${userId}`, requestOptions);
+    const result = await response.json();
+    if (response.status !== 200) {
+      setIsError({ value: true, msg: result.msg });
+    }
+    else {
+      setIsError({ value: false, msg: result.msg });
+      // navigate('/');
+    }
+    console.log("Result=", result);
+    console.log(user)
+    setDisabled(false);
+  }
+
+  function editFields() {
+    setDisabled(false);
+  }
 
   if (loading) {
     return <>
       <h1>Loading....</h1>
     </>;
   }
-
-  function editFields() {
-    setDisabled(false);
-  }
   return <>
-    {/* <h1>{userData.userName}</h1> */}
-    <div className="row">
-      <div className="left-panel border-right border-primary col-md-2">
-        <nav className="nav flex-column">
-          <a className="nav-link active disabled" >Profile Settings </a>
-          <a className="nav-link" href="#">My Campaigns</a>
-          <a className="nav-link" href="#">My Donations</a>
-          <a className="nav-link ">Notifications</a>
-        </nav>
-      </div>
-      <div className='right-panel col-md-6'>
-        {/* <h1 className='text-primary '>Profile</h1> */}
-        <form>
-          <div className="form-group col-md-4">
-            <label >User Name</label>
-            <input type="text" name='userName' className="form-control" value={userData.userName} placeholder="UserName" disabled={disabled} />
-          </div>
-          <div className="form-group col-md-4">
-            <label >Email Address</label>
-            <input type="email" name='emailId' className="form-control" value={userData.emailId} placeholder="Email" disabled={true} />
-          </div>
-          <div className="row">
-            <div className="form-group col-md-4">
-              <label >Date Of Birth</label>
-              <input type={disabled? "text": "date"} value={userData.dob.substring(0, 10)} className="form-control" disabled={disabled} />
+    <Navigationbar />
+    <div className='container-fluid'>
+      {/* <h1>{userData.userName}</h1> */}
+      <div className="row">
+        <div className="left-panel border-right border-primary col-md-2">
+          <nav className="nav flex-column">
+            <a className="nav-link active disabled" >Profile Settings </a>
+            <a className="nav-link">My Campaigns</a>
+            <a className="nav-link" >My Donations</a>
+            <a className="nav-link ">Notifications</a>
+          </nav>
+        </div>
+        <div className='right-panel col-md-6'>
+          {/* <h1 className='text-primary '>Profile</h1> */}
+          <form>
+            <div className="form-group col-md-6">
+              <label >User Name</label>
+              <input type="text" name='userName' onChange={handleChange} className="form-control" value={user.userName} placeholder="UserName" disabled={disabled} />
             </div>
             <div className="form-group col-md-6">
-              <label>Full Name</label>
-              <input type="text" value={userData.fullName} className="form-control" disabled={disabled} />
+              <label >Email Address</label>
+              <input type="email" name='emailId' className="form-control" value={user.emailId} placeholder="Email" disabled={true} />
             </div>
-          </div>
-          <div className="form-group col-md-4">
-            <label >City</label>
-            <input type="text" className="form-control" value={userData.currentCity} disabled={disabled} />
-          </div>
-          <div className="form-group col-md-4">
-            <label >State</label>
-            <input type="text" className="form-control" value={userData.state} disabled={disabled} />
-          </div>
-
-          <div className="row">
-            <div className="col-md-1">
-            <button type="button" onClick={editFields} className="btn btn-primary">{disabled == false ? "Save" : "Edit"}</button>
+            <div className="row m-0">
+              <div className="form-group col-sm-5">
+                <label>Full Name</label>
+                <input type="text" value={user.fullName} name='fullName' onChange={handleChange} className="form-control" disabled={disabled} />
+              </div>
+              <div className="form-group col-md-4">
+                <label >Date Of Birth</label>
+                <input type={disabled ? "text" : "date"} name='dob' onChange={handleChange} value={user.dob} className="form-control" disabled={disabled} />
+              </div>
             </div>
-            <div className="col-md-1">
-            {disabled? null:<button type="button" className="btn btn-primary">Cancel</button>}
+            <div className="row m-0">
+              <div className="form-group col-md-5">
+                <label >City</label>
+                <input type="text" className="form-control" name='currentCity' onChange={handleChange} value={user.currentCity} disabled={disabled} />
+              </div>
+              <div className="form-group col-sm-5">
+                <label >State</label>
+                <input type="text" className="form-control" name='state' onChange={handleChange} value={user.state} disabled={disabled} />
+              </div>
             </div>
-            
-          </div>
-        </form>
+            {isError.value && <h6 className='text-danger text-center'>{isError.msg}</h6>}
+            <div className="row ml-0 mr-0">
+              <div className="col-sm-2">
+                <button type="button" onClick={disabled == false ? handleSubmit : editFields} className="btn btn-primary">{disabled == false ? "Save" : "Edit"}</button>
+              </div>
+              <div className="col-sm-2">
+                {disabled ? null : <button type="button" onClick={onCancel} className="btn btn-primary">Cancel</button>}
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
 
-  </>;
+    </div>;
+  </>
 };
 
 export default Profile;

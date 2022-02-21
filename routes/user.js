@@ -82,7 +82,7 @@ router.get('/:id', (req, res) => {
 
 
 // PUT('/:id') - Update a Particular User Details
-router.post('/:id', (req, res) => {
+router.put('/:id', upload.any(), (req, res) => {
     const { userName, password, fullName, dob, emailId, currentCity, state } = req.body;
 
     const updatedUser = {
@@ -95,16 +95,19 @@ router.post('/:id', (req, res) => {
         state
     }
 
-    User.find({ userName }).then(user => {
-        console.log(user.length);
-        if (user.length==1) return res.status(400).json({ msg: "User already exists" });
-        else
-        User.findByIdAndUpdate(req.params.id, updatedUser, { returnDocument: 'after' }, (error, response) => {
-            if (error) res.status(400).json({ msg: 'Error Updating User Details: ' + error });
-            return res.status(200).json(response);
+    User.findById(req.params.id).then(user => {
+        User.findOne({ userName }).then(user2 => {
+            if (user2 === null || user._id.toString() === user2._id.toString()) {
+                User.findByIdAndUpdate(req.params.id, updatedUser, { returnDocument: 'after' }, (error, response) => {
+                    if (error) res.status(400).json({ msg: 'Error Updating User Details: ' + error });
+                    return res.status(200).json(response);
+                });
+            }
+            else {
+                return res.status(400).json({ msg: "User with UserName already exists" });
+            }
         });
     });
-    
 });
 
 
@@ -138,7 +141,7 @@ router.post('/login', upload.any(), (req, res) => {
                 console.log("JWT Token: " + token + "\nUser: " + user);
                 let options = {
                     maxAge: 1000 * 60 * 15, // would expire after 15 minutes
-                    httpOnly: true, // The cookie only accessible by the web server
+                    httpOnly: false, // The cookie only accessible by the web server
                 }
 
                 res.cookie('jwt', token, options);

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Pagination from '../../components/Pagination/Pagination';
 import CampaignCard from './CampaignCard/CampaignCard';
 import CampaignDescriptionList from '../../components/CampaignDescriptionList/CampaignDescriptionList';
+import Navigationbar from '../../components/Navigationbar/Navigationbar';
 
 //Controllers
 import { useFetch } from '../../controllers/useFetch';
@@ -45,6 +46,7 @@ const Campaigns = () => {
     )
   }
   return <>
+    <Navigationbar />
     <div className="container-fluid">
       <div className="row">
         <div className="col border border-primary">

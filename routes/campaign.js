@@ -45,35 +45,48 @@ router.post("/", cpUpload, (req, res) => {
 
     console.log(campaignCoverMedia);
     console.log(campaignResources);
+    User.findById('621372eb619bbf3301977270').then(user => {
+        if (user === null) return res.status(400).json({ msg: "User Does not Exists:" });
 
-    const walletProvider = eth.provider();
-    eth.deployContract(walletProvider).then(
-        smartContractAddress => {
-            const campaign = new Campaign({
-                _id: mongoose.Types.ObjectId(campaignId),
-                campaignName,
-                campaignDescription,
-                campaignCoverMedia,
-                campaignResources,
-                campaignCategory,
-                campaignOrganiser: mongoose.Types.ObjectId('619b3e236135cd4fab42cd64'),
-                requiredFunding: requiredFunding * Math.pow(10, 18),
-                smartContractAddress,
-                campaignCreatedOn: new Date(Date.now()),
-                campaignLastEditedOn: new Date(Date.now())
-            });
+        const walletProvider = eth.provider();
+        eth.deployContract(walletProvider).then(
+            smartContractAddress => {
+                const campaign = new Campaign({
+                    _id: mongoose.Types.ObjectId(campaignId),
+                    campaignName,
+                    campaignDescription,
+                    campaignCoverMedia,
+                    campaignResources,
+                    campaignCategory,
+                    campaignOrganiser: mongoose.Types.ObjectId('621372eb619bbf3301977270'),
+                    requiredFunding: requiredFunding * Math.pow(10, 18),
+                    smartContractAddress,
+                    campaignCreatedOn: new Date(Date.now()),
+                    campaignLastEditedOn: new Date(Date.now())
+                });
 
-            campaign.save().then(
-                campaignObject => {
-                    console.log('--> New Campaign Created. Document Saved on Database.\n');
-                    res.status(200).json(campaignObject);
-                }
-            ).catch(
-                error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+                user.createdCampaigns.push({
+                    campaignId: mongoose.Types.ObjectId(campaignId)
+                });
+
+                User.findByIdAndUpdate('621372eb619bbf3301977270', user, { returnDocument: 'after' }, (error, response) => {
+                    if (error) return res.status(400).json({ msg: 'Error Updating User Campaign Details: ' + error });
+
+                    campaign.save().then(
+                        campaignObject => {
+                            console.log('--> New Campaign Created. Document Saved on Database.\n');
+                            return res.status(200).json(campaignObject);
+                        }
+                    ).catch(
+                        error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+                    );
+                });
+            }).catch(
+                error => res.status(400).json({ msg: "Error Updating User Campaign Details: " + error })
             );
-        }).catch(
-            error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-        );
+    }).catch(
+        error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
+    );
 });
 
 

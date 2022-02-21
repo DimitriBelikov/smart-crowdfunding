@@ -38,9 +38,12 @@ const userSchema = new Schema({
         donationAmount: Number,
         donatedOn: Date
     }],
-    token: {
-        type: String
-    },
+    createdCampaigns: [{
+        campaignId: {
+            type: Schema.Types.ObjectId,
+            ref: 'Campaign'
+        },
+    }]
 });
 
 module.exports = mongoose.model('User', userSchema);

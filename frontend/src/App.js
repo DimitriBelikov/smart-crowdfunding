@@ -22,7 +22,7 @@ import './App.css';
 function App() {
   return (
     <Router>
-      <Navigationbar />
+
       <Routes>
         <Route exact path="" element={<Home />} />
         <Route path="about" element={<About />} />

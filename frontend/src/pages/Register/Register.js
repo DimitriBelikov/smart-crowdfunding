@@ -2,6 +2,9 @@ import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+//Components
+import Navigationbar from '../../components/Navigationbar/Navigationbar';
+
 const Register = () => {
   const navigate = useNavigate();
   const [isError, setIsError] = useState({ value: false, msg: '' });
@@ -42,6 +45,7 @@ const Register = () => {
     }
   }
   return <>
+    <Navigationbar />
     <div className='container col-md-4'>
       <h1 className='text-primary text-center'>Create a New Account</h1>
       <form>

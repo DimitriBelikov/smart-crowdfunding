@@ -1,18 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap';
 
-const UpdateCampaignForm = ({ show, handleClose, campaignId, campaignData }) => {
+const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
     const [existingCampaign, setExistingCampaign] = useState({
         campaignName: campaignData.campaignName,
         campaignDescription: campaignData.campaignDescription,
-        campaignCoverMedia: campaignData.campaignCoverMedia,
-        campaignResources: campaignData.campaignResources
+        campaignCoverMedia: campaignData.campaignCoverMedia
     })
+    const [campaignResources, setCampaignResources] = useState(campaignData.campaignResources);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: true, msg: '' });
+    const [updatedFiles, setUpdatedFiles] = useState({ campaignCoverMedia: [], campaignResources: [] })
+
+    console.log(campaignResources);
 
     const removeDocument = (index) => {
-        setExistingCampaign({ ...existingCampaign, campaignResources: existingCampaign.campaignResources.splice(index, 1) })
+        // let tempResources = campaignResources.filter((campaignResource, tempIndex) => index !== tempIndex);
+        setCampaignResources((prevResources) => {
+            return prevResources.filter((resource, filteringIndex) => {
+                return index !== filteringIndex;
+            })
+        });
     }
 
     const handleChange = (e) => {
@@ -32,7 +40,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignId, campaignData }) => 
 
             }
             setIsError({ value: false, msg: '' });
-            setExistingCampaign({ ...existingCampaign, [name]: Array.from(e.target.files) });
+            setUpdatedFiles(filesArray);
         }
         else {
             setExistingCampaign({ ...existingCampaign, [name]: value });
@@ -85,25 +93,21 @@ const UpdateCampaignForm = ({ show, handleClose, campaignId, campaignData }) => 
                         {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
                     </div>
                     <div className="container">
-                        <div className="row">
-                            <div className="col-md-12" >
-                                {existingCampaign.campaignResources.map((document, index) => (
-                                    < div className="row border border-secondary m-1 p-1" key={index} >
-                                        <div className="col-md-1">
-                                            <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
-                                                <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
-                                            </a>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <span>{document.filePath.split('/').pop()}</span>
-                                        </div>
-                                        <div className="col-md-3 text-right">
-                                            <button className='btn' onClick={() => removeDocument(index)}><span>&#10060;</span></button>
-                                        </div>
-                                    </div>
-                                ))}
+                        {campaignResources.map((document, index) => (
+                            < div className="row border border-secondary m-1 p-1" key={index} >
+                                <div className="col-md-1">
+                                    <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                    </a>
+                                </div>
+                                <div className="col-md-8">
+                                    <span>{index} {document.filePath.split('/').pop()} </span>
+                                </div>
+                                <div className="col-md-3 text-right">
+                                    <button className='btn' onClick={() => removeDocument(index)}><span>&#10060;</span></button>
+                                </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
                 </form>
             </Modal.Body>

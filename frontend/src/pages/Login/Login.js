@@ -1,6 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import jsonwebtoken from 'jsonwebtoken';
+
+//Components
+import Navigationbar from '../../components/Navigationbar/Navigationbar';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -33,12 +37,17 @@ const Login = () => {
     if (response.status !== 200) {
       setIsError({ value: true, msg: result.msg });
     } else {
-      navigate('/campaigns');
+      const cookie = document.cookie.match("(^|;)\\s*" + 'jwt' + "\\s*=\\s*([^;]+)");;
+      console.log('cookie = ', cookie);
+      const data = jsonwebtoken.decode(cookie);
+      console.log(data);
+      navigate('/');
     }
 
   }
 
   return <>
+    <Navigationbar />
     <div className='container col-md-4'>
       <h1 className='text-primary text-center'>Log In</h1>
       <form>

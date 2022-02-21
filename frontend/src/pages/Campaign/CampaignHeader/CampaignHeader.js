@@ -102,7 +102,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
             </div>
         </div>
         <RequestForm show={showRequestForm} handleClose={handleCloseRequestForm} requestNumber={campaignHeaderData.requestVotingHistory.length + 1} campaignId={campaignHeaderData._id} />
-        <UpdateCampaignForm show={showUpdateCampaignForm} handleClose={handleCloseUpdateCampaignForm} campaignId={campaignHeaderData._id} campaignData={campaignHeaderData} />
+        <UpdateCampaignForm show={showUpdateCampaignForm} handleClose={handleCloseUpdateCampaignForm} campaignData={campaignHeaderData} />
     </>
 };
 

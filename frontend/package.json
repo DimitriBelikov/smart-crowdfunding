@@ -9,6 +9,8 @@
     "bootstrap": "^4.6.0",
     "bson": "^4.6.1",
     "downloadjs": "^1.4.7",
+    "js-cookie": "^3.0.1",
+    "jsonwebtoken": "^8.5.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.1.1",
     "react-dom": "^17.0.2",

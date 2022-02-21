@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useFetch } from '../../controllers/useFetch';
 
 //Components
+import Navigationbar from '../../components/Navigationbar/Navigationbar';
 import CampaignHeader from './CampaignHeader/CampaignHeader';
 import CampaignDescriptionList from '../../components/CampaignDescriptionList/CampaignDescriptionList';
 import CampaignDescription from './CampaignDescription/CampaignDescription';
@@ -29,6 +30,7 @@ const Campaign = () => {
     </>;
   }
   return <>
+    <Navigationbar />
     <CampaignHeader campaignHeaderData={campaignData} />
     <CampaignDescriptionList itemsList={descriptionList} currentActive={selectedTab} clickFunction={changeTab} />
     {selectedTab === 'Campaign' && <CampaignDescription campaignDescription={campaignData.campaignDescription} />}
