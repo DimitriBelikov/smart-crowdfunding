@@ -1,33 +1,45 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button } from 'react-bootstrap';
+import path from 'path';
 
 const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
     const [existingCampaign, setExistingCampaign] = useState({
         campaignName: campaignData.campaignName,
         campaignDescription: campaignData.campaignDescription,
-        campaignCoverMedia: campaignData.campaignCoverMedia
-    })
-    const [campaignResources, setCampaignResources] = useState(campaignData.campaignResources);
+        campaignCoverMedia: campaignData.campaignCoverMedia,
+        campaignResources: campaignData.campaignResources
+    });
+    const [newCampaign, setNewCampaign] = useState({ campaignResources: [], campaignCoverMedia: { fileObject: null, filePath: '' } });
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: true, msg: '' });
-    const [updatedFiles, setUpdatedFiles] = useState({ campaignCoverMedia: [], campaignResources: [] })
 
-    console.log(campaignResources);
+    const removeDocument = (resourceType, index) => {
+        if (resourceType === 'EXISTING_RESOURCE') {
+            setExistingCampaign((prevCampaign) => {
+                return {
+                    ...prevCampaign, campaignResources: prevCampaign.campaignResources.filter((resource, filteringIndex) => {
+                        return index !== filteringIndex;
+                    })
+                }
+            });
+        } else if (resourceType === 'NEW_RESOURCE') {
+            setNewCampaign((prevCampaign) => {
+                return {
+                    ...prevCampaign, campaignResources: prevCampaign.campaignResources.filter((resource, filteringIndex) => {
+                        return index !== filteringIndex;
+                    })
+                }
+            });
+        } else if (resourceType === 'CAMPAIGN_COVER_MEDIA') {
 
-    const removeDocument = (index) => {
-        // let tempResources = campaignResources.filter((campaignResource, tempIndex) => index !== tempIndex);
-        setCampaignResources((prevResources) => {
-            return prevResources.filter((resource, filteringIndex) => {
-                return index !== filteringIndex;
-            })
-        });
+        }
     }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        if (name === 'campaignResources' || name === 'campaignCoverMedia') {
+        if (name === 'campaignResources') {
             const filesArray = Array.from(e.target.files);
-            if (filesArray.length > 10) {
+            if (filesArray.length + existingCampaign.campaignResources.length > 10) {
                 setIsError({ value: true, msg: 'You can upload maximum 10 files' });
                 return;
             } else {
@@ -37,12 +49,19 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                         return;
                     }
                 }
-
             }
             setIsError({ value: false, msg: '' });
-            setUpdatedFiles(filesArray);
-        }
-        else {
+            var updatedCampaignResources = filesArray.map(file => {
+                if (file.size / 1024 < 1000)
+                    var fileSize = (file.size / 1024).toFixed(1) + " KB";
+                else
+                    var fileSize = ((file.size / 1024) / 1024).toFixed(1) + " MB";
+                return { fileObject: file, filePath: path.join(campaignData._id, 'documents', file.name).replace(/\\/g, "/"), fileSize: fileSize }
+            });
+            setNewCampaign({ ...newCampaign, campaignResources: updatedCampaignResources });
+        } else if (name === 'campaignCoverMedia') {
+
+        } else {
             setExistingCampaign({ ...existingCampaign, [name]: value });
         }
     }
@@ -83,33 +102,66 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                         <label htmlFor="total-funding">Total Funding Needed <span className='text-danger'>*</span></label>
                         <input type="number" className="form-control" id="campaign-name" name='requiredFunding' placeholder="Enter Total Funding Needed" min={1} required value={campaignData.requiredFunding / Math.pow(10, 18)} disabled />
                     </div>
+
                     <div className="form-group">
                         <label htmlFor="campaign-cover-image">Campaign Cover Image</label><br />
                         <input type="file" id="campaign-cover-image" name="campaignCoverMedia" onChange={handleChange} accept='image/*' />
+                        <div className="container">
+                            <div className="row border border-success m-1 p-1" >
+                                <div className="col-md-1">
+                                    <a href={`http://localhost:4545/${existingCampaign.campaignCoverMedia}`} target='_blank' download>
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                    </a>
+                                </div>
+                                <div className="col-md-8">
+                                    <span>{existingCampaign.campaignCoverMedia.split('/').pop()} </span>
+                                    <span>file name</span>
+                                </div>
+                                <div className="col-md-3 text-right">
+                                    <button className='btn' type='button' onClick={() => removeDocument('CAMPAIGN_COVER_MEDIA')}><span>&#10060;</span></button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div className="form-group">
                         <label htmlFor="campaign-resources">Campaign Resources</label> <br />
                         <input type="file" id="campaign-resources" name="campaignResources" multiple onChange={handleChange} data-max-size='1024' />
                         {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
-                    </div>
-                    <div className="container">
-                        {campaignResources.map((document, index) => (
-                            < div className="row border border-secondary m-1 p-1" key={index} >
-                                <div className="col-md-1">
-                                    <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
+                        <div className="container">
+                            {existingCampaign.campaignResources.map((document, index) => (
+                                <div className="row border border-success m-1 p-1" key={index} >
+                                    <div className="col-md-1">
+                                        <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
+                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                        </a>
+                                    </div>
+                                    <div className="col-md-8">
+                                        <span>{document.filePath.split('/').pop()} </span>
+                                    </div>
+                                    <div className="col-md-3 text-right">
+                                        <button className='btn' type='button' onClick={() => removeDocument('EXISTING_RESOURCE', index)}><span>&#10060;</span></button>
+                                    </div>
+                                </div>
+                            ))}
+                            {newCampaign.campaignResources.map((document, index) => (
+                                <div className="row border border-primary m-1 p-1" key={index} >
+                                    <div className="col-md-1">
                                         <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
-                                    </a>
+                                    </div>
+                                    <div className="col-md-8">
+                                        <span>{document.filePath.split('/').pop()} </span>
+                                    </div>
+                                    <div className="col-md-3 text-right">
+                                        <button className='btn' type='button' onClick={() => removeDocument('NEW_RESOURCE', index)}><span>&#10060;</span></button>
+                                    </div>
                                 </div>
-                                <div className="col-md-8">
-                                    <span>{index} {document.filePath.split('/').pop()} </span>
-                                </div>
-                                <div className="col-md-3 text-right">
-                                    <button className='btn' onClick={() => removeDocument(index)}><span>&#10060;</span></button>
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
+
                 </form>
+
             </Modal.Body>
             <Modal.Footer>
                 {isLoading && <h6>Loading...</h6>}

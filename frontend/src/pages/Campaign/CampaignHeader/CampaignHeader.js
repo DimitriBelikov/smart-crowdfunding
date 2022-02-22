@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+import jsonwebtoken from 'jsonwebtoken';
 
 
 //Components
@@ -9,8 +11,17 @@ import UpdateCampaignForm from './UpdateCampaignForm/UpdateCampaignForm';
 import './CampaignHeader.css';
 
 const CampaignHeader = ({ campaignHeaderData }) => {
+    const [user, setUser] = useState({});
+    const [isUserCampaignOrganiser, setIsUserCampaignOrganiser] = useState(false);
     const [showRequestForm, setShowRequestForm] = useState(false);
     const [showUpdateCampaignForm, setShowUpdateCampaignForm] = useState(false);
+
+    useEffect(() => {
+        const cookie = Cookies.get('jwt');
+        const user = jsonwebtoken.decode(cookie);
+        setUser(user);
+        setIsUserCampaignOrganiser(user !== null && user.id === campaignHeaderData.campaignOrganiser ? true : false);
+    }, [])
 
     const handleShowRequestForm = () => {
         setShowRequestForm(true);
@@ -29,6 +40,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
     }
 
     return <>
+        {console.log(user)}
         <div className='container-fluid border border-success'>
             <div className='row p-2 border border-secondary campaign-header-image' style={{ backgroundImage: `url("http://localhost:4545/${campaignHeaderData.campaignCoverMedia}")` }}>
                 <div className="fadeshow col-md-6 col-lg-8 border border-danger">
@@ -88,12 +100,16 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                             </div>
                             <div className="row">
                                 <div className="col text-center mb-3">
-                                    <button type="button" className="btn btn-success">Donate Now</button>
-                                    {campaignHeaderData.campaignRequest.requestTitle == null ?
-                                        <button type="button" className="btn btn-primary" onClick={handleShowRequestForm} >Create Request</button> :
-                                        <button type="button" className="btn btn-secondary" disabled>Create Request</button>
+                                    {(user === null || !isUserCampaignOrganiser) ? <button type="button" className="btn btn-success">Donate Now</button> : null}
+
+                                    {isUserCampaignOrganiser ? campaignHeaderData.campaignRequest.requestTitle == null ?
+                                        <button type="button" className="btn btn-primary" onClick={handleShowRequestForm} >Create Request</button>
+                                        : <button type="button" className="btn btn-secondary" disabled>Create Request</button>
+                                        : null
                                     }
-                                    <button type="button" className="btn btn-danger" onClick={handleShowUpdateCampaignForm}>Update Campaign</button>
+
+                                    {isUserCampaignOrganiser && <button type="button" className="btn btn-danger" onClick={handleShowUpdateCampaignForm}>Update Campaign</button>}
+
                                 </div>
                             </div>
                         </div>
