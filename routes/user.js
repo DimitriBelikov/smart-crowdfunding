@@ -123,11 +123,9 @@ router.delete('/:id', (req, res) => {
 // POST('/login') - Login a User
 router.post('/login', upload.any(), (req, res) => {
     const { emailId, password } = req.body;
-
-    console.log(req.body);
-    // if(!emailId || !password){
-    //     res.status(400).json({ msg: "Please enter all fields" });
-    // }
+    if (!emailId || !password) {
+        return res.status(400).json({ msg: "Please enter all fields" });
+    }
 
     User.findOne({ emailId }).then(user => {
         if (!user) res.status(400).json({ msg: "User does not exist" });
@@ -137,8 +135,6 @@ router.post('/login', upload.any(), (req, res) => {
 
             jwt.sign({ id: user._id.toString() }, process.env.JWT_SECRET, (error, token) => {
                 if (error) res.status(400).json({ msg: "Error while creating JWT: " + error });
-
-                console.log("JWT Token: " + token + "\nUser: " + user);
                 let options = {
                     maxAge: 1000 * 60 * 15, // would expire after 15 minutes
                     httpOnly: false, // The cookie only accessible by the web server

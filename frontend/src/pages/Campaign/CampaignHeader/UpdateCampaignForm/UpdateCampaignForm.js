@@ -9,7 +9,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
         campaignCoverMedia: campaignData.campaignCoverMedia,
         campaignResources: campaignData.campaignResources
     });
-    const [newCampaign, setNewCampaign] = useState({ campaignResources: [], campaignCoverMedia: { fileObject: null, filePath: '' } });
+    const [newCampaign, setNewCampaign] = useState({ campaignResources: [], campaignCoverMedia: null });
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: true, msg: '' });
 
@@ -31,7 +31,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                 }
             });
         } else if (resourceType === 'CAMPAIGN_COVER_MEDIA') {
-
+            setNewCampaign({ ...newCampaign, campaignCoverMedia: null });
         }
     }
 
@@ -60,7 +60,13 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
             });
             setNewCampaign({ ...newCampaign, campaignResources: updatedCampaignResources });
         } else if (name === 'campaignCoverMedia') {
-
+            const filesArray = Array.from(e.target.files);
+            if (filesArray[0].size > 10500000) {
+                setIsError({ value: true, msg: 'Your file have exceded the limit of 10MB' });
+                return;
+            }
+            setIsError({ value: false, msg: '' });
+            setNewCampaign({ ...newCampaign, campaignCoverMedia: filesArray[0] });
         } else {
             setExistingCampaign({ ...existingCampaign, [name]: value });
         }
@@ -107,20 +113,30 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                         <label htmlFor="campaign-cover-image">Campaign Cover Image</label><br />
                         <input type="file" id="campaign-cover-image" name="campaignCoverMedia" onChange={handleChange} accept='image/*' />
                         <div className="container">
-                            <div className="row border border-success m-1 p-1" >
-                                <div className="col-md-1">
-                                    <a href={`http://localhost:4545/${existingCampaign.campaignCoverMedia}`} target='_blank' download>
+                            {newCampaign.campaignCoverMedia === null
+                                ? <div className="row border border-success m-1 p-1" >
+                                    <div className="col-md-1">
+                                        <a href={`http://localhost:4545/${existingCampaign.campaignCoverMedia}`} target='_blank' download>
+                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                        </a>
+                                    </div>
+                                    <div className="col-md-8">
+                                        <span>{existingCampaign.campaignCoverMedia.split('/').pop()} </span>
+                                    </div>
+                                    <div className="col-md-3 text-right">
+                                    </div>
+                                </div>
+                                : <div className="row border border-success m-1 p-1" >
+                                    <div className="col-md-1">
                                         <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
-                                    </a>
-                                </div>
-                                <div className="col-md-8">
-                                    <span>{existingCampaign.campaignCoverMedia.split('/').pop()} </span>
-                                    <span>file name</span>
-                                </div>
-                                <div className="col-md-3 text-right">
-                                    <button className='btn' type='button' onClick={() => removeDocument('CAMPAIGN_COVER_MEDIA')}><span>&#10060;</span></button>
-                                </div>
-                            </div>
+                                    </div>
+                                    <div className="col-md-8">
+                                        <span>{newCampaign.campaignCoverMedia.name} </span>
+                                    </div>
+                                    <div className="col-md-3 text-right">
+                                        <button className='btn' type='button' onClick={() => removeDocument('CAMPAIGN_COVER_MEDIA')}><span>&#10060;</span></button>
+                                    </div>
+                                </div>}
                         </div>
 
                     </div>

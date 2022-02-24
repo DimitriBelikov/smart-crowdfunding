@@ -9,15 +9,16 @@ import { useNavigate } from 'react-router-dom';
 
 const CreateCampaign = () => {
     const navigate = useNavigate();
-
+    const [userId, setUserId] = useState();
     useEffect(() => {
         const cookie = Cookies.get('jwt');
         if (cookie === undefined) navigate('/login');
+        setUserId(jsonwebtoken.decode(cookie).id);
     }, []);
 
     return <>
         <Navigationbar />
-        <CampaignForm />
+        <CampaignForm campaignOrganiser={userId} />
     </>;
 };
 

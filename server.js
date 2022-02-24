@@ -23,7 +23,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(__dirname + '/campaign documents'));
+app.use('/campaignDocuments', express.static(__dirname + '/campaign documents'));
+app.use('/static', express.static(__dirname + '/static'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/campaign', require('./routes/campaign'));
 

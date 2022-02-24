@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ObjectID } from 'bson';
 import { useNavigate } from 'react-router-dom';
 
-const CampaignForm = () => {
+const CampaignForm = ({ campaignOrganiser }) => {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -49,6 +49,7 @@ const CampaignForm = () => {
         if (campaign.campaignCoverMedia.length === 1) formData.append('campaignCoverMedia', campaign.campaignCoverMedia[0]);
         for (var i = 0; i < campaign.campaignResources.length; i++)
             formData.append('campaignResources', campaign.campaignResources[i]);
+        formData.append('campaignOrganiser', campaignOrganiser);
         formData.append('campaignName', campaign.campaignName);
         formData.append('campaignDescription', campaign.campaignDescription);
         formData.append('campaignCategory', campaign.campaignCategory);
@@ -97,7 +98,7 @@ const CampaignForm = () => {
                     <select className="form-control" id="campaign-category" name='campaignCategory' value={campaign.campaignCategory} onChange={handleChange} required>
                         <option>Education</option>
                         <option>Medical</option>
-                        <option>Rights</option>
+                        <option>Human Rights</option>
                         <option>Disaster Relief</option>
                         <option>Animal Care</option>
                         <option>Environment</option>

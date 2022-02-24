@@ -17,7 +17,14 @@ const CampaignDocumentList = ({ documents }) => {
                     <h6 className='text-right d-flex inline-block float-right'>Last Updated: 16 Oct 2021</h6>
                 </div>
             </div>
-
+            {documents.length === 0 ?
+                <div className="row m-3 ">
+                    <div className="col">
+                        <p className='text-secondary text-center m-0'>No Documents Uploaded by Campaign Organiser</p>
+                    </div>
+                </div>
+                : null
+            }
             {documents.map((document, index) => (
                 <div className="row border border-secondary m-3 p-3" key={index}>
                     <div className="col-md-1">

@@ -33,19 +33,30 @@ const cpUpload = campaignUpload.fields([{ name: 'campaignCoverMedia', maxCount: 
 router.post("/", cpUpload, (req, res) => {
     console.log(req.body);
     console.log(req.files);
-    const { campaignId, campaignName, campaignDescription, campaignCategory, /*campaignOrganiser*/ requiredFunding } = req.body;
-    const campaignResources = req.files.campaignResources.map(({ originalname, size }) => {
-        if (size / 1024 < 1000)
-            fileSize = (size / 1024).toFixed(1) + " KB";
-        else
-            fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
-        return { filePath: path.join(campaignId, 'documents', originalname).replace(/\\/g, "/"), fileSize }
-    });
-    const campaignCoverMedia = path.join(campaignId, 'documents', 'campaignCoverMedia' + path.extname(req.files.campaignCoverMedia[0].originalname)).replace(/\\/g, "/");
+    const { campaignId, campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding } = req.body;
+    var campaignResources = [];
+    var campaignCoverMedia = '';
+    console.log(req.files.campaignResourcees);
+    console.log(req.files.campaignCoverMedia);
+    if (req.files.campaignResources != undefined) {
+        campaignResources = req.files.campaignResources.map(({ originalname, size }) => {
+            if (size / 1024 < 1000)
+                fileSize = (size / 1024).toFixed(1) + " KB";
+            else
+                fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
+            return { filePath: path.join('campaign documents', campaignId, 'documents', originalname).replace(/\\/g, "/"), fileSize }
+        });
+    }
+    if (req.files.campaignCoverMedia != undefined) {
+        campaignCoverMedia = path.join('campaignDocuments', campaignId, 'documents', 'campaignCoverMedia' + path.extname(req.files.campaignCoverMedia[0].originalname)).replace(/\\/g, "/");
+    } else {
+        const randFileNumber = Math.floor(Math.random() * 3) + 1;
+        campaignCoverMedia = path.join('static', 'DefaultCampaignImage', campaignCategory, 'DefaultImage-0' + randFileNumber + '.jpg').replace(/\\/g, "/");
+    }
 
     console.log(campaignCoverMedia);
     console.log(campaignResources);
-    User.findById('621372eb619bbf3301977270').then(user => {
+    User.findById(campaignOrganiser).then(user => {
         if (user === null) return res.status(400).json({ msg: "User Does not Exists:" });
 
         const walletProvider = eth.provider();
@@ -58,7 +69,7 @@ router.post("/", cpUpload, (req, res) => {
                     campaignCoverMedia,
                     campaignResources,
                     campaignCategory,
-                    campaignOrganiser: mongoose.Types.ObjectId('621372eb619bbf3301977270'),
+                    campaignOrganiser,
                     requiredFunding: requiredFunding * Math.pow(10, 18),
                     smartContractAddress,
                     campaignCreatedOn: new Date(Date.now()),
@@ -69,7 +80,7 @@ router.post("/", cpUpload, (req, res) => {
                     campaignId: mongoose.Types.ObjectId(campaignId)
                 });
 
-                User.findByIdAndUpdate('621372eb619bbf3301977270', user, { returnDocument: 'after' }, (error, response) => {
+                User.findByIdAndUpdate(campaignOrganiser, user, { returnDocument: 'after' }, (error, response) => {
                     if (error) return res.status(400).json({ msg: 'Error Updating User Campaign Details: ' + error });
 
                     campaign.save().then(

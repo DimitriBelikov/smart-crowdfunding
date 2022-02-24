@@ -33,7 +33,6 @@ const Login = () => {
 
     const response = await fetch('http://localhost:4545/api/user/login', requestOptions);
     const result = await response.json();
-    console.log(result);
     if (response.status !== 200) {
       setIsError({ value: true, msg: result.msg });
     } else {

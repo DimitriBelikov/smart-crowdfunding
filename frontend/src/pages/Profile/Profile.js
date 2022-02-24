@@ -76,7 +76,7 @@ const Profile = () => {
     }
     console.log("Result=", result);
     console.log(user)
-    setDisabled(false);
+    setDisabled(true);
   }
 
   function editFields() {
@@ -96,7 +96,7 @@ const Profile = () => {
         <div className="left-panel border-right border-primary col-md-2">
           <nav className="nav flex-column">
             <a className="nav-link active disabled" >Profile Settings </a>
-            <a className="nav-link">My Campaigns</a>
+            <a className="nav-link" href="#">My Campaigns</a>
             <a className="nav-link" >My Donations</a>
             <a className="nav-link ">Notifications</a>
           </nav>
