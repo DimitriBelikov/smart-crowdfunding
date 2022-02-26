@@ -13,7 +13,7 @@ const CreateCampaign = () => {
     useEffect(() => {
         const cookie = Cookies.get('jwt');
         if (cookie === undefined) navigate('/login');
-        setUserId(jsonwebtoken.decode(cookie).id);
+        if (cookie !== undefined) setUserId(jsonwebtoken.decode(cookie).id);
     }, []);
 
     return <>

@@ -112,18 +112,37 @@ router.get('/:id', (req, res) => {
 
 
 // PUT('/:id') - Update a Particular Campaign
-router.put('/:id', (req, res) => {
-    const { campaignName, campaignDescription } = req.body;
-    // const campaignResources = ["./img/img1.jpg"];
-    // const campaignCoverMedia = './img/hshs.jpg';
+router.put('/:id', cpUpload, (req, res) => {
+    const { campaignId, campaignName, campaignDescription, campaignCoverMediaPath, campaignCategory, filePath, fileSize } = req.body;
+    var updatedCampaignResources = [];
+    // console.log(req.body);
+    // console.log(req.files);
 
-    const updatedCampaign = {
+    if (filePath !== undefined) {
+        for (var i = 0; i < filePath.length; i++) {
+            updatedCampaignResources.push({
+                filePath: filePath[i],
+                fileSize: fileSize[i]
+            });
+        }
+    }
+
+    if (campaignCoverMediaPath == undefined && req.files.campaignCoverMedia == undefined) {
+        const randFileNumber = Math.floor(Math.random() * 3) + 1;
+        var newCampaignCoverMedia = path.join('static', 'DefaultCampaignImage', campaignCategory, 'DefaultImage-0' + randFileNumber + '.jpg').replace(/\\/g, "/");
+    }
+
+    if (req.files.campaignCoverMedia != undefined)
+        var newCampaignCoverMedia = path.join('campaignDocuments', campaignId, 'documents', 'campaignCoverMedia' + path.extname(req.files.campaignCoverMedia[0].originalname)).replace(/\\/g, "/");
+
+    updatedCampaign = {
         campaignName,
         campaignDescription,
-        // campaignCoverMedia,
-        // campaignResources,
+        campaignCoverMedia: campaignCoverMediaPath === undefined ? newCampaignCoverMedia : campaignCoverMediaPath,
+        campaignResources: updatedCampaignResources,
         campaignLastEditedOn: new Date(Date.now())
     };
+    console.log(updatedCampaign);
 
     Campaign.findByIdAndUpdate(req.params.id, updatedCampaign, { returnDocument: 'after' }, (error, response) => {
         if (error) res.status(400).json({ msg: 'Error Updating Campaign Details: ' + error });
