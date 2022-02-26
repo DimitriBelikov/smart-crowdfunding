@@ -7,10 +7,11 @@ const campaignStorage = multer.diskStorage({
     destination: function (req, file, cb) {
         const dir = path.join('./campaign documents', req.body.campaignId);
         //const dir = `./campaign documents/${req.body.campaignId}`
-        if (!fs.existsSync(dir)) {
+        if (!fs.existsSync(dir))
             fs.mkdirSync(dir);
+        if (!fs.existsSync(path.join(dir, 'documents')))
             fs.mkdirSync(path.join(dir, 'documents'));
-        }
+
         cb(null, path.join(dir, 'documents'));
     },
     filename: function (req, file, cb) {
@@ -25,14 +26,15 @@ exports.campaignUpload = multer({ storage: campaignStorage });
 //Configuration for request documents
 const requestStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dir = path.join('./campaign documents', req.params.id, 'requests');
-        if (!fs.existsSync(dir)) {
+        const dir = path.join('./campaign documents', req.params.id);
+        if (!fs.existsSync(dir))
             fs.mkdirSync(dir);
-            fs.mkdirSync(path.join(dir, req.body.requestNumber));
-        }
-        if (!fs.existsSync(path.join(dir, req.body.requestNumber)))
-            fs.mkdirSync(path.join(dir, req.body.requestNumber));
-        cb(null, path.join(dir, req.body.requestNumber));
+        if (!fs.existsSync(path.join(dir, 'request')))
+            fs.mkdirSync(path.join(dir, 'request'));
+        if (!fs.existsSync(path.join(dir, 'request', req.body.requestNumber)))
+            fs.mkdirSync(path.join(dir, 'request', req.body.requestNumber));
+
+        cb(null, path.join(dir, 'request', req.body.requestNumber));
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname)

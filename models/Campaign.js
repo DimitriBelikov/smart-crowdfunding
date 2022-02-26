@@ -51,6 +51,10 @@ const campaignSchema = new Schema({
         type: Number,
         default: 0
     },
+    amountDisbursed: {
+        type: Number,
+        default: 0
+    },
     smartContractAddress: {
         type: String,
         default: null

@@ -6,6 +6,7 @@ import jsonwebtoken from 'jsonwebtoken';
 //Components
 import RequestForm from './RequestForm/RequestForm';
 import UpdateCampaignForm from './UpdateCampaignForm/UpdateCampaignForm';
+import UpdateRequestForm from './UpdateRequestForm/UpdateRequestForm';
 
 // Custom-CSS
 import './CampaignHeader.css';
@@ -15,6 +16,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
     const [isUserCampaignOrganiser, setIsUserCampaignOrganiser] = useState(false);
     const [showRequestForm, setShowRequestForm] = useState(false);
     const [showUpdateCampaignForm, setShowUpdateCampaignForm] = useState(false);
+    const [showUpdateRequestForm, setShowUpdateRequestForm] = useState(false);
 
     useEffect(() => {
         const cookie = Cookies.get('jwt');
@@ -37,6 +39,14 @@ const CampaignHeader = ({ campaignHeaderData }) => {
 
     const handleCloseUpdateCampaignForm = () => {
         setShowUpdateCampaignForm(false);
+    }
+
+    const handleShowUpdateRequestForm = () => {
+        setShowUpdateRequestForm(true);
+    }
+
+    const handleCloseUpdateRequestForm = () => {
+        setShowUpdateRequestForm(false);
     }
 
     return <>
@@ -104,7 +114,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
 
                                     {isUserCampaignOrganiser ? campaignHeaderData.campaignRequest.requestTitle == null ?
                                         <button type="button" className="btn btn-primary" onClick={handleShowRequestForm} >Create Request</button>
-                                        : <button type="button" className="btn btn-secondary" disabled>Create Request</button>
+                                        : <button type="button" className="btn btn-primary" onClick={handleShowUpdateRequestForm}>Update Request</button>
                                         : null
                                     }
 
@@ -119,6 +129,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
         </div>
         <RequestForm show={showRequestForm} handleClose={handleCloseRequestForm} requestNumber={campaignHeaderData.requestVotingHistory.length + 1} campaignId={campaignHeaderData._id} />
         <UpdateCampaignForm show={showUpdateCampaignForm} handleClose={handleCloseUpdateCampaignForm} campaignData={campaignHeaderData} />
+        <UpdateRequestForm show={showUpdateRequestForm} handleClose={handleCloseUpdateRequestForm} requestData={campaignHeaderData.campaignRequest} campaignId={campaignHeaderData._id} />
     </>
 };
 
