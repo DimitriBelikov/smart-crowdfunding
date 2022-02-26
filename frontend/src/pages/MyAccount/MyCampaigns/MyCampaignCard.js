@@ -3,9 +3,9 @@ import ShowMoreText from "react-show-more-text";
 import { useNavigate } from 'react-router-dom';
 
 //CSS
-import './CampaignCard.css';
+import './MyCampaignCard.css';
 
-const CampaignCard = ({ campaign }) => {
+const MyCampaignCard = ({ campaign }) => {
     const navigate = useNavigate();
 
     const clickOnCard = () => {
@@ -14,7 +14,7 @@ const CampaignCard = ({ campaign }) => {
 
     return (
         <>
-            <div className="card">
+            <div className="card my-card">
                 <div className="card-body">
                     <h5 className="card-title text-truncate">
                         {campaign.campaignName}
@@ -80,4 +80,4 @@ const CampaignCard = ({ campaign }) => {
     );
 };
 
-export default CampaignCard;
+export default MyCampaignCard;

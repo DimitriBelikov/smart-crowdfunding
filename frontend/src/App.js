@@ -8,7 +8,6 @@ import Campaigns from './pages/Campaigns/Campaigns';
 import Campaign from './pages/Campaign/Campaign';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
-import Profile from './pages/Profile/Profile';
 import Error from './pages/Error/Error';
 import CreateCampaign from './pages/CreateCampaign/CreateCampaign';
 
@@ -18,7 +17,7 @@ import Footer from './components/Footer/Footer';
 
 //CSS
 import './App.css';
-import MyAccount from './pages/Profile/MyAccount';
+import MyAccount from './pages/MyAccount/MyAccount';
 
 function App() {
   return (

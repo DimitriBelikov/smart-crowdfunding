@@ -81,6 +81,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+
         const formData = new FormData();
         formData.append('campaignId', campaignData._id);
         formData.append('campaignName', existingCampaign.campaignName);

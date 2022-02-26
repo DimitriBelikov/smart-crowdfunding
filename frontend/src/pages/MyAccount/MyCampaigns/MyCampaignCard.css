@@ -1,8 +1,9 @@
-.card {
-  width: 95%;
+.my-card {
+  width: 100%;
+  height: 50%;
 }
 
-.card-text-container {
+/* .card-text-container {
   -webkit-column-width: 150vw;
   -moz-column-width: 150vw;
   column-width: 150vw;
@@ -38,4 +39,4 @@
   .card {
     width: 100%;
   }
-}
+} */

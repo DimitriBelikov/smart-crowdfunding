@@ -1,8 +1,5 @@
 import React from 'react';
 
-//CSS
-import './Profile.css';
-
 const SettingsList = ({ itemsList, currentActive, clickFunction }) => {
 
     return (

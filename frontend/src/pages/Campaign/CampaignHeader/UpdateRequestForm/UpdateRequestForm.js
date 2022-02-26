@@ -7,7 +7,7 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
         requestTitle: requestData.requestTitle,
         requestDescription: requestData.requestDescription,
         requestResources: requestData.requestResources,
-        deadline: requestData.deadline.split('.')[0]
+        deadline: requestData.deadline === undefined ? null : requestData.deadline.split('.')[0]
     });
     const [newRequestResources, setNewRequestResources] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +35,7 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
         const { name, value } = e.target;
         if (name === 'requestResources') {
             const filesArray = Array.from(e.target.files);
-            if (filesArray.length + existingRequest.requestResources.length > 10) {
+            if (filesArray.length + existingRequest.requestResources.length > 5) {
                 setIsError({ value: true, msg: 'You can upload maximum 10 files' });
                 return;
             } else {
@@ -54,10 +54,11 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
                     var fileSize = ((file.size / 1024) / 1024).toFixed(1) + " MB";
                 return {
                     fileObject: file,
-                    filePath: path.join(requestData._id, 'documents', file.name).replace(/\\/g, "/"),
+                    filePath: path.join(campaignId, 'request', requestData.requestNumber.toString(), file.name).replace(/\\/g, "/"),
                     fileSize: fileSize
                 }
             });
+            console.log(updatedRequestResources);
             setNewRequestResources(updatedRequestResources);
         } else {
             setExistingRequest({ ...existingRequest, [name]: value });
@@ -69,9 +70,12 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
 
         setIsLoading(true);
         const formData = new FormData();
+
         formData.append('campaignId', campaignId);
+        formData.append('requestNumber', requestData.requestNumber);
         formData.append('requestTitle', existingRequest.requestTitle);
         formData.append('requestDescription', existingRequest.requestDescription);
+        formData.append('deadline', existingRequest.deadline);
 
         for (var i = 0; i < newRequestResources.length; i++)
             formData.append('requestResources', newRequestResources[i].fileObject);
@@ -95,7 +99,7 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
             body: formData
         };
 
-        const response = await fetch(`http://localhost:4545/api/campign/${campaignId}/request/current`, requestOptions);
+        const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/request/current`, requestOptions);
         const result = await response.json();
 
         if (response.status !== 200) {
@@ -112,7 +116,6 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
     }
 
     return <>
-        {console.log(requestData.deadline)}
         <Modal show={show} onHide={handleClose} size="lg" aria-labelledby="contained-modal-title-center" centered>
             <Modal.Header closeButton>
                 <Modal.Title>
@@ -140,7 +143,7 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="request-resources">Request Resources</label> <br />
-                        <input type="file" id="request-resources" name="requestResources" multiple onChange={handleChange} data-max-size='1024' />
+                        <input type='file' id="request-resources" name="requestResources" multiple onChange={handleChange} data-max-size='1024' />
                         {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
                         <div className="container">
                             {existingRequest.requestResources.map((document, index) => (

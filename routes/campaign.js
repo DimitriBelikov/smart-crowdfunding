@@ -165,7 +165,8 @@ router.delete('/:id', (req, res) => {
 
 
 // POST('/:id/request') - Create a New Request for a particular Campaign
-router.post('/:id/request', requestUpload.fields([{ name: 'requestResources', maxCount: 5 }]), (req, res) => {
+const rqUpload = requestUpload.fields([{ name: 'requestResources', maxCount: 5 }])
+router.post('/:id/request', rqUpload, (req, res) => {
     const { requestNumber, requestTitle, requestDescription, requestAmount, deadline } = req.body;
     const requestResources = req.files.requestResources.map(({ originalname, size }) => {
         if (size / 1024 < 1000)
@@ -208,13 +209,27 @@ router.post('/:id/request', requestUpload.fields([{ name: 'requestResources', ma
 
 
 // PUT('/:id/request/current') - Update Details of a current Request for a Particular Campaign
-router.put('/:id/request/current', (req, res) => {
-    const { requestTitle, requestDescription } = req.body;
-    // const requestResources = req.files;
+router.put('/:id/request/current', rqUpload, (req, res) => {
+    console.log(req.body);
+    console.log(req.files);
+    // res.status(200).json({ msg: 'Done' });
+    const { requestTitle, requestDescription, deadline, filePath, fileSize } = req.body;
+
+    var updatedRequestResources = [];
+    if (filePath !== undefined) {
+        for (var i = 0; i < filePath.length; i++) {
+            updatedRequestResources.push({
+                filePath: filePath[i],
+                fileSize: fileSize[i]
+            });
+        }
+    };
 
     const request = {
         'campaignRequest.requestTitle': requestTitle,
         'campaignRequest.requestDescription': requestDescription,
+        'campaignRequest.requestResources': updatedRequestResources,
+        'campaignRequest.deadline': new Date(deadline),
         'campaignRequest.requestLastEditedOn': new Date(Date.now())
     }
 
