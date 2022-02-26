@@ -7,16 +7,9 @@ import { useNavigate } from 'react-router-dom';
 //CSS
 import './Profile.css';
 
-//Controllers
-import { useFetch } from '../../controllers/useFetch';
-import Navigationbar from '../../components/Navigationbar/Navigationbar';
-
-const Profile = () => {
+const Profile = ({userData}) => {
   const navigate = useNavigate();
   const [disabled, setDisabled] = useState('true');
-  const cookie = Cookies.get('jwt');
-  const userId = jsonwebtoken.decode(cookie).id;
-  const { loading, data: userData } = useFetch(`http://localhost:4545/api/user/${userId}`)
   const [isError, setIsError] = useState({ value: false, msg: '' });
 
   const [user, setUser] = useState({
@@ -29,9 +22,6 @@ const Profile = () => {
     state: ''
   });
 
-  useEffect(() => {
-    onCancel();
-  }, [loading])
 
   const onCancel = () => {
     setUser({
@@ -39,7 +29,7 @@ const Profile = () => {
       emailId: userData.emailId,
       password: userData.password,
       fullName: userData.fullName,
-      dob: loading ? '' : userData.dob.split('T')[0],
+      dob:userData.dob.split('T')[0],
       currentCity: userData.currentCity,
       state: userData.state
     })
@@ -65,7 +55,7 @@ const Profile = () => {
       method: 'PUT',
       body: formData
     };
-    const response = await fetch(`http://localhost:4545/api/user/${userId}`, requestOptions);
+    const response = await fetch(`http://localhost:4545/api/user/621372eb619bbf3301977270`, requestOptions);
     const result = await response.json();
     if (response.status !== 200) {
       setIsError({ value: true, msg: result.msg });
@@ -76,33 +66,20 @@ const Profile = () => {
     }
     console.log("Result=", result);
     console.log(user)
-    setDisabled(true);
+    setDisabled(false);
   }
 
   function editFields() {
     setDisabled(false);
   }
 
-  if (loading) {
-    return <>
-      <h1>Loading....</h1>
-    </>;
-  }
+  // if (loading) {
+  //   return <>
+  //     <h1>Loading....</h1>
+  //   </>;
+  // }
   return <>
-    <Navigationbar />
-    <div className='container-fluid'>
-      {/* <h1>{userData.userName}</h1> */}
-      <div className="row">
-        <div className="left-panel border-right border-primary col-md-2">
-          <nav className="nav flex-column">
-            <a className="nav-link active disabled" >Profile Settings </a>
-            <a className="nav-link" href="#">My Campaigns</a>
-            <a className="nav-link" >My Donations</a>
-            <a className="nav-link ">Notifications</a>
-          </nav>
-        </div>
-        <div className='right-panel col-md-6'>
-          {/* <h1 className='text-primary '>Profile</h1> */}
+    
           <form>
             <div className="form-group col-md-6">
               <label >User Name</label>
@@ -142,10 +119,6 @@ const Profile = () => {
               </div>
             </div>
           </form>
-        </div>
-      </div>
-
-    </div>;
   </>
 };
 

@@ -39,7 +39,7 @@ const Navigationbar = () => {
                         <Nav.Link href='/'>Home</Nav.Link>
                         <Nav.Link href='/campaigns'>Campaigns</Nav.Link>
                         <Nav.Link href='/about'>About</Nav.Link>
-                        {cookie === undefined ? <Nav.Link href='/login'>Login</Nav.Link> : <Nav.Link href='/profile'>My Account</Nav.Link>}
+                        <Nav.Link href='/profile'>My Account</Nav.Link>
                         {cookie !== undefined && <Nav.Link href='/' onClick={handleLogout}>Logout</Nav.Link>}
                     </Nav>
                 </Navbar.Collapse>

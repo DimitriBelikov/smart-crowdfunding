@@ -18,6 +18,7 @@ import Footer from './components/Footer/Footer';
 
 //CSS
 import './App.css';
+import MyAccount from './pages/Profile/MyAccount';
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
         <Route path="campaign/:id" element={<Campaign />} />
         <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
-        <Route path="profile" element={<Profile />} />
+        <Route path="profile" element={<MyAccount />} />
         <Route path="create-campaign" element={<CreateCampaign />} />
         <Route path="*" element={<Error />} />
       </Routes>
