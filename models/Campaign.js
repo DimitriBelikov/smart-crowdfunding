@@ -111,6 +111,11 @@ const campaignSchema = new Schema({
         },
         donationAmount: Number,
         donationDate: Date
+    }],
+    updates: [{
+        updateTitle: String,
+        updateDescription: [],
+        updateDate: Date
     }]
 });
 

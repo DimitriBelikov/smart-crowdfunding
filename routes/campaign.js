@@ -15,6 +15,7 @@ const rootDocumentPath = 'documents'
 
 //Configurations
 const { campaignUpload, requestUpload } = require('../config/multerConfig');
+const updateHandler = require('../middlewares/updateHandler');
 
 // GET('/') - Get list of all Campaigns
 router.get("/", (req, res) => {
@@ -112,19 +113,28 @@ router.get('/:id', (req, res) => {
 
 
 // PUT('/:id') - Update a Particular Campaign
-router.put('/:id', cpUpload, (req, res) => {
+router.put('/:id', cpUpload, (req, res, next) => {
     const { campaignId, campaignName, campaignDescription, campaignCoverMediaPath, campaignCategory, filePath, fileSize } = req.body;
     var updatedCampaignResources = [];
-    // console.log(req.body);
-    // console.log(req.files);
+    console.log(req.body);
+    console.log(req.files);
 
     if (filePath !== undefined) {
-        for (var i = 0; i < filePath.length; i++) {
+        if (typeof req.body.filePath !== 'string') {
+            for (var i = 0; i < filePath.length; i++) {
+                updatedCampaignResources.push({
+                    filePath: filePath[i],
+                    fileSize: fileSize[i]
+                });
+            }
+        }
+        else {
             updatedCampaignResources.push({
-                filePath: filePath[i],
-                fileSize: fileSize[i]
+                filePath: filePath,
+                fileSize: fileSize
             });
         }
+        req.updateAreas = ['Documents'];
     }
 
     if (campaignCoverMediaPath == undefined && req.files.campaignCoverMedia == undefined) {
@@ -144,11 +154,18 @@ router.put('/:id', cpUpload, (req, res) => {
     };
     console.log(updatedCampaign);
 
-    Campaign.findByIdAndUpdate(req.params.id, updatedCampaign, { returnDocument: 'after' }, (error, response) => {
+    Campaign.findByIdAndUpdate(req.params.id, updatedCampaign, { returnDocument: 'before' }, (error, response) => {
         if (error) res.status(400).json({ msg: 'Error Updating Campaign Details: ' + error });
         res.status(200).json(response);
+        if (response.campaignDescription !== campaignDescription || response.campaignName !== campaignName) {
+            if (req.updateAreas != undefined)
+                req.updateAreas.push('Description')
+            else
+                req.updateAreas = ['Description']
+        }
+        next();
     });
-});
+}, updateHandler);
 
 
 // DELETE('/:id') - Delete a Particular Campaign - (Destroy Smart Contract)
@@ -166,7 +183,7 @@ router.delete('/:id', (req, res) => {
 
 // POST('/:id/request') - Create a New Request for a particular Campaign
 const rqUpload = requestUpload.fields([{ name: 'requestResources', maxCount: 5 }])
-router.post('/:id/request', rqUpload, (req, res) => {
+router.post('/:id/request', rqUpload, (req, res, next) => {
     const { requestNumber, requestTitle, requestDescription, requestAmount, deadline } = req.body;
     const requestResources = req.files.requestResources.map(({ originalname, size }) => {
         if (size / 1024 < 1000)
@@ -175,12 +192,9 @@ router.post('/:id/request', rqUpload, (req, res) => {
             fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
         return { filePath: path.join(req.params.id, 'requests', requestNumber, originalname).replace(/\\/g, "/"), fileSize }
     });
-    console.log(req.files);
-    console.log(req.body);
-    console.log(requestResources);
-    console.log(requestAmount);
+    // console.log(req.files);
+    // console.log(req.body);
     // return res.status(200).json({msg: "Done"});
-
 
     Campaign.findById(req.params.id, (error, campaign) => {
         if (campaign.campaignRequest.requestTitle != null) return res.status(400).json({ msg: "Your campaign's already has an existing active request" });
@@ -198,29 +212,39 @@ router.post('/:id/request', rqUpload, (req, res) => {
             deadline: new Date(deadline)
         }
     }
-    console.log(request);
 
     Campaign.findByIdAndUpdate(req.params.id, request, { returnDocument: 'after' }, (error, response) => {
         if (error) return res.status(400).json({ msg: 'Error Creating a new Request: ' + error });
         //Notify donor that new request is created and its deadline to vote
-        return res.status(200).json(response);
+        res.status(200).json(response);
+
+        req.updateAreas = ['RequestCreated'];
+        next();
     });
-});
+}, updateHandler);
 
 
 // PUT('/:id/request/current') - Update Details of a current Request for a Particular Campaign
-router.put('/:id/request/current', rqUpload, (req, res) => {
+router.put('/:id/request/current', rqUpload, (req, res, next) => {
     console.log(req.body);
     console.log(req.files);
-    // res.status(200).json({ msg: 'Done' });
+
     const { requestTitle, requestDescription, deadline, filePath, fileSize } = req.body;
 
     var updatedRequestResources = [];
     if (filePath !== undefined) {
-        for (var i = 0; i < filePath.length; i++) {
+        if (typeof req.body.filePath !== 'string') {
+            for (var i = 0; i < filePath.length; i++) {
+                updatedRequestResources.push({
+                    filePath: filePath[i],
+                    fileSize: fileSize[i]
+                });
+            }
+        }
+        else {
             updatedRequestResources.push({
-                filePath: filePath[i],
-                fileSize: fileSize[i]
+                filePath: filePath,
+                fileSize: fileSize
             });
         }
     };
@@ -237,8 +261,11 @@ router.put('/:id/request/current', rqUpload, (req, res) => {
         if (error) res.status(400).json({ msg: 'Error Updating the Request: ' + error });
         //Notify donors that the request is updated
         res.status(200).json(response);
+
+        req.updateAreas = ['RequestUpdated'];
+        next();
     });
-});
+}, updateHandler);
 
 //Common Function to delete curent request and add it to request voting history
 function processRequest(req, res) {
