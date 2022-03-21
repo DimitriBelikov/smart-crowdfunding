@@ -306,12 +306,14 @@ router.post('/:id/request/current/:status', (req, res) => {
 
 
 // POST('/:id/vote') - Add's a Contributor's Vote for a Particular Request for a Particular Campaign
-router.post('/:id/vote', (req, res) => {
+router.post('/:id/vote', cpUpload, (req, res) => {
+    const { userId, vote } = req.body;
+    console.log(req.body);
     Campaign.findById(req.params.id).then(campaign => {
-        if (req.body.vote == 'yes')
-            campaign.currentVote.yes.push(req.body.userId);
-        else if (req.body.vote == 'no')
-            campaign.currentVote.no.push(req.body.userId);
+        if (vote === 'true')
+            campaign.currentVote.yes.push(userId);
+        else if (vote === 'false')
+            campaign.currentVote.no.push(userId);
 
         campaign.campaignRequest.upVotePercentage = Decimal128.fromString(((campaign.currentVote.yes.length / campaign.donors.length) * 100).toFixed(2));
         Campaign.findByIdAndUpdate(req.params.id, campaign, { returnDocument: 'after' }, (error, response) => {
@@ -331,13 +333,20 @@ router.post('/:id/donate', cpUpload, (req, res) => {
     const donationAmount = amount * Math.pow(10, 18);
 
     Campaign.findById(req.params.id).then(campaign => {
-        const donor = {
-            userId,
-            donationAmount,
-            donationDate: new Date(Date.now())
+        const donor = campaign.donors.findIndex(donors => donors.userId == userId);
+        if (donor === -1) {
+            const newDonor = {
+                userId,
+                donationAmount,
+                donationDate: new Date(Date.now())
+            }
+            campaign.donors.push(newDonor);
+        } else {
+            campaign.donors[donor].donationAmount += donationAmount;
+            campaign.donors[donor].donationDate = new Date(Date.now());
         }
-        campaign.donors.push(donor);
         campaign.amountCollected += donationAmount;
+
         Campaign.findByIdAndUpdate(req.params.id, campaign, { returnDocument: 'after' }, (error, response) => {
             if (error) return res.status(400).json({ msg: 'Error Voting: ' + error });
 

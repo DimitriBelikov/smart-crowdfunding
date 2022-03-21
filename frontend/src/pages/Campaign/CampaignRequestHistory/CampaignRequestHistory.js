@@ -7,7 +7,8 @@ import HistoryRequestTile from './RequestTile/HistoryRequestTile';
 //CSS
 import './CampaignRequestHistory.css';
 
-const CampaignRequestHistory = ({ currentRequest, requestVotingHistory }) => {
+const CampaignRequestHistory = ({ currentRequest, requestVotingHistory, votersList, donors, campaignId }) => {
+
     return <>
         <div className="container">
             {(requestVotingHistory.length === 0 && currentRequest.requestTitle == null) &&
@@ -17,7 +18,7 @@ const CampaignRequestHistory = ({ currentRequest, requestVotingHistory }) => {
                     </div>
                 </div>
             }
-            {currentRequest.requestTitle != null && <CurrentRequestTile request={currentRequest} />}
+            {currentRequest.requestTitle != null && <CurrentRequestTile request={currentRequest} campaignId={campaignId} votersList={votersList} donors={donors} />}
             {[...requestVotingHistory].reverse().map((request, index) => (
                 <HistoryRequestTile request={request} key={index} />
             ))}

@@ -1,12 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ShowMoreText from "react-show-more-text";
+import Cookies from 'js-cookie';
+import jsonwebtoken from 'jsonwebtoken';
 
 //CSS
 import '../CampaignRequestHistory.css';
 
-const CurrentRequestTile = ({ request }) => {
+const CurrentRequestTile = ({ request, votersList, donors, campaignId }) => {
+    const [vote, setVote] = useState({ hasVoted: false, voteValue: true });
+    const [user, setUser] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState({ value: false, msg: '' });
+
+    useEffect(() => {
+        const cookie = Cookies.get('jwt');
+        const user = jsonwebtoken.decode(cookie);
+        console.log(user);
+        if (user !== null) {
+            const userInYes = votersList.yes.find(users => users === user.id);
+            if (userInYes !== undefined) {
+                setVote({ hasVoted: true, voteValue: true })
+            } else {
+                const userInNo = votersList.no.find(users => users === user.id);
+                if (userInNo !== undefined) {
+                    setVote({ hasVoted: true, voteValue: false })
+                }
+            }
+            const isDonor = donors.find(donor => donor.userId === user.id);
+            if (isDonor !== undefined) user.isDonor = true;
+            else user.isDonor = false;
+        }
+        setUser(user);
+    }, [])
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setVote({ ...vote, hasVoted: true });
+
+        const formData = new FormData();
+        formData.append('userId', user.id);
+        formData.append('vote', vote.voteValue);
+
+        const requestOptions = {
+            method: 'POST',
+            body: formData
+        }
+
+        const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/vote`, requestOptions);
+        const result = await response.json();
+        if (response.status !== 200) {
+            setIsError({ value: true, msg: "Error: Couldn't append your Vote... Please Try Again" });
+            alert('Error: Cannot Append Vote at the Moment.');
+            setIsLoading(false);
+        } else {
+            window.location.reload(true);
+            alert('Voted Successfully');
+        }
+    }
+
     return <>
-        {console.log(request.requestResources)}
         <div className="row m-3">
             <div className="col-md-1 d-flex align-items-center text-center border border-success">
                 <h4 className='p-4'>{request.requestNumber}</h4>
@@ -73,14 +125,22 @@ const CurrentRequestTile = ({ request }) => {
                         <h6>{request.requestAmount / Math.pow(10, 18)} ETH</h6>
                     </div>
                 </div>
-                <div className="row mb-3 mt-3 border border-warning">
-                    <div className="col-sm-12 text-center">
-                        <h6>upVote Percentage</h6>
-                    </div>
-                    <div className="col-sm-12 text-center">
-                        <h6>{request.upVotePercentage.$numberDecimal} %</h6>
-                    </div>
+                {user !== null && user.isDonor && <div className="row mb-3 mt-3 border border-warning text-center">
+                    <form>
+                        <fieldset disabled={vote.hasVoted ? true : false}>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="customRadioInline1" name="customRadioInlineYES" class="custom-control-input" onClick={() => setVote({ hasVoted: false, voteValue: true })} checked={vote.voteValue && "checked"} />
+                                <label class="custom-control-label" for="customRadioInline1">YES</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="customRadioInline2" name="customRadioInlineNO" class="custom-control-input" onClick={() => setVote({ hasVoted: false, voteValue: false })} checked={!vote.voteValue && "checked"} />
+                                <label class="custom-control-label" for="customRadioInline2">NO</label>
+                            </div>
+                            <button className='btn btn-primary' onClick={handleSubmit}>Submit Vote</button>
+                        </fieldset>
+                    </form>
                 </div>
+                }
             </div>
         </div>
     </>

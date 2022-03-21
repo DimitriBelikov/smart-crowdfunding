@@ -46,8 +46,8 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
                 alert('Error: while Donating Amount.');
                 setIsLoading(false);
             } else {
-                // window.location.reload(true);
-                //alert('Amount Donated Successfully');
+                alert('Amount Donated Successfully');
+                window.location.reload(true);
             }
         }).catch(error => {
             setIsError({ value: true, msg: 'Error: Cannot Donate to the Campaign... Try Again Later' });
