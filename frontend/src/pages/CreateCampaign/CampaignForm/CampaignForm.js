@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ObjectID } from 'bson';
 import { useNavigate } from 'react-router-dom';
+import { provider, deployContract } from '../../../ETHBackend/deploy-contract';
 
 const CampaignForm = ({ campaignOrganiser }) => {
     const navigate = useNavigate();
@@ -40,41 +41,49 @@ const CampaignForm = ({ campaignOrganiser }) => {
         }
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const campaignId = new ObjectID();
-        const formData = new FormData();
-        formData.append('campaignId', campaignId);
-        if (campaign.campaignCoverMedia.length === 1) formData.append('campaignCoverMedia', campaign.campaignCoverMedia[0]);
-        for (var i = 0; i < campaign.campaignResources.length; i++)
-            formData.append('campaignResources', campaign.campaignResources[i]);
-        formData.append('campaignOrganiser', campaignOrganiser);
-        formData.append('campaignName', campaign.campaignName);
-        formData.append('campaignDescription', campaign.campaignDescription);
-        formData.append('campaignCategory', campaign.campaignCategory);
-        formData.append('requiredFunding', campaign.requiredFunding);
+        const walletProvider = provider();
+        deployContract(walletProvider).then(async (smartContractAddress) => {
+            const campaignId = new ObjectID();
+            const formData = new FormData();
 
-        const requestOptions = {
-            method: 'POST',
-            body: formData
-        };
+            formData.append('campaignId', campaignId);
+            if (campaign.campaignCoverMedia.length === 1) formData.append('campaignCoverMedia', campaign.campaignCoverMedia[0]);
+            for (var i = 0; i < campaign.campaignResources.length; i++)
+                formData.append('campaignResources', campaign.campaignResources[i]);
+            formData.append('campaignOrganiser', campaignOrganiser);
+            formData.append('campaignName', campaign.campaignName);
+            formData.append('campaignDescription', campaign.campaignDescription);
+            formData.append('campaignCategory', campaign.campaignCategory);
+            formData.append('requiredFunding', campaign.requiredFunding);
+            formData.append('smartContractAddress', smartContractAddress);
 
-        const response = await fetch('http://localhost:4545/api/campaign', requestOptions);
-        const result = await response.json();
-        if (response.status !== 200) {
-            setCampaign({
-                campaignName: '',
-                campaignDescription: '',
-                campaignCategory: 'Education',
-                requiredFunding: 0,
-                campaignCoverMedia: [],
-                campaignResources: []
-            })
-            setIsLoading(false);
-        } else {
-            navigate(`/campaign/${result._id}`);
-        }
+            const requestOptions = {
+                method: 'POST',
+                body: formData
+            };
+
+            const response = await fetch('http://localhost:4545/api/campaign', requestOptions);
+            const result = await response.json();
+            if (response.status !== 200) {
+                setCampaign({
+                    campaignName: '',
+                    campaignDescription: '',
+                    campaignCategory: 'Education',
+                    requiredFunding: 0,
+                    campaignCoverMedia: [],
+                    campaignResources: []
+                })
+                setIsLoading(false);
+            } else {
+                navigate(`/campaign/${result._id}`);
+            }
+        }).catch(error => {
+            setIsError({ value: true, msg: 'Cannot Create Smart Contract... Please Try Again' });
+            alert('Error: ', error);
+        })
     }
 
     if (isLoading) {

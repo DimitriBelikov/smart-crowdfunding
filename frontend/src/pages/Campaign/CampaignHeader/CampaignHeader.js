@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import jsonwebtoken from 'jsonwebtoken';
-
+import { useNavigate } from 'react-router-dom';
 
 //Components
 import RequestForm from './RequestForm/RequestForm';
 import UpdateCampaignForm from './UpdateCampaignForm/UpdateCampaignForm';
 import UpdateRequestForm from './UpdateRequestForm/UpdateRequestForm';
+import DonationForm from './DonationForm/DonationForm';
 
 // Custom-CSS
 import './CampaignHeader.css';
 
 const CampaignHeader = ({ campaignHeaderData }) => {
+    const navigate = useNavigate();
     const [user, setUser] = useState({});
     const [isUserCampaignOrganiser, setIsUserCampaignOrganiser] = useState(false);
     const [showRequestForm, setShowRequestForm] = useState(false);
     const [showUpdateCampaignForm, setShowUpdateCampaignForm] = useState(false);
     const [showUpdateRequestForm, setShowUpdateRequestForm] = useState(false);
+    const [showDonationForm, setShowDonationForm] = useState(false);
+
+
 
     useEffect(() => {
         const cookie = Cookies.get('jwt');
@@ -47,6 +52,14 @@ const CampaignHeader = ({ campaignHeaderData }) => {
 
     const handleCloseUpdateRequestForm = () => {
         setShowUpdateRequestForm(false);
+    }
+
+    const handleShowDonationForm = () => {
+        (user === null) ? navigate('/login') : setShowDonationForm(true);
+    }
+
+    const handleCloseDonationForm = () => {
+        setShowDonationForm(false);
     }
 
     return <>
@@ -110,7 +123,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                             </div>
                             <div className="row">
                                 <div className="col text-center mb-3">
-                                    {(user === null || !isUserCampaignOrganiser) ? <button type="button" className="btn btn-success">Donate Now</button> : null}
+                                    {(user === null || !isUserCampaignOrganiser) ? <button type="button" className="btn btn-success" onClick={handleShowDonationForm}>Donate Now</button> : null}
 
                                     {isUserCampaignOrganiser ? campaignHeaderData.campaignRequest.requestTitle == null ?
                                         <button type="button" className="btn btn-primary" onClick={handleShowRequestForm} >Create Request</button>
@@ -130,6 +143,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
         <RequestForm show={showRequestForm} handleClose={handleCloseRequestForm} requestNumber={campaignHeaderData.requestVotingHistory.length + 1} campaignId={campaignHeaderData._id} />
         <UpdateCampaignForm show={showUpdateCampaignForm} handleClose={handleCloseUpdateCampaignForm} campaignData={campaignHeaderData} />
         <UpdateRequestForm show={showUpdateRequestForm} handleClose={handleCloseUpdateRequestForm} requestData={campaignHeaderData.campaignRequest} campaignId={campaignHeaderData._id} />
+        <DonationForm show={showDonationForm} handleClose={handleCloseDonationForm} campaignId={campaignHeaderData._id} campaignName={campaignHeaderData.campaignName} smartContractAddress={campaignHeaderData.smartContractAddress} />
     </>
 };
 

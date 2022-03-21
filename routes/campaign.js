@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const eth = require('../ETHBackend/deploy-contract');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -34,7 +33,7 @@ const cpUpload = campaignUpload.fields([{ name: 'campaignCoverMedia', maxCount: 
 router.post("/", cpUpload, (req, res) => {
     console.log(req.body);
     console.log(req.files);
-    const { campaignId, campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding } = req.body;
+    const { campaignId, campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding, smartContractAddress } = req.body;
     var campaignResources = [];
     var campaignCoverMedia = '';
     console.log(req.files.campaignResourcees);
@@ -60,42 +59,36 @@ router.post("/", cpUpload, (req, res) => {
     User.findById(campaignOrganiser).then(user => {
         if (user === null) return res.status(400).json({ msg: "User Does not Exists:" });
 
-        const walletProvider = eth.provider();
-        eth.deployContract(walletProvider).then(
-            smartContractAddress => {
-                const campaign = new Campaign({
-                    _id: mongoose.Types.ObjectId(campaignId),
-                    campaignName,
-                    campaignDescription,
-                    campaignCoverMedia,
-                    campaignResources,
-                    campaignCategory,
-                    campaignOrganiser,
-                    requiredFunding: requiredFunding * Math.pow(10, 18),
-                    smartContractAddress,
-                    campaignCreatedOn: new Date(Date.now()),
-                    campaignLastEditedOn: new Date(Date.now())
-                });
+        const campaign = new Campaign({
+            _id: mongoose.Types.ObjectId(campaignId),
+            campaignName,
+            campaignDescription,
+            campaignCoverMedia,
+            campaignResources,
+            campaignCategory,
+            campaignOrganiser,
+            requiredFunding: requiredFunding * Math.pow(10, 18),
+            smartContractAddress,
+            campaignCreatedOn: new Date(Date.now()),
+            campaignLastEditedOn: new Date(Date.now())
+        });
 
-                user.createdCampaigns.push({
-                    campaignId: mongoose.Types.ObjectId(campaignId)
-                });
+        user.createdCampaigns.push({
+            campaignId: mongoose.Types.ObjectId(campaignId)
+        });
 
-                User.findByIdAndUpdate(campaignOrganiser, user, { returnDocument: 'after' }, (error, response) => {
-                    if (error) return res.status(400).json({ msg: 'Error Updating User Campaign Details: ' + error });
+        User.findByIdAndUpdate(campaignOrganiser, user, { returnDocument: 'after' }, (error, response) => {
+            if (error) return res.status(400).json({ msg: 'Error Updating User Campaign Details: ' + error });
 
-                    campaign.save().then(
-                        campaignObject => {
-                            console.log('--> New Campaign Created. Document Saved on Database.\n');
-                            return res.status(200).json(campaignObject);
-                        }
-                    ).catch(
-                        error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
-                    );
-                });
-            }).catch(
-                error => res.status(400).json({ msg: "Error Updating User Campaign Details: " + error })
+            campaign.save().then(
+                campaignObject => {
+                    console.log('--> New Campaign Created. Document Saved on Database.\n');
+                    return res.status(200).json(campaignObject);
+                }
+            ).catch(
+                error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
             );
+        });
     }).catch(
         error => res.status(400).json({ msg: "Error while creating new Campaign: " + error })
     );
@@ -332,10 +325,10 @@ router.post('/:id/vote', (req, res) => {
 
 
 // POST('/:id/donate') - Let a Contributor gets added to the Donors List and Interact with Smart Contract to add Donation amount
-router.post('/:id/donate', (req, res) => {
-    const userId = req.body.userId;
-    const donationAmount = req.body.donationAmount * Math.pow(10, 18);
-    // Call to smart contract for donation of amount
+router.post('/:id/donate', cpUpload, (req, res) => {
+    const { userId, amount } = req.body;
+    console.log(req.body);
+    const donationAmount = amount * Math.pow(10, 18);
 
     Campaign.findById(req.params.id).then(campaign => {
         const donor = {
