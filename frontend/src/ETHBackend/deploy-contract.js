@@ -19,21 +19,15 @@ exports.deployContract = async (walletProvider) => {
     console.log('\nStarting Deployment of Contract from account: ', account[0]);
 
     var contractABI = compiledContract.campaignContract.abi;
-    try {
-        var contractObject = new web3.eth.Contract(contractABI)
-            .deploy(
-                {
-                    data: '0x' + compiledContract.campaignContract.evm.bytecode.object,
-                    arguments: [account[1]]
-                }
-            );
+    var contractObject = new web3.eth.Contract(contractABI)
+        .deploy(
+            {
+                data: '0x' + compiledContract.campaignContract.evm.bytecode.object,
+                arguments: [account[1]]
+            }
+        );
 
-        var deployResponse = await contractObject.send({ from: account[0] });
-    } catch (error) {
-        console.log(error);
-        var deployResponse = 'Error... Check Logs';
-        return error;
-    }
+    var deployResponse = await contractObject.send({ from: account[0] });
 
     console.log('--> Contract Deployed at: ', deployResponse._address);
     return deployResponse._address;

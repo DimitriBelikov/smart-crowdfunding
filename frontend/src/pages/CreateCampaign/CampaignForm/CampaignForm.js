@@ -82,7 +82,9 @@ const CampaignForm = ({ campaignOrganiser }) => {
             }
         }).catch(error => {
             setIsError({ value: true, msg: 'Cannot Create Smart Contract... Please Try Again' });
-            alert('Error: ', error);
+            alert('Error: ' + error);
+            setIsLoading(false);
+            // window.location.reload(true);
         })
     }
 

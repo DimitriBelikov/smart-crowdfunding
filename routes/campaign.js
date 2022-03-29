@@ -44,7 +44,7 @@ router.post("/", cpUpload, (req, res) => {
                 fileSize = (size / 1024).toFixed(1) + " KB";
             else
                 fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
-            return { filePath: path.join('campaign documents', campaignId, 'documents', originalname).replace(/\\/g, "/"), fileSize }
+            return { filePath: path.join('campaignDocuments', campaignId, 'documents', originalname).replace(/\\/g, "/"), fileSize }
         });
     }
     if (req.files.campaignCoverMedia != undefined) {
@@ -183,7 +183,7 @@ router.post('/:id/request', rqUpload, (req, res, next) => {
             fileSize = (size / 1024).toFixed(1) + " KB";
         else
             fileSize = ((size / 1024) / 1024).toFixed(1) + " MB";
-        return { filePath: path.join(req.params.id, 'requests', requestNumber, originalname).replace(/\\/g, "/"), fileSize }
+        return { filePath: path.join('campaignDocuments', req.params.id, 'requests', requestNumber, originalname).replace(/\\/g, "/"), fileSize }
     });
     // console.log(req.files);
     // console.log(req.body);

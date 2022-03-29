@@ -60,7 +60,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                     var fileSize = ((file.size / 1024) / 1024).toFixed(1) + " MB";
                 return {
                     fileObject: file,
-                    filePath: path.join(campaignData._id, 'documents', file.name).replace(/\\/g, "/"),
+                    filePath: path.join('campaignDocuments', campaignData._id, 'documents', file.name).replace(/\\/g, "/"),
                     fileSize: fileSize
                 }
             });
