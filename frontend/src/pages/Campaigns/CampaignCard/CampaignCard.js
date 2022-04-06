@@ -18,7 +18,7 @@ const CampaignCard = ({ campaign }) => {
                 <img
                     className="card-img-top"
                     src={`http://localhost:4545/${campaign.campaignCoverMedia}`}
-                    alt="Card image cap"
+                    alt="Campign Cover"
                     onClick={clickOnCard}
                 />
                 <div className="card-body">

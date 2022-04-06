@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
 //Components
 import Pagination from '../../components/Pagination/Pagination';
@@ -16,13 +15,13 @@ const Campaigns = () => {
   // console.log(loading);
 
   const [category, setCategory] = useState("All");
-  const [showPerPage, setShowPerPage] = useState(6);
+  const showPerPage = 6;
   const [pagination, setPagination] = useState({
     start: 0,
     end: showPerPage,
   });
   const [total, setTotal] = useState(0);
-  const [categoryList, setCategoryList] = useState(['All', 'Education', 'Medical', 'Human Rights', 'Disaster Relief', 'Animal Care', 'Environment']);
+  const categoryList = ['All', 'Education', 'Medical', 'Human Rights', 'Disaster Relief', 'Animal Care', 'Environment'];
 
 
   useEffect(() => {

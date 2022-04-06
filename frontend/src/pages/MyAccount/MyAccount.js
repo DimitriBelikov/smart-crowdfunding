@@ -17,9 +17,8 @@ import Navigationbar from '../../components/Navigationbar/Navigationbar';
 const MyAccount = () => {
   const cookie = Cookies.get('jwt');
   const userId = jsonwebtoken.decode(cookie).id;
-  const { loading, data: userData } = useFetch(`http://localhost:4545/api/user/${userId}`)
-
-  const [settingsList, setSettingsList] = useState(['Profile', 'My Campaigns', 'My Donations', 'Notifications']);
+  const { loading, data: userData } = useFetch(`http://localhost:4545/api/user/${userId}`);
+  const settingsList = ['Profile', 'My Campaigns', 'My Donations', 'Notifications'];
   const [selectedTab, setSelectedTab] = useState('Profile');
 
   const changeTab = (tabName) => {

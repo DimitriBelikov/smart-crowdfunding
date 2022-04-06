@@ -1,6 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { download } from 'downloadjs';
 
 const CampaignDocumentList = ({ documents }) => {
     return <>
@@ -28,7 +26,7 @@ const CampaignDocumentList = ({ documents }) => {
             {documents.map((document, index) => (
                 <div className="row border border-secondary m-3 p-3" key={index}>
                     <div className="col-md-1">
-                        <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download><span className='font-weight-bold'>&#8595;</span></a>
+                        <a href={`http://localhost:4545/${document.filePath}`} target='_blank' rel="noreferrer" download><span className='font-weight-bold'>&#8595;</span></a>
                     </div>
                     <div className="col-md-9">
                         <h6>{document.filePath.split('/').pop()}</h6>

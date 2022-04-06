@@ -1,11 +1,6 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import jsonwebtoken from 'jsonwebtoken';
-import { useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
 
 const Profile = ({ userData }) => {
-  const navigate = useNavigate();
   const [disabled, setDisabled] = useState('true');
   const [isError, setIsError] = useState({ value: false, msg: '' });
 
@@ -109,7 +104,7 @@ const Profile = ({ userData }) => {
       {isError.value && <h6 className='text-danger text-center'>{isError.msg}</h6>}
       <div className="row ml-0 mr-0">
         <div className="col-sm-2">
-          <button type="button" onClick={disabled == false ? handleSubmit : editFields} className="btn btn-primary">{disabled == false ? "Save" : "Edit"}</button>
+          <button type="button" onClick={disabled === false ? handleSubmit : editFields} className="btn btn-primary">{disabled === false ? "Save" : "Edit"}</button>
         </div>
         <div className="col-sm-2">
           {disabled ? null : <button type="button" onClick={onCancel} className="btn btn-primary">Cancel</button>}

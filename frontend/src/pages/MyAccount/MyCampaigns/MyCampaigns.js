@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useMultipleFetch } from '../../../controllers/useMultipleFetch';
 import MyCampaignCard from './MyCampaignCard';
 

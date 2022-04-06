@@ -40,8 +40,8 @@ const HistoryRequestTile = ({ request }) => {
                         {request.requestResources.map((document, index) => (
                             <div className="row border border-secondary m-1 p-1" key={index}>
                                 <div className="col-md-1">
-                                    <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
-                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                    <a href={`http://localhost:4545/${document.filePath}`} target='_blank' rel="noreferrer" download>
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
                                     </a>
                                 </div>
                                 <div className="col-md-8">

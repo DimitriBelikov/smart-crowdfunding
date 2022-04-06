@@ -5,7 +5,7 @@ const SettingsList = ({ itemsList, currentActive, clickFunction }) => {
     return (
         <nav className="nav flex-column">
             {itemsList.map((item, index) => (
-                <a key={index} className={`nav-link ${currentActive === item ? "active" : null}`} aria-current="page" onClick={() => clickFunction(item)}>{item}</a>
+                <button key={index} className={`btn btn-link btn-lg ${currentActive === item ? "active" : null}`} aria-current="page" onClick={() => clickFunction(item)}>{item}</button>
             ))}
         </nav>
     );

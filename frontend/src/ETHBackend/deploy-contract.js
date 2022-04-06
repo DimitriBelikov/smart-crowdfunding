@@ -9,6 +9,16 @@ exports.provider = () => {
         'HTTP://127.0.0.1:7545', 0, 2);
 }
 
+exports.web3Provider = async () => {
+    if (window.ethereum) {
+        await window.ethereum.request({method: 'eth_requestAccounts'});
+        window.web3 = new Web3(window.ethereum);
+        console.log(window.web3.eth.getAccounts());
+        return true;
+    }
+    return false;
+}
+
 // console.log(provider); --> Output: E:\Development\Web-Dev\smart-crowdfunding\ETHBackend\Sample-Tests\hdwallet-provider.txt
 // account[0] -> Us i.e. contractOwner
 // account[1] -> Campaign Organizer

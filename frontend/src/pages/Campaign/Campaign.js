@@ -18,7 +18,7 @@ const Campaign = () => {
   const { id } = useParams();
   const { loading, data: campaignData } = useFetch(`http://localhost:4545/api/campaign/${id}`)
 
-  const [descriptionList, setDescriptionList] = useState(['Campaign', 'Updates', 'Request History', 'Documents']);
+  const descriptionList = ['Campaign', 'Updates', 'Request History', 'Documents'];
   const [selectedTab, setSelectedTab] = useState('Campaign');
   const changeTab = (tabName) => {
     setSelectedTab(tabName);

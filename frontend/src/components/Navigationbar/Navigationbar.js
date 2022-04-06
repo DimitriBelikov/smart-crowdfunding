@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import Cookies from 'js-cookie';
-import jsonwebtoken from 'jsonwebtoken';
 
 //CSS
 import './Navigationbar.css';

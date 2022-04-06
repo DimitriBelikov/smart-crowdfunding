@@ -152,6 +152,6 @@ dist
 !.vscode/*.code-snippets
 
 # Test Scripts
-ETHBackend/Sample-Tests/
+/frontend/src/ETHBackend/Sample-Tests/
 package-lock.json
 # End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode

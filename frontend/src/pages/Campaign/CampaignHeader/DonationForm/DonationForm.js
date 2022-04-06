@@ -40,7 +40,6 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
                 body: formData
             };
             const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/donate`, requestOptions);
-            const result = await response.json();
             if (response.status !== 200) {
                 setIsError({ value: true, msg: 'Error: Cannot Donate to the Campaign... Try Again Later' });
                 alert('Error: while Donating Amount.');

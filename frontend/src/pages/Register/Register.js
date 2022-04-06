@@ -1,6 +1,7 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {web3Provider} from '../../ETHBackend/deploy-contract';
 
 //Components
 import Navigationbar from '../../components/Navigationbar/Navigationbar';
@@ -17,6 +18,7 @@ const Register = () => {
     currentCity: '',
     state: ''
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });

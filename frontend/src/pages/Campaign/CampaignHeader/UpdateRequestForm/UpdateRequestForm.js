@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap';
 import path from 'path';
 
@@ -48,10 +48,11 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
             }
             setIsError({ value: false, msg: '' });
             var updatedRequestResources = filesArray.map(file => {
+                var fileSize = null;
                 if (file.size / 1024 < 1000)
-                    var fileSize = (file.size / 1024).toFixed(1) + " KB";
+                    fileSize = (file.size / 1024).toFixed(1) + " KB";
                 else
-                    var fileSize = ((file.size / 1024) / 1024).toFixed(1) + " MB";
+                    fileSize = ((file.size / 1024) / 1024).toFixed(1) + " MB";
                 return {
                     fileObject: file,
                     filePath: path.join('campaignDocuments', campaignId, 'request', requestData.requestNumber.toString(), file.name).replace(/\\/g, "/"),
@@ -77,7 +78,7 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
         formData.append('requestDescription', existingRequest.requestDescription);
         formData.append('deadline', existingRequest.deadline);
 
-        for (var i = 0; i < newRequestResources.length; i++)
+        for (let i = 0; i < newRequestResources.length; i++)
             formData.append('requestResources', newRequestResources[i].fileObject);
 
         const existingRequestResourcesPath = existingRequest.requestResources.map(({ filePath, fileSize }) => {
@@ -87,7 +88,7 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
             return { filePath, fileSize }
         }));
 
-        for (var i = 0; i < newRequestResourcesPath.length; i++) {
+        for (let i = 0; i < newRequestResourcesPath.length; i++) {
             for (let subKey in newRequestResourcesPath[i]) {
                 formData.append(`${subKey}`, newRequestResourcesPath[i][subKey]);
                 console.log(`${subKey}`, newRequestResourcesPath[i][subKey])
@@ -100,7 +101,6 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
         };
 
         const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/request/current`, requestOptions);
-        const result = await response.json();
 
         if (response.status !== 200) {
             setExistingRequest({
@@ -149,8 +149,8 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
                             {existingRequest.requestResources.map((document, index) => (
                                 <div className="row border border-success m-1 p-1" key={index} >
                                     <div className="col-md-1">
-                                        <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
-                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                        <a href={`http://localhost:4545/${document.filePath}`} target='_blank' rel="noreferrer" download>
+                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
                                         </a>
                                     </div>
                                     <div className="col-md-8">
@@ -164,7 +164,7 @@ const UpdateRequestForm = ({ show, handleClose, requestData, campaignId }) => {
                             {newRequestResources.map((document, index) => (
                                 <div className="row border border-primary m-1 p-1" key={index} >
                                     <div className="col-md-1">
-                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
                                     </div>
                                     <div className="col-md-8">
                                         <span>{document.filePath.split('/').pop()} </span>

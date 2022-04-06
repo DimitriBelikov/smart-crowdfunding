@@ -47,7 +47,6 @@ const CurrentRequestTile = ({ request, votersList, donors, campaignId }) => {
         }
 
         const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/vote`, requestOptions);
-        const result = await response.json();
         if (response.status !== 200) {
             setIsError({ value: true, msg: "Error: Couldn't append your Vote... Please Try Again" });
             alert('Error: Cannot Append Vote at the Moment.');

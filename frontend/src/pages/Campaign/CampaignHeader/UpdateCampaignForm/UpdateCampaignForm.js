@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap';
 import path from 'path';
 
@@ -54,10 +54,11 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
             }
             setIsError({ value: false, msg: '' });
             var updatedCampaignResources = filesArray.map(file => {
+                var fileSize = null;
                 if (file.size / 1024 < 1000)
-                    var fileSize = (file.size / 1024).toFixed(1) + " KB";
+                    fileSize = (file.size / 1024).toFixed(1) + " KB";
                 else
-                    var fileSize = ((file.size / 1024) / 1024).toFixed(1) + " MB";
+                    fileSize = ((file.size / 1024) / 1024).toFixed(1) + " MB";
                 return {
                     fileObject: file,
                     filePath: path.join('campaignDocuments', campaignData._id, 'documents', file.name).replace(/\\/g, "/"),
@@ -91,7 +92,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
         if (newCampaign.campaignCoverMedia !== null) formData.append('campaignCoverMedia', newCampaign.campaignCoverMedia);
         else if (existingCampaign.campaignCoverMedia !== null) formData.append('campaignCoverMediaPath', existingCampaign.campaignCoverMedia);
 
-        for (var i = 0; i < newCampaign.campaignResources.length; i++)
+        for (let i = 0; i < newCampaign.campaignResources.length; i++)
             formData.append('campaignResources', newCampaign.campaignResources[i].fileObject);
 
         const existingCampaignResourcesPath = existingCampaign.campaignResources.map(({ filePath, fileSize }) => {
@@ -101,7 +102,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
             return { filePath, fileSize }
         }));
 
-        for (var i = 0; i < newCampaignResourcesPath.length; i++) {
+        for (let i = 0; i < newCampaignResourcesPath.length; i++) {
             for (let subKey in newCampaignResourcesPath[i]) {
                 formData.append(`${subKey}`, newCampaignResourcesPath[i][subKey]);
                 console.log(`${subKey}`, newCampaignResourcesPath[i][subKey])
@@ -113,7 +114,6 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
             body: formData
         };
         const response = await fetch(`http://localhost:4545/api/campaign/${campaignData._id}`, requestOptions);
-        const result = await response.json();
         if (response.status !== 200) {
             setExistingCampaign({
                 campaignName: campaignData.campaignName,
@@ -168,8 +168,8 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                             {existingCampaign.campaignCoverMedia !== null
                                 && <div className="row border border-success m-1 p-1" >
                                     <div className="col-md-1">
-                                        <a href={`http://localhost:4545/${existingCampaign.campaignCoverMedia}`} target='_blank' download>
-                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                        <a href={`http://localhost:4545/${existingCampaign.campaignCoverMedia}`} target='_blank' rel="noreferrer" download>
+                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
                                         </a >
                                     </div >
                                     <div className="col-md-8">
@@ -183,7 +183,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                             {newCampaign.campaignCoverMedia !== null
                                 && <div className="row border border-success m-1 p-1" >
                                     <div className="col-md-1">
-                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File ison"/>
                                     </div>
                                     <div className="col-md-8">
                                         <span>{newCampaign.campaignCoverMedia.name} </span>
@@ -204,8 +204,8 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                             {existingCampaign.campaignResources.map((document, index) => (
                                 <div className="row border border-success m-1 p-1" key={index} >
                                     <div className="col-md-1">
-                                        <a href={`http://localhost:4545/${document.filePath}`} target='_blank' download>
-                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                        <a href={`http://localhost:4545/${document.filePath}`} target='_blank' rel="noreferrer" download>
+                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
                                         </a>
                                     </div>
                                     <div className="col-md-8">
@@ -219,7 +219,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                             {newCampaign.campaignResources.map((document, index) => (
                                 <div className="row border border-primary m-1 p-1" key={index} >
                                     <div className="col-md-1">
-                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" />
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
                                     </div>
                                     <div className="col-md-8">
                                         <span>{document.filePath.split('/').pop()} </span>
