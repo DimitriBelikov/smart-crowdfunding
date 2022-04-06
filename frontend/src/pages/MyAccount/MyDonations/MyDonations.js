@@ -1,8 +1,8 @@
 import { useMultipleFetch } from '../../../controllers/useMultipleFetch';
 import Card from '../Card';
 
-const MyCampaigns = ({ createdCampaigns }) => {
-    const { loading, data: campaigns } = useMultipleFetch(createdCampaigns.map(({ campaignId }) => `http://localhost:4545/api/campaign/${campaignId}`));
+const MyDonations = ({ donatedCampaigns }) => {
+    const { loading, data: campaigns } = useMultipleFetch(donatedCampaigns.map(({ campaignId }) => `http://localhost:4545/api/campaign/${campaignId}`));
 
     if (loading) {
         return <h1>Loading...</h1>
@@ -20,4 +20,4 @@ const MyCampaigns = ({ createdCampaigns }) => {
     </>
 }
 
-export default MyCampaigns;
+export default MyDonations;

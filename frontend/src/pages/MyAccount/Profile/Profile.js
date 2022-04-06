@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
 const Profile = ({ userData }) => {
-  const [disabled, setDisabled] = useState('true');
+  const [disabled, setDisabled] = useState(true);
   const [isError, setIsError] = useState({ value: false, msg: '' });
 
   const [user, setUser] = useState({

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import MyCampaigns from './MyCampaigns/MyCampaigns';
+import MyDonations from './MyDonations/MyDonations';
 import Profile from './Profile/Profile';
 import SettingsList from './SettingsList/SettingsList';
 import Cookies from 'js-cookie';
@@ -43,8 +44,8 @@ const MyAccount = () => {
         <div className='right-panel col-md-10 pt-5'>
           {selectedTab === 'Profile' && <Profile userData={userData} />}
           {selectedTab === 'My Campaigns' && <MyCampaigns createdCampaigns={userData.createdCampaigns} />}
-          {selectedTab === 'My Donations' && <Profile />}
-          {selectedTab === 'Notifications' && <MyCampaigns />}
+          {selectedTab === 'My Donations' && <MyDonations donatedCampaigns={userData.donatedCampaigns}/>}
+          {selectedTab === 'Notifications' && <h3>You will receive the Notifications here</h3> }
         </div>
       </div>
     </div>
