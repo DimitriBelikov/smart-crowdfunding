@@ -8,18 +8,21 @@ import RequestForm from './RequestForm/RequestForm';
 import UpdateCampaignForm from './UpdateCampaignForm/UpdateCampaignForm';
 import UpdateRequestForm from './UpdateRequestForm/UpdateRequestForm';
 import DonationForm from './DonationForm/DonationForm';
+import { ETHConnect, isMetamaskInstalled } from '../../../components/ETHConnect/ETHConnect';
 
 // Custom-CSS
 import './CampaignHeader.css';
 
 const CampaignHeader = ({ campaignHeaderData }) => {
     const navigate = useNavigate();
+    const {ethereum} = window;
     const [user, setUser] = useState({});
     const [isUserCampaignOrganiser, setIsUserCampaignOrganiser] = useState(false);
     const [showRequestForm, setShowRequestForm] = useState(false);
     const [showUpdateCampaignForm, setShowUpdateCampaignForm] = useState(false);
     const [showUpdateRequestForm, setShowUpdateRequestForm] = useState(false);
     const [showDonationForm, setShowDonationForm] = useState(false);
+    const [showMetamaskConnect, setShowMetamaskConnect] = useState(false);
 
 
 
@@ -28,6 +31,18 @@ const CampaignHeader = ({ campaignHeaderData }) => {
         const user = jsonwebtoken.decode(cookie);
         setUser(user);
         setIsUserCampaignOrganiser(user !== null && user.id === campaignHeaderData.campaignOrganiser ? true : false);
+
+        if(ethereum !== undefined){
+            ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length == 0) window.location.reload();
+                ethereum.account = accounts[0];
+                console.log('Account Changed = ',accounts);
+            });
+            ethereum.on('chainChanged', (chainId) => {
+                ethereum.chainId = chainId;
+                window.location.reload();
+            });
+        }
     }, [])
 
     const handleShowRequestForm = () => {
@@ -53,9 +68,27 @@ const CampaignHeader = ({ campaignHeaderData }) => {
     const handleCloseUpdateRequestForm = () => {
         setShowUpdateRequestForm(false);
     }
+    
+    const handleShowMetamaskConnect = () => {
+        setShowMetamaskConnect(true);
+    }
+    
+    const handleCloseMetamaskConnect = () => {
+        setShowMetamaskConnect(false);
+        setShowDonationForm(true);
+    }
 
-    const handleShowDonationForm = () => {
-        (user === null) ? navigate('/login') : setShowDonationForm(true);
+    const handleShowDonationForm = async() => {
+        if (user === null) navigate('/login')
+        else{
+            // let isAccountConnected = await isAccountConnected();
+            console.log(ethereum.account !== undefined);
+            if(!isMetamaskInstalled() || !window.ethereum.isConnected() || !(ethereum.account !== undefined)) handleShowMetamaskConnect();
+            else {
+                console.log(ethereum.account);
+                setShowDonationForm(true);
+            }
+        }
     }
 
     const handleCloseDonationForm = () => {
@@ -144,6 +177,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
         <UpdateCampaignForm show={showUpdateCampaignForm} handleClose={handleCloseUpdateCampaignForm} campaignData={campaignHeaderData} />
         <UpdateRequestForm show={showUpdateRequestForm} handleClose={handleCloseUpdateRequestForm} requestData={campaignHeaderData.campaignRequest} campaignId={campaignHeaderData._id} />
         <DonationForm show={showDonationForm} handleClose={handleCloseDonationForm} campaignId={campaignHeaderData._id} campaignName={campaignHeaderData.campaignName} smartContractAddress={campaignHeaderData.smartContractAddress} />
+        <ETHConnect show={showMetamaskConnect} handleClose={handleCloseMetamaskConnect}/>                            
     </>
 };
 

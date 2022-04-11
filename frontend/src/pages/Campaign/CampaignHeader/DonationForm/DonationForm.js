@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import jsonwebtoken from 'jsonwebtoken';
 
 const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContractAddress }) => {
+    const {ethereum} = window;
     const [donationAmount, setDonationAmount] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: false, msg: '' });
@@ -20,12 +21,11 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        //const walletProvider = provider();
+        var web3 = new Web3(ethereum); // walletProvider in case you use Ganache
+        var account = ethereum.account //await web3.eth.getAccounts(); in case you are using Ganache
 
-        const walletProvider = provider();
-        var web3 = new Web3(walletProvider);
-        var account = await web3.eth.getAccounts();
-
-        web3.eth.sendTransaction({ to: smartContractAddress, value: donationAmount * Math.pow(10, 18), from: account[0] }).then(async (res) => {
+        web3.eth.sendTransaction({ to: smartContractAddress, value: donationAmount * Math.pow(10, 18), from: account }).then(async (res) => {
             console.log(res);
 
             const formData = new FormData();

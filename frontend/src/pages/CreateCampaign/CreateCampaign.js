@@ -6,7 +6,7 @@ import jsonwebtoken from 'jsonwebtoken';
 import CampaignForm from "./CampaignForm/CampaignForm";
 import Navigationbar from '../../components/Navigationbar/Navigationbar';
 import { useNavigate } from 'react-router-dom';
-import { ETHConnect, isMetamaskInstalled, isAccountConnected } from '../../components/ETHConnect/ETHConnect';
+import { ETHConnect, isMetamaskInstalled} from '../../components/ETHConnect/ETHConnect';
 
 const CreateCampaign = () => {
     const navigate = useNavigate();
@@ -22,18 +22,22 @@ const CreateCampaign = () => {
     }
 
     useEffect(async() => {
+        console.log(ethereum.account);
+        
         const cookie = Cookies.get('jwt');
         if (cookie === undefined) navigate('/login');
         if (cookie !== undefined) setUserId(jsonwebtoken.decode(cookie).id);
 
-        if(!isMetamaskInstalled() || !window.ethereum.isConnected() || !await isAccountConnected()) handleShowMetamaskConnect();
+        if(!isMetamaskInstalled() || !window.ethereum.isConnected() || !(ethereum.account !== undefined)) handleShowMetamaskConnect();
         
         if(ethereum !== undefined){
             ethereum.on('accountsChanged', (accounts) => {
                 if (accounts.length == 0) window.location.reload();
+                ethereum.account = accounts[0];
                 console.log('Account Changed = ',accounts);
             });
             ethereum.on('chainChanged', (chainId) => {
+                ethereum.chainId = chainId;
                 window.location.reload();
             });
         }

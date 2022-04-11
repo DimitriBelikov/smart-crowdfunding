@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { ObjectID } from 'bson';
 import { useNavigate } from 'react-router-dom';
 import { provider, deployContract } from '../../../ETHBackend/deploy-contract';
+import {isMetamaskInstalled} from '../../../components/ETHConnect/ETHConnect';
 
 const CampaignForm = ({ campaignOrganiser }) => {
     const navigate = useNavigate();
-
+    const {ethereum} = window;
     const [isLoading, setIsLoading] = useState(false);
-    const [isError, setIsError] = useState({ value: false, msg: '' });
+    const [isError, setIsError] = useState({ value: false, msg: ''});
     const [campaign, setCampaign] = useState({
         campaignName: '',
         campaignDescription: '',
@@ -22,18 +23,18 @@ const CampaignForm = ({ campaignOrganiser }) => {
         if (name === 'campaignResources' || name === 'campaignCoverMedia') {
             const filesArray = Array.from(e.target.files);
             if (filesArray.length > 10) {
-                setIsError({ value: true, msg: 'You can upload maximum 10 files' });
+                setIsError({ value: true, msg: 'You can upload maximum 10 files'});
                 return;
             } else {
                 for (var i = 0; i < filesArray.length; i++) {
                     if (filesArray[i].size > 10500000) {
-                        setIsError({ value: true, msg: 'One of your files have exceded the limit of 10MB' });
+                        setIsError({ value: true, msg: 'One of your files have exceded the limit of 10MB'});
                         return;
                     }
                 }
 
             }
-            setIsError({ value: false, msg: '' });
+            setIsError({ value: false, msg: ''});
             setCampaign({ ...campaign, [name]: Array.from(e.target.files) });
         }
         else {
@@ -41,51 +42,72 @@ const CampaignForm = ({ campaignOrganiser }) => {
         }
     }
 
+    const isCampaignDataValid = () => {
+        if (campaign.campaignName === '' || campaign.campaignDescription === '' || campaign.requiredFunding === 0 || campaign.requiredFunding === ''){
+            setIsError({ value: true, msg: 'Please Fill All the Required Fields'});
+            return false;
+        }
+        return true;
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        const walletProvider = provider();
-        deployContract(walletProvider).then(async (smartContractAddress) => {
-            const campaignId = new ObjectID();
-            const formData = new FormData();
+        if(isCampaignDataValid()) {
+            setIsLoading(true);
+            if (isMetamaskInstalled()){
+                //const walletProvider = provider();
+                deployContract(ethereum.account).then(async (smartContractAddress) => {
+                    const campaignId = new ObjectID();
+                    const formData = new FormData();
 
-            formData.append('campaignId', campaignId);
-            if (campaign.campaignCoverMedia.length === 1) formData.append('campaignCoverMedia', campaign.campaignCoverMedia[0]);
-            for (var i = 0; i < campaign.campaignResources.length; i++)
-                formData.append('campaignResources', campaign.campaignResources[i]);
-            formData.append('campaignOrganiser', campaignOrganiser);
-            formData.append('campaignName', campaign.campaignName);
-            formData.append('campaignDescription', campaign.campaignDescription);
-            formData.append('campaignCategory', campaign.campaignCategory);
-            formData.append('requiredFunding', campaign.requiredFunding);
-            formData.append('smartContractAddress', smartContractAddress);
+                    formData.append('campaignId', campaignId);
+                    if (campaign.campaignCoverMedia.length === 1) formData.append('campaignCoverMedia', campaign.campaignCoverMedia[0]);
+                    for (var i = 0; i < campaign.campaignResources.length; i++)
+                        formData.append('campaignResources', campaign.campaignResources[i]);
+                    formData.append('campaignOrganiser', campaignOrganiser);
+                    formData.append('campaignName', campaign.campaignName);
+                    formData.append('campaignDescription', campaign.campaignDescription);
+                    formData.append('campaignCategory', campaign.campaignCategory);
+                    formData.append('requiredFunding', campaign.requiredFunding);
+                    formData.append('smartContractAddress', smartContractAddress);
 
-            const requestOptions = {
-                method: 'POST',
-                body: formData
-            };
+                    const requestOptions = {
+                        method: 'POST',
+                        body: formData
+                    };
 
-            const response = await fetch('http://localhost:4545/api/campaign', requestOptions);
-            const result = await response.json();
-            if (response.status !== 200) {
-                setCampaign({
-                    campaignName: '',
-                    campaignDescription: '',
-                    campaignCategory: 'Education',
-                    requiredFunding: 0,
-                    campaignCoverMedia: [],
-                    campaignResources: []
+                    const response = await fetch('http://localhost:4545/api/campaign', requestOptions);
+                    const result = await response.json();
+                    if (response.status !== 200) {
+                        setCampaign({
+                            campaignName: '',
+                            campaignDescription: '',
+                            campaignCategory: 'Education',
+                            requiredFunding: 0,
+                            campaignCoverMedia: [],
+                            campaignResources: []
+                        })
+                        setIsLoading(false);
+                    } else {
+                        navigate(`/campaign/${result._id}`);
+                    }
+                }).catch(error => {
+                    if (error.code === 4001){
+                        setIsError({ value: true, msg: 'User Denied Contract Creation. Please Approve the Transaction to create Contract'});
+                    } else {
+                        setIsError({ value: true, msg: 'Cannot Create Smart Contract... Please Try Again'});
+                    }
+                    
+                    // alert('Error: ' + error);
+                    setIsLoading(false);
+                    console.log(error);
+                    // window.location.reload(true);
                 })
-                setIsLoading(false);
-            } else {
-                navigate(`/campaign/${result._id}`);
             }
-        }).catch(error => {
-            setIsError({ value: true, msg: 'Cannot Create Smart Contract... Please Try Again' });
-            alert('Error: ' + error);
-            setIsLoading(false);
-            // window.location.reload(true);
-        })
+            else{
+                setIsError({ value: true, msg: 'Seems Like your Metamask is not Installed... Please install Metamask first'});
+            }
+        }
     }
 
     if (isLoading) {
@@ -129,11 +151,7 @@ const CampaignForm = ({ campaignOrganiser }) => {
                     {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
                 </div>
                 <div className="text-center">
-                    {isError.value ?
-                        <button className="btn btn-secondary align-center" type="submit" onClick={handleSubmit} disabled>Create Campaign</button> :
-                        <button className="btn btn-primary align-center" type="submit" onClick={handleSubmit} >Create Campaign</button>
-                    }
-
+                        <button className="btn btn-primary align-center" type="submit" onClick={handleSubmit} >Create Campaign</button>:
                 </div>
             </form>
         </div>

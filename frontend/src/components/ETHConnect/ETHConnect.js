@@ -15,13 +15,21 @@ function ETHConnect({show, handleClose}) {
     const connectToMetamask = async ()=> {
         if(!isMetamaskInstalled()) window.open("https://metamask.io/download/", "_blank")
         else {
-            await ethereum.request({ method: 'eth_requestAccounts' }).then(result => {
+            await ethereum.request({ method: 'eth_requestAccounts' }).then(async (result) => {
                 setConnectMetamask({value: 'Wallet Connected Successfully', status: 'connected'});
-                setIsError({
-                    value: false,
-                    msg: ''
+                setIsError({value: false,msg: ''});
+                ethereum.account = result[0];
+                await ethereum.request({ method: 'eth_chainId' }).then(chainId => {
+                    ethereum.chainId = chainId;
+                    console.log('ChainId = ', ethereum.chainId);
+                }).catch(error => {
+                    setIsError({
+                        value: true,
+                        msg: error.message + '. Error with Chain... Please Try Again'
+                    })
+                    console.log(error);
                 })
-                console.log(result);
+                console.log('Current Account = ', ethereum.account);
             }).catch(error => {
                 setIsError({
                     value: true,
@@ -69,13 +77,14 @@ const isMetamaskInstalled = () => {
     return Boolean(ethereum && ethereum.isMetaMask);
 }
 
-const isAccountConnected = async() => {
-    const {ethereum} = window;
-    await ethereum.request({ method: 'eth_accounts' }).then(result => {
-        if (result.length == 0) return false;
-    }).catch(error => {
-        return false;
-    });
-}
+// const isAccountConnected = () => {
+//     const {ethereum} = window;
+//     ethereum.request({ method: 'eth_accounts' }).then(result => {
+//         if (result.length == 0) return false;
+//         return true
+//     }).catch(error => {
+//         return false;
+//     });
+// }
 
-export {ETHConnect, isMetamaskInstalled, isAccountConnected};
+export {ETHConnect, isMetamaskInstalled};
