@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 //Pages
@@ -12,7 +12,6 @@ import Error from './pages/Error/Error';
 import CreateCampaign from './pages/CreateCampaign/CreateCampaign';
 
 //Components
-import Navigationbar from './components/Navigationbar/Navigationbar';
 import Footer from './components/Footer/Footer';
 
 //CSS
@@ -22,7 +21,6 @@ import MyAccount from './pages/MyAccount/MyAccount';
 function App() {
   return (
     <Router>
-
       <Routes>
         <Route exact path="" element={<Home />} />
         <Route path="about" element={<About />} />

@@ -299,7 +299,7 @@ router.post('/:id/request/current/:status', (req, res) => {
         //Notify user and campaign organoser
     } else if (req.params.status == "Cancelled") {
         //Notify smart contract to transfer respective donated funds to donors
-        //Notify user and campaign organoser
+        //Notify user and campaign organiser
     }
     processRequest(req, res);
 });
@@ -369,5 +369,18 @@ router.post('/:id/donate', cpUpload, (req, res) => {
         error => res.status(400).json({ msg: "Error Fetching Campaign Details: " + error })
     );
 });
+
+// Get campaigns with currently running request and with deadline within next 36hrs
+// GET('/request/end') - Let a Contributor gets added to the Donors List and Interact with Smart Contract to add Donation amount
+router.get('/request/end', (req, res)=> {
+    Campaign.find({"campaignRequest.deadline": {$lt:new Date(Date.now()+1.5*24*60*60*1000)}}).then(
+        campaigns => {
+            res.status(200).json(campaigns)
+        }
+    ).catch(
+        error => res.status(400).json({ msg: 'Error Fetching Campaigns: ' + error })
+    );
+})
+
 
 module.exports = router;

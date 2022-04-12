@@ -1,5 +1,5 @@
 import { useMultipleFetch } from '../../../controllers/useMultipleFetch';
-import Card from '../Card';
+import Card from './Card';
 
 const MyDonations = ({ donatedCampaigns }) => {
     const { loading, data: campaigns } = useMultipleFetch(donatedCampaigns.map(({ campaignId }) => `http://localhost:4545/api/campaign/${campaignId}`));
@@ -9,12 +9,14 @@ const MyDonations = ({ donatedCampaigns }) => {
     }
     return <>
         <div className="col">
-            {campaigns.map((item, key) => (
+            {donatedCampaigns.map((x) => (
+            campaigns.map((item, key) => (
                 <div className="row mb-4" key={key}>
-                    <Card campaign={item} />
+                    <Card campaign={item} donationAmount={x.donationAmount} donatedOn={x.donatedOn}/>
                 </div>
-
-            ))}
+            ))))
+            
+            }
         </div>
 
     </>

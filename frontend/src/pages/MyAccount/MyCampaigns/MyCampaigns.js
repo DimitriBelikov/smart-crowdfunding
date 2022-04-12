@@ -1,5 +1,5 @@
 import { useMultipleFetch } from '../../../controllers/useMultipleFetch';
-import Card from '../Card';
+import Card from './Card';
 
 const MyCampaigns = ({ createdCampaigns }) => {
     const { loading, data: campaigns } = useMultipleFetch(createdCampaigns.map(({ campaignId }) => `http://localhost:4545/api/campaign/${campaignId}`));
