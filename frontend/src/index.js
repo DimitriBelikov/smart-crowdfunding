@@ -1,4 +1,4 @@
-import React from 'react';
+    import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
@@ -23,45 +23,57 @@ const createPriorityRequests = async () => {
     priorityRequests = await response.json();
     console.log('Inside create priority request: ');
     console.log(priorityRequests);
+    // checkRequestAndExecute();
 }
 
 const checkRequestAndExecute = () => {
-    priorityRequests.forEach((request) => {
-        if (new Date(request.campaignRequest.deadline) - new Date(Date.now()) <= 0) {
-            if (request.currentVote.yes.length !== 0 && request.currentVote.no.length !== 0){
-                var notVoted = request.donors.length - (request.currentVote.yes.length + request.currentVote.no.length);
-                var upVotePercentage = (notVoted + request.currentVote.yes.length)/(request.donors.length);
-                if (upVotePercentage > 66){
-                    var web3 = new Web3(ethereum);
-                    var contractABI = compiledContract.campaignContract.abi;
-                    var contractObject = new web3.eth.Contract(contractABI, request.smartContractAddress);
-                    // console.log(contractObject);
-                    contractObject.methods._sendRequestedMoney(String(request.campaignRequest.requestAmount))
-                    .send({from: process.env.REACT_APP_METAMASK_ACCOUNT1}, (error, response) => {
-                        if (error) throw error;
-                        // Interact to API
-                        console.log('Amount Sent =>\nTransaction ID = ', response);
-                    }).catch(error => console.log(error));
-                }
-                //Call API saying Funds Denied
-            }
-            else console.log('Divison By Zero: Campaign Voting Data Error');
-            console.log(request.campaignName + " deadline has arrived at " + new Date(Date.now()));
+    priorityRequests.forEach(async (request, index, object) => {
+        const now = new Date(); 
+        const DBDate = new Date(request.campaignRequest.deadline);
+        console.log("Current Time" + new Date(DBDate.getTime() + DBDate.getTimezoneOffset() * 60000));
+        console.log("Deadline" + new Date(now.getTime() + now.getTimezoneOffset() * 60000));
+        console.log(new Date(DBDate.getTime() + DBDate.getTimezoneOffset() * 60000) - new Date(now.getTime() + now.getTimezoneOffset() * 60000))
+        if (new Date(DBDate.getTime() + DBDate.getTimezoneOffset() * 60000) - new Date(now.getTime() + now.getTimezoneOffset() * 60000) <= 0) {
+            console.log('Inside If');
+            var notVoted = request.donors.length - (request.currentVote.yes.length + request.currentVote.no.length);
+            var upVotePercentage = ((notVoted + request.currentVote.yes.length)/(request.donors.length))*100;
+            if (upVotePercentage >= 66){
+                    // var web3 = new Web3(ethereum);
+                    // var contractABI = compiledContract.campaignContract.abi;
+                    // var contractObject = new web3.eth.Contract(contractABI, request.smartContractAddress);
+                    // // console.log(contractObject);
+                    // contractObject.methods._sendRequestedMoney(String(request.campaignRequest.requestAmount))
+                    // .send({from: process.env.REACT_APP_METAMASK_ACCOUNT1}, (error, response) => {
+                    //     if (error) throw error;
+                    //     // Interact to API
+                    //     console.log('Amount Sent =>\nTransaction ID = ', response);
+                    // }).catch(error => console.log(error));
+                var requestStatus = 'FundsDisbursed';
+            } else var requestStatus = 'FundsDenied';
+            // const formData = new FormData();
+            // formData.append('upVotePercentage', upVotePercentage);
+            // const requestOptions = {
+            //     method: 'POST',
+            //     body: formData
+            // };
+            // const response = await fetch(`http://localhost:4545/api/campaign/${request._id}/request/current/${requestStatus}`, requestOptions);
+            // const result = await response.json();
+            // console.log(result);
+            // if (response.status != 200) console.log(response);
+            // else console.log(`${requestStatus} for Campaign with name: `, request.campaignName);
+            object.splice(index, 1);
+            console.log(`${requestStatus} for Campaign with name: `, request.campaignName);
+            console.log(priorityRequests);
         }
+        //console.log(request.campaignName + " deadline has arrived at " + new Date(Date.now()));
     });
 }
 
+
 // createPriorityRequests();
 // setInterval(createPriorityRequests, 24*60*60*1000);
-// checkRequestAndExecute();
+// setTimeout(checkRequestAndExecute, 10*1000);
 // setInterval(checkRequestAndExecute, 10*1000);
-    
-//console.log(endingCampaignRequests);
-//Find campaigns with running request whse deadline is 36hrs
-//Loop through all the above campaigns every 2 mins to check their deadline
-//if deadline is passed or matched then 
-//Check if denied/disbursed and acc call ETHBackend
-//Once done, update DB
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

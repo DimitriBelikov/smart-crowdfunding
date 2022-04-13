@@ -8,17 +8,13 @@ const MyDonations = ({ donatedCampaigns }) => {
         return <h1>Loading...</h1>
     }
     return <>
-        <div className="col">
-            {donatedCampaigns.map((x) => (
-            campaigns.map((item, key) => (
+        <div className='col'>
+            {donatedCampaigns.map((dCampaign,key) => (
                 <div className="row mb-4" key={key}>
-                    <Card campaign={item} donationAmount={x.donationAmount} donatedOn={x.donatedOn}/>
+                    <Card campaign={campaigns[key]} donationAmount={dCampaign.donationAmount} donatedOn={dCampaign.donatedOn}/>
                 </div>
-            ))))
-            
-            }
+            ))}
         </div>
-
     </>
 }
 

@@ -263,19 +263,22 @@ router.put('/:id/request/current', rqUpload, (req, res, next) => {
 //Common Function to delete curent request and add it to request voting history
 function processRequest(req, res) {
     Campaign.findById(req.params.id).then(campaign => {
+    console.log(campaign.campaignRequest.requestitle);
+    if (campaign.campaignRequest.requestTitle !== undefined) {
         const request = {
             requestNumber: campaign.campaignRequest.requestNumber,
             requestTitle: campaign.campaignRequest.requestTitle,
             requestDescription: campaign.campaignRequest.requestDescription,
             requestResources: campaign.campaignRequest.requestResources,
             requestAmount: campaign.campaignRequest.requestAmount,
-            upVotePercentage: campaign.campaignRequest.upVotePercentage,
+            upVotePercentage: req.body.upVotePercentage,
             requestStatus: req.params.status,
             requestCreatedOn: campaign.campaignRequest.requestCreatedOn,
             requestLastEditedOn: campaign.campaignRequest.requestLastEditedOn,
             deadline: campaign.campaignRequest.deadline
         }
 
+        campaign.currentVote = { yes: [], no: [] };
         campaign.campaignRequest = { "requestResources": [] }
         campaign.requestVotingHistory.push(request);
 
@@ -283,6 +286,9 @@ function processRequest(req, res) {
             if (error) res.status(400).json({ msg: 'Error Deleting Request: ' + error });
             res.status(200).json(response);
         });
+    } else {
+        res.status(400).json({ msg: "Current Request Doesnt Exists.... Invalid Call" });
+    }
     }).catch(
         error => res.status(400).json({ msg: "Error Fetching Campaign Details: " + error })
     );
@@ -290,18 +296,17 @@ function processRequest(req, res) {
 
 
 // POST('/:id/request/current/:status') - Delete Details of a current Request for a Particular Campaign
-router.post('/:id/request/current/:status', (req, res) => {
+router.post('/:id/request/current/:status', cpUpload, (req, res) => {
+    console.log(req.body);
     if (req.params.status == "FundsDisbursed") {
-        //Notify smart contract to transfer funds to campaign creator
-        //Notify user and campaign organoser
+        //Notify user and campaign organiser
     } else if (req.params.status == "FundsDenied") {
         //Notify Campaign Organiser about denial and reasons
         //Notify user and campaign organoser
     } else if (req.params.status == "Cancelled") {
-        //Notify smart contract to transfer respective donated funds to donors
         //Notify user and campaign organiser
     }
-    processRequest(req, res);
+    // processRequest(req, res);
 });
 
 
