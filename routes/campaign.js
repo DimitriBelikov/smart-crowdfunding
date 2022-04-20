@@ -190,30 +190,31 @@ router.post('/:id/request', rqUpload, (req, res, next) => {
     // return res.status(200).json({msg: "Done"});
 
     Campaign.findById(req.params.id, (error, campaign) => {
-        if (campaign.campaignRequest.requestTitle != null) return res.status(400).json({ msg: "Your campaign's already has an existing active request" });
-    })
-
-    const request = {
-        campaignRequest: {
-            requestNumber,
-            requestTitle,
-            requestDescription,
-            requestResources,
-            requestAmount: requestAmount * Math.pow(10, 18),
-            requestCreatedOn: new Date(Date.now()),
-            requestLastEditedOn: new Date(Date.now()),
-            deadline: new Date(deadline)
+        if (campaign.campaignRequest.requestTitle != undefined) return res.status(400).json({ msg: "Your campaign's already has an existing active request" });
+        else{
+            const request = {
+                campaignRequest: {
+                    requestNumber,
+                    requestTitle,
+                    requestDescription,
+                    requestResources,
+                    requestAmount: requestAmount * Math.pow(10, 18),
+                    requestCreatedOn: new Date(Date.now()),
+                    requestLastEditedOn: new Date(Date.now()),
+                    deadline: new Date(deadline)
+                }
+            }
+        
+            Campaign.findByIdAndUpdate(req.params.id, request, { returnDocument: 'after' }, (error, response) => {
+                if (error) return res.status(400).json({ msg: 'Error Creating a new Request: ' + error });
+                //Notify donor that new request is created and its deadline to vote
+                res.status(200).json(response);
+        
+                req.updateAreas = ['RequestCreated'];
+                next();
+            });
         }
-    }
-
-    Campaign.findByIdAndUpdate(req.params.id, request, { returnDocument: 'after' }, (error, response) => {
-        if (error) return res.status(400).json({ msg: 'Error Creating a new Request: ' + error });
-        //Notify donor that new request is created and its deadline to vote
-        res.status(200).json(response);
-
-        req.updateAreas = ['RequestCreated'];
-        next();
-    });
+    })
 }, updateHandler);
 
 
@@ -263,32 +264,34 @@ router.put('/:id/request/current', rqUpload, (req, res, next) => {
 //Common Function to delete curent request and add it to request voting history
 function processRequest(req, res) {
     Campaign.findById(req.params.id).then(campaign => {
-    console.log(campaign.campaignRequest.requestitle);
-    if (campaign.campaignRequest.requestTitle !== undefined) {
-        const request = {
-            requestNumber: campaign.campaignRequest.requestNumber,
-            requestTitle: campaign.campaignRequest.requestTitle,
-            requestDescription: campaign.campaignRequest.requestDescription,
-            requestResources: campaign.campaignRequest.requestResources,
-            requestAmount: campaign.campaignRequest.requestAmount,
-            upVotePercentage: req.body.upVotePercentage,
-            requestStatus: req.params.status,
-            requestCreatedOn: campaign.campaignRequest.requestCreatedOn,
-            requestLastEditedOn: campaign.campaignRequest.requestLastEditedOn,
-            deadline: campaign.campaignRequest.deadline
+        console.log(campaign.campaignRequest.requestitle);
+        if (campaign.campaignRequest.requestTitle !== undefined) {
+            if (req.params.status === 'Cancelled' || req.params.status === 'FundsDenied') campaign.amountDisbursed += 0;
+            else campaign.amountDisbursed += campaign.campaignRequest.requestAmount;
+            const request = {
+                requestNumber: campaign.campaignRequest.requestNumber,
+                requestTitle: campaign.campaignRequest.requestTitle,
+                requestDescription: campaign.campaignRequest.requestDescription,
+                requestResources: campaign.campaignRequest.requestResources,
+                requestAmount: campaign.campaignRequest.requestAmount,
+                upVotePercentage: req.body.upVotePercentage,
+                requestStatus: req.params.status,
+                requestCreatedOn: campaign.campaignRequest.requestCreatedOn,
+                requestLastEditedOn: campaign.campaignRequest.requestLastEditedOn,
+                deadline: campaign.campaignRequest.deadline
+            }
+
+            campaign.currentVote = { yes: [], no: [] };
+            campaign.campaignRequest = { "requestResources": [] };
+            campaign.requestVotingHistory.push(request);
+
+            Campaign.findByIdAndUpdate(req.params.id, campaign, { returnDocument: 'after' }, (error, response) => {
+                if (error) res.status(400).json({ msg: 'Error Updating Current Request: ' + error });
+                res.status(200).json(response);
+            });
+        } else {
+            res.status(400).json({ msg: "Current Request Doesnt Exists.... Invalid Call" });
         }
-
-        campaign.currentVote = { yes: [], no: [] };
-        campaign.campaignRequest = { "requestResources": [] }
-        campaign.requestVotingHistory.push(request);
-
-        Campaign.findByIdAndUpdate(req.params.id, campaign, { returnDocument: 'after' }, (error, response) => {
-            if (error) res.status(400).json({ msg: 'Error Deleting Request: ' + error });
-            res.status(200).json(response);
-        });
-    } else {
-        res.status(400).json({ msg: "Current Request Doesnt Exists.... Invalid Call" });
-    }
     }).catch(
         error => res.status(400).json({ msg: "Error Fetching Campaign Details: " + error })
     );
@@ -306,7 +309,7 @@ router.post('/:id/request/current/:status', cpUpload, (req, res) => {
     } else if (req.params.status == "Cancelled") {
         //Notify user and campaign organiser
     }
-    // processRequest(req, res);
+    processRequest(req, res);
 });
 
 

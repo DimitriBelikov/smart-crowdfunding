@@ -11,9 +11,9 @@ contract campaignContract {
     mapping(address => uint256) private _addressETHmap; // Address mapping with contibution amount
     
     // Constructor
-    constructor(address campaignCreator) {
-        _campaignCreator = campaignCreator;
-        _contractOwner = msg.sender;
+    constructor(address campaignOwner) {
+        _campaignCreator = msg.sender;
+        _contractOwner = campaignOwner;
     }
     
     // Event & Modifiers- Logs Received Amount 

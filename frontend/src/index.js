@@ -25,6 +25,9 @@ const createPriorityRequests = async () => {
     priorityRequests = await response.json();
     console.log('Inside create priority request: ');
     console.log(priorityRequests);
+    const infura = `https://ropsten.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`;
+    const web3 = new Web3(new Web3.providers.HttpProvider(infura));
+    console.log(await web3.eth.getGasPrice());
     // checkRequestAndExecute();
 }
 
@@ -45,43 +48,46 @@ const checkRequestAndExecute = () => {
             if (upVotePercentage >= 66){
                 const infura = `https://ropsten.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`;
                 const web3 = new Web3(new Web3.providers.HttpProvider(infura));
-                web3.eth.defaultAccount = '0x5ef638563128c2f5816d12512822D45343D6C745';
+                var defaultAccount = '0x7a7cC4CE2f66AdDbF1A52D8536565F3deE535327';
                 const common = new Common({ chain: Chain.Ropsten })
                 var contractABI = compiledContract.campaignContract.abi;
                 var privateKey = process.env.REACT_APP_METAMASK_PRIVATEKEY;
 
-                web3.eth.getTransactionCount(web3.eth.defaultAccount, async (err, nonce) => {
+                console.log(defaultAccount);
+                
+                await web3.eth.getTransactionCount(defaultAccount, 'latest', async (err, nonce) => {
                     console.log("nonce value is ", nonce);
+                    
                     const contractObject = new web3.eth.Contract(contractABI, request.smartContractAddress);
                     const functionABI = contractObject.methods._sendRequestedMoney(String(0.1*Math.pow(10,18))).encodeABI();
                     
                     var transactionDetails = {
                         "nonce": nonce,
+                        "to": request.smartContractAddress,
                         "gasPrice": '0x' + (await web3.eth.getGasPrice()).toString(16),
-                        "gasLimit": '0x' + (50000).toString(16),
-                        "to": '0x7a7cC4CE2f66AdDbF1A52D8536565F3deE535327',
-                        "value": '0x'+ (0.1*Math.pow(10,18)).toString(16),
+                        "gasLimit": '0x' + (30000).toString(16),
                         "data": functionABI
                     }
                     const transaction = Transaction.fromTxData(transactionDetails, { common });
                     var signedTx = transaction.sign(Buffer.from(privateKey, 'hex'));
                     var rawdata = '0x' + signedTx.serialize().toString('hex');
-                    web3.eth.sendSignedTransaction(rawdata).on('transactionHash', (hash)=> {
+                    await web3.eth.sendSignedTransaction(rawdata).on('transactionHash', (hash)=> {
                         console.log(hash);
+                    }).on('receipt', async (receipt) => {    
+                        console.log(['transferToStaging Receipt:', receipt]);
                         var requestStatus = 'FundsDisbursed';
-                        var response = updateDatabase(upVotePercentage, request, requestStatus);
+                        var response = await updateDatabase(upVotePercentage, request, requestStatus);
                         if (response.status == 200) success = true;
-                    }).on('receipt', (receipt) => {    
-                        console.log(['transferToStaging Receipt:', receipt])
                     }).on('error', (error) => {
                         console.log(error);
                     });
                 });
             } else {
                 var requestStatus = 'FundsDenied';
-                var response = updateDatabase(upVotePercentage, request, requestStatus);
+                var response = await updateDatabase(upVotePercentage, request, requestStatus);
                 if (response.status == 200) success = true;
             }
+
             if (success) {
                 object.splice(index, 1);
                 console.log(`${requestStatus} for Campaign with name: `, request.campaignName);
@@ -102,7 +108,7 @@ const updateDatabase = async (upVotePercentage, campaign, requestStatus) => {
         method: 'POST',
         body: formData
     };
-    const response = await fetch(`http://localhost:4545/api/campaign/${campaign.campaignId}/request/current/${requestStatus}`, requestOptions);
+    const response = await fetch(`http://localhost:4545/api/campaign/${campaign._id}/request/current/${requestStatus}`, requestOptions);
     const result = await response.json();
     console.log(result);
     if (response.status != 200) console.log(response);
@@ -111,7 +117,8 @@ const updateDatabase = async (upVotePercentage, campaign, requestStatus) => {
     }
     return response;
 }
-// createPriorityRequests();
+
+createPriorityRequests();
 // setInterval(createPriorityRequests, 24*60*60*1000);
 // setTimeout(checkRequestAndExecute, 10*1000);
 // setInterval(checkRequestAndExecute, 10*1000);

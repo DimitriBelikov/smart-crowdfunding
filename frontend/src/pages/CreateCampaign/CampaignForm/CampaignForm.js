@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { provider, deployContract } from '../../../ETHBackend/deploy-contract';
 import {isMetamaskInstalled} from '../../../components/ETHConnect/ETHConnect';
 
+const compiledContract = require('../../../ETHBackend/build/campaignContract.json');
+const Web3 = require('web3');
+
 const CampaignForm = ({ campaignOrganiser }) => {
     const navigate = useNavigate();
     const {ethereum} = window;
@@ -50,13 +53,35 @@ const CampaignForm = ({ campaignOrganiser }) => {
         return true;
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         if(isCampaignDataValid()) {
             setIsLoading(true);
             if (isMetamaskInstalled()){
                 //const walletProvider = provider();
-                deployContract(ethereum.account).then(async (smartContractAddress) => {
+                var web3 = new Web3(window.ethereum);
+                // web3.eth.Contract.transcationBlockTimeout = 200;
+                // web3.eth.Contract.transactionPollingTimeout = 10000;
+                console.log('\nStarting Deployment of Contract from account: ', ethereum.account);
+                var contractABI = compiledContract.campaignContract.abi;
+                var contractObject = new web3.eth.Contract(contractABI).deploy(
+                    {
+                        data: '0x' + compiledContract.campaignContract.evm.bytecode.object,
+                        arguments: ['0x7a7cC4CE2f66AdDbF1A52D8536565F3deE535327']
+                    }
+                );
+                contractObject.transactionPollingTimeout = 10000;
+                contractObject.transactionBlockTimeout = 200;
+
+                await contractObject.send({ from: ethereum.account }).on('error', (error) => {
+                    if (error.code === 4001) setIsError({ value: true, msg: 'User Denied Contract Creation. Please Approve the Transaction to create Contract'});
+                    else setIsError({ value: true, msg: 'Cannot Create Smart Contract... Please Try Again'});
+                    setIsLoading(false);
+                    console.log(error);
+                }).on('transactionHash', (transactionHash)=> {
+                    console.log('Transaction Hash: ', transactionHash);
+                }).on('receipt', async (receipt) => {
+                    console.log('Txn. Receipt: ', receipt);
                     const campaignId = new ObjectID();
                     const formData = new FormData();
 
@@ -69,7 +94,7 @@ const CampaignForm = ({ campaignOrganiser }) => {
                     formData.append('campaignDescription', campaign.campaignDescription);
                     formData.append('campaignCategory', campaign.campaignCategory);
                     formData.append('requiredFunding', campaign.requiredFunding);
-                    formData.append('smartContractAddress', smartContractAddress);
+                    formData.append('smartContractAddress', receipt.contractAddress);
 
                     const requestOptions = {
                         method: 'POST',
@@ -91,18 +116,7 @@ const CampaignForm = ({ campaignOrganiser }) => {
                     } else {
                         navigate(`/campaign/${result._id}`);
                     }
-                }).catch(error => {
-                    if (error.code === 4001){
-                        setIsError({ value: true, msg: 'User Denied Contract Creation. Please Approve the Transaction to create Contract'});
-                    } else {
-                        setIsError({ value: true, msg: 'Cannot Create Smart Contract... Please Try Again'});
-                    }
-                    
-                    // alert('Error: ' + error);
-                    setIsLoading(false);
-                    console.log(error);
-                    // window.location.reload(true);
-                })
+                });
             }
             else{
                 setIsError({ value: true, msg: 'Seems Like your Metamask is not Installed... Please install Metamask first'});

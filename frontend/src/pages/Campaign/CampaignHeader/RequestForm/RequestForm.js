@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 
-const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
+const RequestForm = ({ show, handleClose, requestNumber, campaignId, amountCollected, amountDisbursed}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: true, msg: '' });
     const [request, setRequest] = useState({
@@ -37,41 +37,54 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
         }
     }
 
+    const isRequestDataValid = () => {
+        if (request.requestTitle === '' || request.requestDescription === '' || request.requestAmount === 0 || request.deadline === null){
+            setIsError({ value: true, msg: 'Please Fill All the Required Fields'});
+            return false;
+        }
+        if (request.requestAmount*Math.pow(10,18) > amountCollected-amountDisbursed){
+            setIsError({ value: true, msg: 'Insufficient Money in Smart Contract. Funds Remaining = '+ String((amountCollected-amountDisbursed)/Math.pow(10,18))+ ' ETH'});
+            return false;
+        }
+        return true;
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        console.log(request);
+        if (isRequestDataValid()){
+            setIsLoading(true);
+            console.log(request);
+            const formData = new FormData();
+            formData.append('requestNumber', request.requestNumber);
+            for (var i = 0; i < request.requestResources.length; i++)
+                formData.append('requestResources', request.requestResources[i]);
+            formData.append('requestTitle', request.requestTitle);
+            formData.append('requestDescription', request.requestDescription);
+            formData.append('requestAmount', request.requestAmount);
+            formData.append('deadline', request.deadline);
 
-        const formData = new FormData();
-        formData.append('requestNumber', request.requestNumber);
-        for (var i = 0; i < request.requestResources.length; i++)
-            formData.append('requestResources', request.requestResources[i]);
-        formData.append('requestTitle', request.requestTitle);
-        formData.append('requestDescription', request.requestDescription);
-        formData.append('requestAmount', request.requestAmount);
-        formData.append('deadline', request.deadline);
+            const requestOptions = {
+                method: 'POST',
+                body: formData
+            };
 
-        const requestOptions = {
-            method: 'POST',
-            body: formData
-        };
-
-        const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/request`, requestOptions);
-        const result = await response.json();
-        setRequest({
-            requestNumber: requestNumber,
-            requestTitle: '',
-            requestDescription: '',
-            requestAmount: 0,
-            requestResources: [],
-            deadline: null
-        });
-        setIsLoading(false);
-        if (response.status !== 200) {
-            setIsError({ value: true, msg: result.msg });
-        } else {
-            handleClose();
-            window.location.reload(true);
+            const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/request`, requestOptions);
+            const result = await response.json();
+            setRequest({
+                requestNumber: requestNumber,
+                requestTitle: '',
+                requestDescription: '',
+                requestAmount: 0,
+                requestResources: [],
+                deadline: null
+            });
+            setIsLoading(false);
+            if (response.status !== 200) {
+                setIsError({ value: true, msg: result.msg });
+            } else {
+                handleClose();
+                window.location.reload(true);
+            }
         }
     }
 
@@ -95,7 +108,7 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="request-amount">Request Amount <span className='text-danger'>*</span></label>
-                        <input type="number" className="form-control" id="request-amount" name='requestAmount' placeholder="Enter Request Amount Needed" min={1} value={request.requestAmount === 0 ? null : request.requestAmount} onChange={handleChange} required />
+                        <input type="number" className="form-control" id="request-amount" name='requestAmount' placeholder="Enter Request Amount Needed" min={String(0)} max={String(amountCollected)} value={request.requestAmount === 0 ? null : request.requestAmount} onChange={handleChange} required />
                     </div>
                     <div className="form-group">
                         <label htmlFor="request-deadline">Deadline <span className='text-danger'>*</span></label> <br />
@@ -111,14 +124,9 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId }) => {
             </Modal.Body>
             <Modal.Footer>
                 {isLoading && <h6>Loading...</h6>}
-                {isError.value ?
-                    <Button variant="secondary" onClick={handleSubmit} disabled>
+                <Button variant="primary" onClick={handleSubmit}>
                         Submit Request
-                    </Button> :
-                    <Button variant="primary" onClick={handleSubmit}>
-                        Submit Request
-                    </Button>
-                }
+                </Button>
             </Modal.Footer>
         </Modal>
     </>

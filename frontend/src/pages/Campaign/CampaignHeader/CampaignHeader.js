@@ -156,7 +156,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                             </div>
                             <div className="row">
                                 <div className="col text-center mb-3">
-                                    {(user === null || !isUserCampaignOrganiser) ? <button type="button" className="btn btn-success" onClick={handleShowDonationForm}>Donate Now</button> : null}
+                                    {(campaignHeaderData.amountCollected < campaignHeaderData.requiredFunding)&&(user === null || !isUserCampaignOrganiser) ? <button type="button" className="btn btn-success" onClick={handleShowDonationForm}>Donate Now</button> : null}
 
                                     {isUserCampaignOrganiser ? campaignHeaderData.campaignRequest.requestTitle == null ?
                                         <button type="button" className="btn btn-primary" onClick={handleShowRequestForm} >Create Request</button>
@@ -173,10 +173,10 @@ const CampaignHeader = ({ campaignHeaderData }) => {
                 </div>
             </div>
         </div>
-        <RequestForm show={showRequestForm} handleClose={handleCloseRequestForm} requestNumber={campaignHeaderData.requestVotingHistory.length + 1} campaignId={campaignHeaderData._id} />
+        <RequestForm show={showRequestForm} handleClose={handleCloseRequestForm} requestNumber={campaignHeaderData.requestVotingHistory.length + 1} campaignId={campaignHeaderData._id} amountCollected={campaignHeaderData.amountCollected} amountDisbursed={campaignHeaderData.amountDisbursed}/>
         <UpdateCampaignForm show={showUpdateCampaignForm} handleClose={handleCloseUpdateCampaignForm} campaignData={campaignHeaderData} />
         <UpdateRequestForm show={showUpdateRequestForm} handleClose={handleCloseUpdateRequestForm} requestData={campaignHeaderData.campaignRequest} campaignId={campaignHeaderData._id} />
-        <DonationForm show={showDonationForm} handleClose={handleCloseDonationForm} campaignId={campaignHeaderData._id} campaignName={campaignHeaderData.campaignName} smartContractAddress={campaignHeaderData.smartContractAddress} />
+        <DonationForm show={showDonationForm} handleClose={handleCloseDonationForm} campaignId={campaignHeaderData._id} campaignName={campaignHeaderData.campaignName} smartContractAddress={campaignHeaderData.smartContractAddress} amountCollected={campaignHeaderData.amountCollected} requiredFunding={campaignHeaderData.requiredFunding}/>
         <ETHConnect show={showMetamaskConnect} handleClose={handleCloseMetamaskConnect}/>                            
     </>
 };
