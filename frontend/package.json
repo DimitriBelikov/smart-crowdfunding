@@ -8,6 +8,7 @@
     "@testing-library/jest-dom": "^5.15.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "antd": "^4.19.5",
     "bootstrap": "^4.6.0",
     "bson": "^4.6.1",
     "dotenv": "^16.0.0",

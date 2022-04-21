@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { provider, deployContract } from '../../../ETHBackend/deploy-contract';
 import {isMetamaskInstalled} from '../../../components/ETHConnect/ETHConnect';
 
+//AntD Components
+import { Spin } from 'antd';
+
 const compiledContract = require('../../../ETHBackend/build/campaignContract.json');
 const Web3 = require('web3');
 
@@ -124,10 +127,14 @@ const CampaignForm = ({ campaignOrganiser }) => {
         }
     }
 
-    if (isLoading) {
-        return <h1>Loading...</h1>
-    }
-
+    
+  if (isLoading) {
+    return (
+      <div  style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+        <Spin size='large'/>
+      </div>
+    )
+  }
     return <>
         <h1 className='text-center'>Create a Campaign</h1>
         <div className='container'>

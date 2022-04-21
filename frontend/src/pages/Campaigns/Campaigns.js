@@ -9,6 +9,12 @@ import Navigationbar from '../../components/Navigationbar/Navigationbar';
 //Controllers
 import { useFetch } from '../../controllers/useFetch';
 
+//CSS
+import './Campaigns.css';
+
+//AntD Components
+import { Spin } from 'antd';
+
 const Campaigns = () => {
   const { loading, data: campaigns } = useFetch("http://localhost:4545/api/campaign");
   // console.log("Campaigns: " + campaigns);
@@ -41,7 +47,9 @@ const Campaigns = () => {
 
   if (loading) {
     return (
-      <h1>Loading...</h1>
+      <div  style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+        <Spin size='large'/>
+      </div>
     )
   }
   return <>

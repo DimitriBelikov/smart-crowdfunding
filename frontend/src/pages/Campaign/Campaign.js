@@ -13,6 +13,9 @@ import CampaignUpdates from './CampaignUpdates/CampaignUpdates';
 import CampaignRequestHistory from './CampaignRequestHistory/CampaignRequestHistory';
 import CampaignDocumentList from './CampaignDocumentList/CampaignDocumentList'
 
+//AntD Components
+import { Spin } from 'antd';
+
 
 const Campaign = () => {
   const { id } = useParams();
@@ -25,10 +28,13 @@ const Campaign = () => {
   }
 
   if (loading) {
-    return <>
-      <h1>Loading....</h1>
-    </>;
+    return (
+      <div  style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+        <Spin size='large'/>
+      </div>
+    )
   }
+
   return <>
     <Navigationbar />
     <CampaignHeader campaignHeaderData={campaignData} />

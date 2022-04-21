@@ -14,6 +14,8 @@ import './MyAccount.css';
 import { useFetch } from '../../controllers/useFetch';
 import Navigationbar from '../../components/Navigationbar/Navigationbar';
 
+//AntD Components
+import { Spin } from 'antd';
 
 const MyAccount = () => {
   const cookie = Cookies.get('jwt');
@@ -26,10 +28,13 @@ const MyAccount = () => {
     setSelectedTab(tabName);
   }
 
+ 
   if (loading) {
-    return <>
-      <h1>Loading....</h1>
-    </>;
+    return (
+      <div  style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
+        <Spin size='large'/>
+      </div>
+    )
   }
 
   return <>

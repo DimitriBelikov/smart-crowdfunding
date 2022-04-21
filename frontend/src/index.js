@@ -2,10 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Web3 from 'web3';
 import {Transaction} from'@ethereumjs/tx';
 import Common, { Chain } from '@ethereumjs/common'
+
+//Stylesheets
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'antd/dist/antd.css';
 
 //Contract Build
 import compiledContract from './ETHBackend/build/campaignContract.json';
