@@ -1,0 +1,16 @@
+.menu-item-selected, .menu-item-selected > a:focus, .menu-item-selected > a:hover{
+    background-color: #00b964;
+    color: white;
+    border: none;
+}
+
+.menu-item, .menu-item > a:hover{
+    background-color: #f0edeb;
+    border: none;
+}
+
+.menu-link{
+    font-size: 15px;
+    font-weight: 800;
+    text-decoration: none;
+}

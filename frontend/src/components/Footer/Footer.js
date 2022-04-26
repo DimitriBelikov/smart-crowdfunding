@@ -1,50 +1,62 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
+
+//CSS
+import "./Footer.css";
 
 const Footer = () => {
-    return <footer className='page-footer'>
-        <div className='container-fluid mt-5'>
-            <div className='row'>
-                <div className='col-md-3 border border-primary'>
-                    <h1 className='text-center'>Get Started</h1>
-                    <p className='ml-5'>
-                        Dashboard <br />
-                        <Link to='create-campaign'>Create Your Campaign </Link> <br />
-                        Donate <br />
-                        User Guide <br />
-                    </p>
+    return (
+        <footer className="page-footer ">
+            <div className="container-fluid mt-2">
+                <div className="row">
+                    <div className="col-md-3 footer-containers p-4">
+                        <div>
+                            <ul className="no-bullet-list">
+                                <li className="footer-section mb-2">Get Started</li>
+                                <li className="footer-item">Dashboard</li>
+                                <li className="footer-item">
+                                    <Link to="create-campaign">Create Your Campaign </Link>
+                                </li>
+                                <li className="footer-item">Donate</li>
+                                <li className="footer-item">User Guide</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="col-md-3 footer-containers p-4">
+                        <ul className="no-bullet-list">
+                            <li className="footer-section mb-2">About</li>
+                            <li className="footer-item">Contact Us</li>
+                            <li className="footer-item">Get to Know us</li>
+                            <li className="footer-item">White Paper</li>
+                        </ul>
+                    </div>
+                    <div className="col-md-3 footer-containers p-4">
+                        <ul className="no-bullet-list">
+                            <li className="footer-section mb-2">Explore</li>
+                            <li className="footer-item">Education</li>
+                            <li className="footer-item">Medical</li>
+                            <li className="footer-item">Human Rights</li>
+                            <li className="footer-item">Disaster Relief</li>
+                            <li className="footer-item">Animal Care</li>
+                            <li className="footer-item">Environment</li>
+                        </ul>
+                    </div>
+                    <div className="col-md-3 footer-containers p-4">
+                        <ul className="no-bullet-list">
+                            <li className="footer-section mb-2">Legal</li>
+                            <li className="footer-item">Terms &#38; Conditions </li>
+                        </ul>
+                    </div>
                 </div>
-                <div className='col-md-3 border border-primary'>
-                    <h1 className='text-center'>About</h1>
-                    <p className='ml-5'>
-                        Contact Us <br />
-                        Get to Know us <br />
-                        White Paper <br />
-                    </p>
-                </div>
-                <div className='col-md-3 border border-primary'>
-                    <h1 className='text-center'>Explore</h1>
-                    <p className='ml-5'>
-                        Category 1 <br />
-                        Category 2 <br />
-                        Category 3 <br />
-                    </p>
-                </div>
-                <div className='col-md-3 border border-primary'>
-                    <h1 className='text-center'>Legal</h1>
-                    <p className='ml-5'>
-                        Terms &#38; Conditions <br />
-                    </p>
-                </div>
-            </div>
 
-            <div className="row">
-                <div className="col text-center">
-                    All Rights Reserved by SMARTFUNDCUBE Team
+                <div className="row">
+                    <div className="col text-center text-white footer-containers">
+                        <span className="p-1">©</span>All Rights Reserved by SMARTFUNDCUBE Team
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>;
+        </footer>
+    );
 };
 
 export default Footer;

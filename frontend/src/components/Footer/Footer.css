@@ -1,0 +1,31 @@
+.footer-containers {
+    background-color: #2e3c4b;
+}
+
+.footer-title {
+    padding-left: 14%;
+}
+
+.footer-item { 
+    color: #B6C1CD;
+    font-size: large;
+}
+
+.footer-item > a {
+    text-decoration: none;
+    color: #B6C1CD;
+    font-size: large;
+}
+
+.footer-item > a:hover {
+    color: white;
+}
+
+.no-bullet-list{
+    list-style-type: none;
+}
+
+.footer-section{
+    font-size: 32px;
+    color: white;
+}

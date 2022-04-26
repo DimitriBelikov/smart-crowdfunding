@@ -29,12 +29,12 @@ const requestStorage = multer.diskStorage({
         const dir = path.join('./campaign documents', req.params.id);
         if (!fs.existsSync(dir))
             fs.mkdirSync(dir);
-        if (!fs.existsSync(path.join(dir, 'request')))
-            fs.mkdirSync(path.join(dir, 'request'));
-        if (!fs.existsSync(path.join(dir, 'request', req.body.requestNumber)))
-            fs.mkdirSync(path.join(dir, 'request', req.body.requestNumber));
+        if (!fs.existsSync(path.join(dir, 'requests')))
+            fs.mkdirSync(path.join(dir, 'requests'));
+        if (!fs.existsSync(path.join(dir, 'requests', req.body.requestNumber)))
+            fs.mkdirSync(path.join(dir, 'requests', req.body.requestNumber));
 
-        cb(null, path.join(dir, 'request', req.body.requestNumber));
+        cb(null, path.join(dir, 'requests', req.body.requestNumber));
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname)

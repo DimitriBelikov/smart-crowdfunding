@@ -1,17 +1,54 @@
+.container{
+  position: relative;
+}
+
+.campaign-status-block {
+  position: absolute;
+  top: 10px;
+  right: 0px;
+  background-color: rgba(0,0,0,0.6);
+  color: white;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 7px;
+  padding-bottom: 3px;
+  border-radius: 7px 0 0px 7px;
+}
+
+.campaign-status-text{
+  top: 10px;
+  right: 0px;
+  color: white;
+  /* opacity: 9; */
+}
+
 .card {
-  width: 95%;
+  width: 90%;
+}
+
+.card-body{
+  padding: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+} 
+.card-title{
+  font-weight: bold;
 }
 
 .card-text-container {
-  -webkit-column-width: 150vw;
-  -moz-column-width: 150vw;
-  column-width: 150vw;
+  -webkit-column-width: 200vw;
+  -moz-column-width: 200vw;
+  column-width: 200vw;
   text-align-last: justify;
 }
 
 .progress {
   position: relative;
-  height: 25px;
+  height: 8px !important;
+}
+
+.progress-bar{
+  height: 8px;
 }
 
 .progress > .progress-completed {
@@ -38,4 +75,4 @@
   .card {
     width: 100%;
   }
-}
+} 

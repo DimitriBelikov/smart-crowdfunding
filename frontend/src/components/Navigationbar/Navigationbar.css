@@ -13,3 +13,32 @@
 .menu {
   color: #fff;
 }
+
+.navigation-bar {
+  font-size:medium;
+}
+
+.nav-brand {
+  font-size: 1.50rem;
+  letter-spacing: 0.3rem;
+  font-weight: bold;
+  color: #00b964;
+}
+
+#nav-link{
+  font-size: 17px;
+  font-weight: 600;
+  color: #7A7A7A;
+  letter-spacing: 0.1rem;
+}
+
+#nav-link:hover {
+  color: #2e3c4b;
+}
+
+.nav-dropdown {
+  font-size: 17px;
+  font-weight: 600;
+  color: #7A7A7A;
+  letter-spacing: 0.1rem;
+}

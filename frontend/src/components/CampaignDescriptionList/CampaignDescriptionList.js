@@ -1,22 +1,35 @@
-import React from 'react';
+import React from "react";
+import { Nav } from "react-bootstrap";
 
-const CampaignDescriptionList = ({ itemsList, currentActive, clickFunction }) => {
+//CSS
+import "./CampaignDescriptionList.css";
 
+const CampaignDescriptionList = ({
+    itemsList,
+    currentActive,
+    clickFunction,
+}) => {
     return (
-        <div className='container-fluid'>
-            <div className="row">
-                <div className="col border border-primary">
-                    <ul className="nav nav-pills nav-fill">
-                        {itemsList.map((item, index) => (
-                            <li className="nav-item" key={index}>
-                                <a className={`nav-link ${currentActive === item ? "active" : null}`} aria-current="page" onClick={() => clickFunction(item)}>{item}</a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
+        <div className="container-fluid mt-1">
+            <Nav fill variant="tabs" defaultActiveKey="1">
+                {itemsList.map((item, index) => (
+                    <Nav.Item
+                        eventKey={index}
+                        className={`nav-link m-1 ${currentActive === item ? "menu-item-selected" : "menu-item"
+                            }`}
+                    >
+                        <Nav.Link
+                            className={`menu-link nav-link-item ${currentActive === item ? "text-white" : "text-dark"
+                                }`}
+                            onClick={() => clickFunction(item)}
+                        >
+                            {item}
+                        </Nav.Link>
+                    </Nav.Item>
+                ))}
+            </Nav>
         </div>
     );
-}
+};
 
 export default CampaignDescriptionList;
