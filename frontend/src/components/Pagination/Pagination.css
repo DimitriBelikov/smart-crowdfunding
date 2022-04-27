@@ -1,0 +1,18 @@
+.link-static{
+    background-color: #fcce00 !important;
+    border: none !important;
+}
+
+.link-static:hover {
+    background-color: #ffd412 !important;
+    color: #2e3c4b !important;
+}
+
+.link-static-text{
+    color: #2e3c4b !important;
+    font-weight: bold;
+}
+
+.page-number {
+    border: none !important;
+}

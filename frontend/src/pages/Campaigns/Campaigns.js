@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
 
 //Components
 import Pagination from "../../components/Pagination/Pagination";
@@ -16,11 +17,10 @@ import "./Campaigns.css";
 import { Spin } from "antd";
 
 const Campaigns = () => {
+  const location = useLocation();
   const { loading, data: campaigns } = useFetch(
     "http://localhost:4545/api/campaign"
   );
-  // console.log("Campaigns: " + campaigns);
-  // console.log(loading);
 
   const [category, setCategory] = useState("All");
   const showPerPage = 6;
@@ -40,10 +40,10 @@ const Campaigns = () => {
   ];
 
   useEffect(() => {
-    // console.log("Inside UseEffect");
-    // console.log("Campaigns Length: " + campaigns.length);
+    console.log(location);
     setTotal(campaigns.length);
-  }, [loading]);
+    filterCampaigns(location.state === null ? "All" : location.state.category);
+  }, [loading, location]);
 
   const onPaginationChange = (start, end) => {
     setPagination({ start: start, end: end });
@@ -110,7 +110,7 @@ const Campaigns = () => {
         </div>
 
         <div className="row">
-          <div className="col text-center border border-primary mt-3 pt-3">
+          <div className="col text-center mt-3 pt-3">
             {/* {console.log("Before Pagination - total: " + total)} */}
             {total > 0 && (
               <Pagination

@@ -16,11 +16,12 @@ const CampaignCard = ({ campaign }) => {
         <>
             <div className="card">
                 <img
-                    className="card-img-top"
+                    className="img-top"
                     src={`http://localhost:4545/${campaign.campaignCoverMedia}`}
                     alt="Campign Cover"
                     onClick={clickOnCard}
                 />
+
                 <div className="campaign-status-block">
                     {/* <h3 className="campaign-status-block">sacac</h3> */}
                     <h6 className="campaign-status-text">{campaign.campaignStatus}</h6>

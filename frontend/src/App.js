@@ -1,22 +1,22 @@
-import React, {useEffect} from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 //Pages
-import Home from './pages/Home/Home';
-import About from './pages/About/About';
-import Campaigns from './pages/Campaigns/Campaigns';
-import Campaign from './pages/Campaign/Campaign';
-import Login from './pages/Login/Login';
-import Register from './pages/Register/Register';
-import Error from './pages/Error/Error';
-import CreateCampaign from './pages/CreateCampaign/CreateCampaign';
+import Home from "./pages/Home/Home";
+import About from "./pages/About/About";
+import Campaigns from "./pages/Campaigns/Campaigns";
+import Campaign from "./pages/Campaign/Campaign";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
+import Error from "./pages/Error/Error";
+import CreateCampaign from "./pages/CreateCampaign/CreateCampaign";
 
 //Components
-import Footer from './components/Footer/Footer';
+import Footer from "./components/Footer/Footer";
 
 //CSS
-import './App.css';
-import MyAccount from './pages/MyAccount/MyAccount';
+import "./App.css";
+import MyAccount from "./pages/MyAccount/MyAccount";
 
 function App() {
   return (

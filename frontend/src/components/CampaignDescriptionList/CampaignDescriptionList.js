@@ -10,7 +10,7 @@ const CampaignDescriptionList = ({
     clickFunction,
 }) => {
     return (
-        <div className="container-fluid mt-1">
+        <div className="container mt-1">
             <Nav fill variant="tabs" defaultActiveKey="1">
                 {itemsList.map((item, index) => (
                     <Nav.Item
