@@ -1,4 +1,42 @@
 .pdf-icon {
-  height: 30px;
+  height: 25px;
   width: 25px;
+}
+
+.request-number-col {
+  background-color: #f0edeb;;
+  color: black;
+  font-weight: bold;
+  border-radius: 5px 0px 0px 5px;
+}
+
+.request-details-col {
+  background-color: #f0edeb;;
+  color: black;
+  font-weight: bold;
+  border-radius: 0px 5px 5px 0px;
+}
+
+/* .vote-radio:checked ~ .vote-radio::before, *:focus {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  color: #00b964 !important;
+  border: none !important;
+  outline: none !important;
+  background-color: #00b964 !important;
+} */
+
+
+.vote-btn{
+  background-color: #FFF759 !important;
+  color: #2e3c4b !important;
+}
+
+.vote-btn:hover{
+  background-color: #2e3c4b !important;
+  color: white !important;
+}
+.card-text-container {
+    text-align-last: start;
 }

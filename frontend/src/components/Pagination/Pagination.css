@@ -1,11 +1,16 @@
 .link-static{
-    background-color: #fcce00 !important;
+    background-color: #f0edeb !important;
     border: none !important;
 }
 
 .link-static:hover {
-    background-color: #ffd412 !important;
+    background-color: #fed857 !important;
     color: #2e3c4b !important;
+}
+
+.current-page{
+    background-color: #fed857 !important;
+    color: black;
 }
 
 .link-static-text{
@@ -15,4 +20,5 @@
 
 .page-number {
     border: none !important;
+    border-radius: 3px 3px 3px 3px !important;
 }

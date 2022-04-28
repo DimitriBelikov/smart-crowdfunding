@@ -1,0 +1,24 @@
+.personal-info-titles {
+    font-size: medium;
+    font-weight: bold;
+}
+
+.personal-info-btn, .personal-info-btn:focus{
+    background-color: #FFF759 !important;
+    color: #2e3c4b !important;
+    font-weight: bold !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+  
+.personal-info-btn:hover{
+   background-color: #2e3c4b !important;
+   color: white !important;
+   font-weight: bold;
+}
+
+.form-field-bg-disabled {
+    background-color: #f0edeb !important;
+    border: none !important;
+
+}

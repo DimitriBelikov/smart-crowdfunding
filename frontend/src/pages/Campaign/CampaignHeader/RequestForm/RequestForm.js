@@ -17,8 +17,8 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId, amountColle
         const { name, value } = e.target;
         if (name === 'requestResources') {
             const filesArray = Array.from(e.target.files);
-            if (filesArray.length > 10) {
-                setIsError({ value: true, msg: 'You can upload maximum 10 files' });
+            if (filesArray.length > 5) {
+                setIsError({ value: true, msg: 'You can upload maximum 5 files' });
                 return;
             } else {
                 for (var i = 0; i < filesArray.length; i++) {

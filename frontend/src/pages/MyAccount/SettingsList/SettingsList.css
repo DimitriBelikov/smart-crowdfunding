@@ -1,0 +1,19 @@
+.vertical-menu-item-selected{
+    background-color: #00b964;
+    color: white;
+    border: none;
+    font-size: 17px;
+}
+
+.vertical-menu-item{
+    background-color: #f0edeb;
+    border: none;
+    font-size: 17px;
+}
+
+.vertical-menu-item:hover {
+    background-color: #00b964;
+    color: white;
+    border: none;
+    font-size: 17px;
+}

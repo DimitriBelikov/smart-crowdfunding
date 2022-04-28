@@ -1,36 +1,37 @@
-import React from 'react';
+import React from "react";
+
+//CSS
+import "./CampaignUpdates.css";
 
 const CampaignUpdates = ({ updates }) => {
-    return <>
-        <div className="container border border-primary">
-            {[...updates].reverse().map((update, index) => (
-                <li className='border border-secondary m-3' style={{ listStyleType: 'none' }} key={index}>
-                    <div class="row">
-                        <div class="col-md-9">
-                            <h5>{update.updateTitle}</h5>
-                        </div>
-                        <div class="col-md-3 text-right">
-                            <h6>{update.updateDate.split('.')[0].replace('T', ' ')}</h6>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h8>Campaign Organiser</h8>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul>
-                                {update.updateDescription.map((description) => (
-                                    <li>{description}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-            ))}
-        </div >
-    </>
-}
+	return (
+		<>
+			<div className="container mt-5 mb-5 my-1">
+				<div className="row">
+					<ul className="timeline">
+						{[...updates].reverse().map((update, index) => (
+							<li key={index} className="mb-3">
+								<h6 style={{ "font-weight": "500" }}>
+									{update.updateDate.split("T")[0]}
+								</h6>
+								<h4 style={{ "font-weight": "bold" }}>
+									{update.updateTitle}
+								</h4>
+								<h6 style={{ color: "#787676" }}>
+									{update.updateDescription.map(
+										(description) => (
+											<li>{description}</li>
+										)
+									)}
+								</h6>
+							</li>
+						))}
+						<br />
+					</ul>
+				</div>
+			</div>
+		</>
+	);
+};
 
 export default CampaignUpdates;
