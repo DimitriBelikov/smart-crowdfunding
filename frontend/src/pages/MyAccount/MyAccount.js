@@ -26,8 +26,7 @@ const MyAccount = () => {
 	const settingsList = [
 		"Profile",
 		"My Campaigns",
-		"My Donations",
-		"Notifications",
+		"My Donations"
 	];
 	const [selectedTab, setSelectedTab] = useState("Profile");
 
@@ -54,9 +53,9 @@ const MyAccount = () => {
 		<>
 			{console.log(userData.createdCampaigns)}
 			<Navigationbar />
-			<div className="container-fluid">
-				<div className="row p-3 mt-4">
-					<div className="left-panel border-right col-md-2 pl-5">
+			<div className="container-fluid mb-5">
+				<div className="row mt-4">
+					<div className="left-panel border-right col-md-2 pl-4 pr-4">
 						<SettingsList
 							itemsList={settingsList}
 							currentActive={selectedTab}
@@ -78,9 +77,9 @@ const MyAccount = () => {
 								donatedCampaigns={userData.donatedCampaigns}
 							/>
 						)}
-						{selectedTab === "Notifications" && (
+						{/* {selectedTab === "Notifications" && (
 							<h3>You will receive the Notifications here</h3>
-						)}
+						)} */}
 					</div>
 				</div>
 			</div>

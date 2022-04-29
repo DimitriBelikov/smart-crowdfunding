@@ -77,16 +77,15 @@ const Profile = ({ userData }) => {
 	// }
 	return (
 		<>
-			<form>
-				<div className="form-group col-sm-5 col-md-4">
+			<form className="">
+				<div className="form-group col-sm-5 col-md-4 ">
 					<label className="personal-info-titles">User Name</label>
 					<input
 						type="text"
 						name="userName"
 						onChange={handleChange}
-						className={`form-control ${
-							disabled ? "form-field-bg-disabled" : null
-						}`}
+						className={`form-control ${disabled ? "form-field-bg-disabled" : null
+							}`}
 						value={user.userName}
 						placeholder="UserName"
 						disabled={disabled}
@@ -115,9 +114,8 @@ const Profile = ({ userData }) => {
 							value={user.fullName}
 							name="fullName"
 							onChange={handleChange}
-							className={`form-control ${
-								disabled ? "form-field-bg-disabled" : null
-							}`}
+							className={`form-control ${disabled ? "form-field-bg-disabled" : null
+								}`}
 							disabled={disabled}
 						/>
 					</div>
@@ -130,9 +128,8 @@ const Profile = ({ userData }) => {
 							name="dob"
 							onChange={handleChange}
 							value={user.dob}
-							className={`form-control ${
-								disabled ? "form-field-bg-disabled" : null
-							}`}
+							className={`form-control ${disabled ? "form-field-bg-disabled" : null
+								}`}
 							disabled={disabled}
 						/>
 					</div>
@@ -142,9 +139,8 @@ const Profile = ({ userData }) => {
 						<label className="personal-info-titles">City</label>
 						<input
 							type="text"
-							className={`form-control ${
-								disabled ? "form-field-bg-disabled" : null
-							}`}
+							className={`form-control ${disabled ? "form-field-bg-disabled" : null
+								}`}
 							name="currentCity"
 							onChange={handleChange}
 							value={user.currentCity}
@@ -155,9 +151,8 @@ const Profile = ({ userData }) => {
 						<label className="personal-info-titles">State</label>
 						<input
 							type="text"
-							className={`form-control ${
-								disabled ? "form-field-bg-disabled" : null
-							}`}
+							className={`form-control ${disabled ? "form-field-bg-disabled" : null
+								}`}
 							name="state"
 							onChange={handleChange}
 							value={user.state}

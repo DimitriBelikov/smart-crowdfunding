@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { Modal, Button } from 'react-bootstrap';
 import path from 'path';
 
+//CSS
+import "./UpdateCampaignForm.css";
+
 const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
     const [existingCampaign, setExistingCampaign] = useState({
         campaignName: campaignData.campaignName,
@@ -74,6 +77,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
             }
             setIsError({ value: false, msg: '' });
             setNewCampaign({ ...newCampaign, campaignCoverMedia: filesArray[0] });
+            //Null existing campaign cover media
         } else {
             setExistingCampaign({ ...existingCampaign, [name]: value });
         }
@@ -128,26 +132,29 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
     }
 
     return <>
-        <Modal show={show} onHide={handleClose} size="lg" aria-labelledby="contained-modal-title-center" centered>
-            <Modal.Header closeButton>
-                <Modal.Title>
+        <Modal className="modal" show={show} onHide={handleClose} size="lg" aria-labelledby="contained-modal-title-center" centered>
+            <Modal.Header>
+                <Modal.Title className="font-weight-bold">
                     Update Campaign
                 </Modal.Title>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleClose}>
+                    <span aria-hidden="true">&#10006;</span>
+                </button>
             </Modal.Header>
             <Modal.Body>
-                <h1 className='text-center'>Campaign Title</h1>
+                <h1 className='text-center font-weight-bold'>{existingCampaign.campaignName}</h1>
                 <form>
                     <div className="form-group">
-                        <label htmlFor="campaign-name">Campaign Name <span className='text-danger'>*</span></label>
+                        <label htmlFor="campaign-name" className="custom-font">Campaign Name <span className='text-danger'>*</span></label>
                         <input type="text" className="form-control" id="campaign-name" name='campaignName' placeholder="Type in Campaign Name" onChange={handleChange} required autoComplete="off" value={existingCampaign.campaignName} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="campaign-description">Campaign Description <span className='text-danger'>*</span></label>
+                        <label htmlFor="campaign-description" className="custom-font">Campaign Description <span className='text-danger'>*</span></label>
                         <textarea className="form-control" id="campaign-description" rows="5" name='campaignDescription' placeholder="Type in Campaign Description" onChange={handleChange} required value={existingCampaign.campaignDescription} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="campaign-category">Campaign Category <span className='text-danger'>*</span></label>
-                        <select className="form-control" id="campaign-category" name='campaignCategory' required value={campaignData.campaignCategory} disabled>
+                        <label htmlFor="campaign-category" className="custom-font">Campaign Category <span className='text-danger'>*</span></label>
+                        <select className="form-control form-field-bg-disabled" id="campaign-category" name='campaignCategory' required value={campaignData.campaignCategory} disabled>
                             <option>Education</option>
                             <option>Medical</option>
                             <option>Rights</option>
@@ -157,39 +164,62 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                         </select>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="total-funding">Total Funding Needed <span className='text-danger'>*</span></label>
-                        <input type="number" className="form-control" id="campaign-name" name='requiredFunding' placeholder="Enter Total Funding Needed" min={1} required value={campaignData.requiredFunding / Math.pow(10, 18)} disabled />
+                        <label htmlFor="total-funding" className="custom-font">Total Funding Needed <span className='text-danger'>*</span></label>
+                        <input type="number" className="form-control form-field-bg-disabled" id="campaign-name" name='requiredFunding' placeholder="Enter Total Funding Needed" min={1} required value={campaignData.requiredFunding / Math.pow(10, 18)} disabled />
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="campaign-cover-image">Campaign Cover Image</label><br />
-                        <input type="file" id="campaign-cover-image" name="campaignCoverMedia" onChange={handleChange} accept='image/*' />
+                        <label htmlFor="campaign-cover-image" className="custom-font">Campaign Cover Image</label><br />
+                        <label className='file-btn' htmlFor="campaign-cover-image" style={{ "font-size": "17px" }}>Choose Files</label><br />
+                        <input type="file" id="campaign-cover-image" name="campaignCoverMedia" onChange={handleChange} accept='image/*' style={{ "display": "none" }} />
                         <div className="container">
                             {existingCampaign.campaignCoverMedia !== null
-                                && <div className="row border border-success m-1 p-1" >
+                                && <div className="row m-1 p-1" >
                                     <div className="col-md-1">
-                                        <a href={`http://localhost:4545/${existingCampaign.campaignCoverMedia}`} target='_blank' rel="noreferrer" download>
-                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
-                                        </a >
-                                    </div >
-                                    <div className="col-md-8">
-                                        <span>{existingCampaign.campaignCoverMedia.split('/').pop()} </span>
+                                        <a
+                                            href={`http://localhost:4545/${existingCampaign.campaignCoverMedia}`}
+                                            target="_blank"
+                                            download
+                                            rel="noreferrer"
+                                        >
+                                            <img
+                                                className="pdf-icon"
+                                                src="http://localhost:3000/file-icon.png"
+                                            />
+                                        </a>
+                                    </div>
+                                    <div className="col-md-8 pl-0">
+                                        <span>
+                                            {existingCampaign.campaignCoverMedia.split('/').pop()}
+                                        </span>
                                     </div>
                                     <div className="col-md-3 text-right">
-                                        <button className='btn' type='button' onClick={() => removeDocument('EXISTING_CAMPAIGN_COVER_MEDIA')}><span>&#10060;</span></button>
+                                        <button className='btn p-0' type='button' onClick={() => removeDocument('EXISTING_CAMPAIGN_COVER_MEDIA')}><img
+                                            src="http://localhost:3000/remove.png"
+                                            className="pdf-icon m-0"
+                                        /> </button>
                                     </div>
                                 </div >
                             }
                             {newCampaign.campaignCoverMedia !== null
-                                && <div className="row border border-success m-1 p-1" >
+                                && <div className="row m-1 p-1" >
                                     <div className="col-md-1">
-                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File ison"/>
+                                        <img
+                                            className="pdf-icon"
+                                            src="http://localhost:3000/file-icon.png"
+                                            alt="File icon"
+                                        />
                                     </div>
-                                    <div className="col-md-8">
-                                        <span>{newCampaign.campaignCoverMedia.name} </span>
+                                    <div className="col-md-8 pl-0">
+                                        <span>
+                                            {newCampaign.campaignCoverMedia.name}
+                                        </span>
                                     </div>
                                     <div className="col-md-3 text-right">
-                                        <button className='btn' type='button' onClick={() => removeDocument('NEW_CAMPAIGN_COVER_MEDIA')}><span>&#10060;</span></button>
+                                        <button className='btn p-0' type='button' onClick={() => removeDocument('NEW_CAMPAIGN_COVER_MEDIA')}> <img
+                                            className="pdf-icon m-0"
+                                            src="http://localhost:3000/remove.png"
+                                        /> </button>
                                     </div>
                                 </div>
                             }
@@ -197,36 +227,57 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
 
                     </div >
                     <div className="form-group">
-                        <label htmlFor="campaign-resources">Campaign Resources</label> <br />
-                        <input type="file" id="campaign-resources" name="campaignResources" multiple onChange={handleChange} data-max-size='1024' />
+                        <label htmlFor="campaign-resources" className="custom-font">Campaign Resources</label> <br />
+                        <label className='file-btn' htmlFor="campaign-resources" style={{ "font-size": "17px" }}>Choose Files</label><br />
+                        <input type="file" id="campaign-resources" name="campaignResources" multiple onChange={handleChange} data-max-size='1024' style={{ "display": "none" }} />
                         {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
                         <div className="container">
                             {existingCampaign.campaignResources.map((document, index) => (
-                                <div className="row border border-success m-1 p-1" key={index} >
-                                    <div className="col-md-1">
+                                <div className="row m-1 p-1" key={index} >
+                                    <div className="col-md-1 pr-0">
                                         <a href={`http://localhost:4545/${document.filePath}`} target='_blank' rel="noreferrer" download>
-                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
+                                            <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon" />
                                         </a>
                                     </div>
-                                    <div className="col-md-8">
+                                    <div className="col-md-8 pl-0">
                                         <span>{document.filePath.split('/').pop()} </span>
                                     </div>
                                     <div className="col-md-3 text-right">
-                                        <button className='btn' type='button' onClick={() => removeDocument('EXISTING_RESOURCE', index)}><span>&#10060;</span></button>
+                                        <button className='btn p-0' type='button' onClick={() => removeDocument('EXISTING_RESOURCE', index)}><img
+                                            src="http://localhost:3000/remove.png"
+                                            className="pdf-icon m-0"
+                                        /> </button>
                                     </div>
+                                    {index !==
+                                        existingCampaign.campaignResources.length - 1 && (
+                                            <hr
+                                                width="100%"
+                                                className="m-0 mb-1 mt-2"
+                                            />
+                                        )}
                                 </div>
                             ))}
                             {newCampaign.campaignResources.map((document, index) => (
-                                <div className="row border border-primary m-1 p-1" key={index} >
-                                    <div className="col-md-1">
-                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon"/>
+                                <div className="row m-1 p-1" key={index} >
+                                    <div className="col-md-1 pr-0">
+                                        <img className='pdf-icon' src="http://localhost:3000/file-icon.png" alt="File icon" />
                                     </div>
-                                    <div className="col-md-8">
+                                    <div className="col-md-8 pl-0">
                                         <span>{document.filePath.split('/').pop()} </span>
                                     </div>
                                     <div className="col-md-3 text-right">
-                                        <button className='btn' type='button' onClick={() => removeDocument('NEW_RESOURCE', index)}><span>&#10060;</span></button>
+                                        <button className='btn p-0' type='button' onClick={() => removeDocument('NEW_RESOURCE', index)}><img
+                                            src="http://localhost:3000/remove.png"
+                                            className="pdf-icon m-0"
+                                        /> </button>
                                     </div>
+                                    {index !==
+                                        newCampaign.campaignResources.length - 1 && (
+                                            <hr
+                                                width="100%"
+                                                className="m-0 mb-1 mt-2"
+                                            />
+                                        )}
                                 </div>
                             ))}
                         </div>
@@ -238,10 +289,10 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
             <Modal.Footer>
                 {isLoading && <h6>Loading...</h6>}
                 {isError.value ?
-                    <Button variant="secondary" onClick={(e) => handleSubmit} disabled>
+                    <Button variant="secondary" className='btn-custom font-weight-bold' onClick={(e) => handleSubmit} disabled>
                         Submit Request
                     </Button> :
-                    <Button variant="primary" onClick={handleSubmit}>
+                    <Button variant="primary" className="btn-custom font-weight-bold" onClick={handleSubmit}>
                         Submit Request
                     </Button>
                 }

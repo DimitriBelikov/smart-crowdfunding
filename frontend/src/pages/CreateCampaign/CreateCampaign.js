@@ -52,7 +52,7 @@ const CreateCampaign = () => {
 	return (
 		<>
 			<Navigationbar />
-			<CampaignForm campaignOrganiser={userId} />
+			<CampaignForm className="pb-5" campaignOrganiser={userId} />
 			<ETHConnect
 				show={showMetamaskConnect}
 				handleClose={handleCloseMetamaskConnect}

@@ -3,12 +3,14 @@
     color: white;
     border: none;
     font-size: 17px;
+    cursor: pointer;
 }
 
 .vertical-menu-item{
     background-color: #f0edeb;
     border: none;
     font-size: 17px;
+    cursor: pointer;
 }
 
 .vertical-menu-item:hover {
@@ -16,4 +18,5 @@
     color: white;
     border: none;
     font-size: 17px;
+    cursor: pointer;
 }

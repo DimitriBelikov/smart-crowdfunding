@@ -11,9 +11,11 @@
   }
 }
 
-.btn-custom{
+.btn-custom, .btn-custom:focus {
   background-color: #FFF759 !important;
   color: #2e3c4b !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .btn-custom:hover{

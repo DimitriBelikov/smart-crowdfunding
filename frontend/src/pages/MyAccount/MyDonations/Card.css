@@ -3,16 +3,19 @@
   height: 50%;
 }
 
-/* .card-text-container {
-  -webkit-column-width: 150vw;
-  -moz-column-width: 150vw;
-  column-width: 150vw;
-  text-align-last: justify;
-}
-
 .progress {
   position: relative;
   height: 25px;
+}
+
+.donation-card-campaign-status-block {
+  position: absolute;
+  top: 0px;
+  right: 25px;
+  background-color: #FFF759 !important;
+  color: black !important;
+  padding: 8px;
+  border-radius: 5px;
 }
 
 .progress > .progress-completed {
@@ -29,6 +32,10 @@
   font-size: 16px;
 }
 
+.card-title-container {
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 600px) {
   .card {
     width: 98%;
@@ -39,4 +46,4 @@
   .card {
     width: 100%;
   }
-} */
+}

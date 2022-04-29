@@ -48,17 +48,25 @@ const Login = () => {
   return <>
     <Navigationbar />
     <div className='container col-md-4'>
-      <h1 className='text-primary text-center'>Log In</h1>
+      <h1 className='mt-3 text-center font-weight-bold'>Log In</h1>
       <form>
         <div className="form-group">
-          <input type="email" name='emailId' value={user.emailId} onChange={handleChange} className="form-control" placeholder="Email" />
+          <label htmlFor="campaign-name" style={{ "font-size": "17px", "font-weight": "bold" }}>Email <span className='text-danger'>*</span></label>
+          <input type="email" name='emailId' value={user.emailId} onChange={handleChange} className="form-control form-textbox" placeholder="Enter your Email" />
         </div>
         <div className="form-group">
-          <input type="password" name='password' value={user.password} onChange={handleChange} className="form-control" placeholder="Password" />
+          <label htmlFor="campaign-name" style={{ "font-size": "17px", "font-weight": "bold" }}>Password <span className='text-danger'>*</span></label>
+          <input type="password" name='password' value={user.password} onChange={handleChange} className="form-control form-textbox" placeholder="Enter Password" />
         </div>
         {isError.value && <h6 className='text-center text-danger'>{isError.msg}</h6>}
         <div className="text-center">
-          <button type="button" onClick={handleSubmit} className="btn btn-primary">Login</button>
+          <button
+            type="button"
+            className="btn btn-custom font-weight-bold"
+            onClick={handleSubmit}
+          >
+            Login
+          </button>
         </div>
       </form>
       <br />

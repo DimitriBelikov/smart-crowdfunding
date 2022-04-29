@@ -31,11 +31,11 @@ const CampaignCard = ({ campaign }) => {
                     <h5 className="card-title text-truncate mb-2">
                         {campaign.campaignName}
                     </h5>
-                    <h6>{campaign.campaignCategory}</h6>
+                    <h6 className="font-italic">{campaign.campaignCategory}</h6>
                     <ShowMoreText
                         lines={5}
                         more="Show more"
-                        className="card-text-container"
+                        className="card-text-container campaings-card-text"
                         onClick={() => clickOnCard()}
                         expanded={false}
                         expandByClick={false}

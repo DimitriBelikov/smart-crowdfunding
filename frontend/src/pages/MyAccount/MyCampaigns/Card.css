@@ -3,11 +3,19 @@
   height: 50%;
 }
 
-/* .card-text-container {
-  -webkit-column-width: 150vw;
-  -moz-column-width: 150vw;
+.card-text-container {
   column-width: 150vw;
-  text-align-last: justify;
+  text-align-last: start;
+}
+
+.card-campaign-status-block {
+  position: absolute;
+  top: 0px;
+  right: 25px;
+  background-color: #FFF759 !important;
+  color: black !important;
+  padding: 5px;
+  border-radius: 5px;
 }
 
 .progress {
@@ -39,4 +47,4 @@
   .card {
     width: 100%;
   }
-} */
+}
