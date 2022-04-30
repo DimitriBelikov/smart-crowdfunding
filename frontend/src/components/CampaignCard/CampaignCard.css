@@ -4,6 +4,7 @@
   height: 340px;
   object-fit: fill;
   cursor: pointer;
+  border-radius: 3px 3px 0px 0px;
 }
 
 .container{
@@ -37,6 +38,9 @@
 .card {
   width: 90%;
   height: max-content;
+  animation: fadeInAnimation ease-in 0.5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
 }
 
 .card-body{

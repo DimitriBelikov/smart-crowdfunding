@@ -2,3 +2,145 @@
   border: 1px solid black;
   height: 200px;
 }
+
+.browse-by-categories-container {
+  background-color: #f0edeb;
+}
+
+.browse-by-categories-header{
+  font-weight:bold; 
+}
+
+.browse-by-categories-text{
+  font-size: large;
+}
+
+.category-icon {
+  width: 68px;
+  height: 68px;
+}
+
+.category-container {
+  background-color: white;
+  transition-duration: 0.5s;
+}
+
+.category-container:hover {
+  background-color: #00b964;
+  transition-duration: 0.5s;
+}
+
+.category-container .icon-hover {
+  display: none;
+  z-index: 99;
+  position: relative;
+  transition-duration: 0.5s;
+}
+
+.category-container:hover .icon-hover {
+  display: inline;
+  width: 68px;
+  height: 68px;
+  transition-duration: 0.5s;
+}
+
+.category-container:hover .category-icon {
+  display: none;
+  transition-duration: 0.5s;
+}
+
+.category-container:hover .category-text {
+  color: white;
+  transition-duration: 0.5s;
+}
+
+.start-campaign{
+  background-image: url('http://localhost:3000/start-campaign-background.jpg');
+  height: 325px;
+}
+
+.carousel-item-container-1{
+  position: relative;
+}
+
+.carousel-item-container-2{
+  position: relative;
+}
+
+.carousel-item-text-l1{
+  position: absolute;
+  margin-top: 9%;
+  margin-left: 20%;
+  font-size: 80px;
+  font-family: 'Roboto Slab', serif;
+  animation: 1s ease-out 0s 1 slideInFromLeft;
+
+}
+
+.carousel-item-text-l2{
+  position: absolute;
+  margin-top: 16%;
+  margin-left: 20%;
+  font-size: 80px;
+  font-family: 'Roboto Slab', serif;
+}
+
+.carousel-item-text-l3{
+  position: absolute;
+  margin-top: 21%;
+  margin-left: 20%;
+  font-size: 80px;
+  font-family: 'Roboto Slab', serif;
+}
+
+.carousel-item-text{
+  position: absolute;
+  top: 30%;
+  margin-left: 20%;
+  font-size: 60px;
+}
+
+
+.carousel-item-button, .carousel-item-button:focus {
+  background-color: #FFF759 !important;
+  color: #2e3c4b !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: absolute;
+  top: 65%;
+  width: 20%;
+  left: 20%;
+  animation: fadeInAnimation ease-in 1.5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+.carousel-item-button:hover{
+  background-color: #00b964 !important;
+  color: white !important;
+  position: absolute;
+  left: 20%;
+  top: 65%;
+  width: 20%;
+}
+
+.carousel-item-text-l1{
+  animation: fadeInAnimation ease-in 0.5s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+.carousel-item-text-l2 {
+  animation: fadeInAnimation ease-in 1s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+  0% {
+      opacity: 0;
+  }
+  100% {
+      opacity: 1;
+  }
+}

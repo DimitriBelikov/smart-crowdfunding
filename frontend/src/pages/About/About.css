@@ -1,0 +1,54 @@
+.about-container{
+    background-color: #f8f9fa !important;
+    padding: 10%;
+}
+
+.center {
+    text-align: center;
+    padding-left: 30%;
+    padding-right: 30%;
+    padding-top: 5%;
+    justify-content: center;
+    /* width:50%; */
+}
+
+.about-headings{
+    display: inline;
+    text-align: center;
+    width: 100%;
+    font-weight: bold;
+}
+
+.about-paragraphs{
+    padding-left: 20%;
+    padding-right: 20%;
+    font-size: 18px;
+}
+
+/* .member-card-container{
+    height: 320px;
+    border-radius: 5px;
+    padding: 20px;
+    margin:  20px;
+    text-align: center;
+} */
+
+/* .member-image-container{
+    height: 200px;
+    background: pink;
+    width:100%;
+} */
+
+.member-image {
+    height: 240px;
+    width: 100%;
+    object-fit: fill;
+}
+
+.clg-img {
+    height: 100px;
+    width: 180px;
+    display: block;
+    margin: 0 auto;
+    
+}

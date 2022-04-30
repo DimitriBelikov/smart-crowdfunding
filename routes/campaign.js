@@ -27,6 +27,17 @@ router.get("/", (req, res) => {
     );
 });
 
+//GET('/featured-campaigns') - Get list of top 3 featured campaigns
+router.get("/featured-campaigns", (req, res) => {
+    Campaign.find().limit(3).then(
+        campaigns => {
+            res.status(200).json(campaigns)
+        }
+    ).catch(
+        error => res.status(400).json({ msg: 'Error Fetching Campaigns: ' + error })
+    );
+})
+
 
 // POST('/') - Create a new Campaign (Deploy Smart Contract for this campaign ang get its address)
 const cpUpload = campaignUpload.fields([{ name: 'campaignCoverMedia', maxCount: 1 }, { name: 'campaignResources', maxCount: 15 }])
@@ -191,7 +202,7 @@ router.post('/:id/request', rqUpload, (req, res, next) => {
 
     Campaign.findById(req.params.id, (error, campaign) => {
         if (campaign.campaignRequest.requestTitle != undefined) return res.status(400).json({ msg: "Your campaign's already has an existing active request" });
-        else{
+        else {
             const request = {
                 campaignRequest: {
                     requestNumber,
@@ -204,12 +215,12 @@ router.post('/:id/request', rqUpload, (req, res, next) => {
                     deadline: new Date(deadline)
                 }
             }
-        
+
             Campaign.findByIdAndUpdate(req.params.id, request, { returnDocument: 'after' }, (error, response) => {
                 if (error) return res.status(400).json({ msg: 'Error Creating a new Request: ' + error });
                 //Notify donor that new request is created and its deadline to vote
                 res.status(200).json(response);
-        
+
                 req.updateAreas = ['RequestCreated'];
                 next();
             });
@@ -380,8 +391,8 @@ router.post('/:id/donate', cpUpload, (req, res) => {
 
 // Get campaigns with currently running request and with deadline within next 36hrs
 // GET('/request/end') - Let a Contributor gets added to the Donors List and Interact with Smart Contract to add Donation amount
-router.get('/request/end', (req, res)=> {
-    Campaign.find({"campaignRequest.deadline": {$lt:new Date(Date.now()+1.5*24*60*60*1000)}}).then(
+router.get('/request/end', (req, res) => {
+    Campaign.find({ "campaignRequest.deadline": { $lt: new Date(Date.now() + 1.5 * 24 * 60 * 60 * 1000) } }).then(
         campaigns => {
             res.status(200).json(campaigns)
         }

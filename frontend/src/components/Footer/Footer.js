@@ -7,16 +7,10 @@ import "./Footer.css";
 
 const Footer = () => {
     const navigate = useNavigate();
-    const cat = "Education";
-    const exploreCampaign = (exploreCategory) => {
-        navigate(`/campaigns`, {
-            exploreCategory: exploreCategory,
-        });
-    };
 
     return (
         <footer className="page-footer ">
-            <div className="container-fluid mt-2">
+            <div className="container-fluid">
                 <div className="row">
                     <div className="col-md-3 footer-containers p-4">
                         <div>

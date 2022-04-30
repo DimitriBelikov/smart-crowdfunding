@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import jsonwebtoken from 'jsonwebtoken';
 
 const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContractAddress, amountCollected, requiredFunding }) => {
-    const {ethereum} = window;
+    const { ethereum } = window;
     const [donationAmount, setDonationAmount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: false, msg: '' });
@@ -18,35 +18,35 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
     }, [])
 
     const isDonationDataValid = () => {
-        if (donationAmount*Math.pow(10,18) + amountCollected > requiredFunding){
-            setIsError({ value: true, msg: 'Donation Amount is greater than required funding'});
+        if (donationAmount * Math.pow(10, 18) + amountCollected > requiredFunding) {
+            setIsError({ value: true, msg: 'Donation Amount is greater than required funding' });
             return false;
         }
-        else if (donationAmount === '' || donationAmount === 0){
-            setIsError({ value: true, msg: 'Please Fill in All the Fields'});
+        else if (donationAmount === '' || donationAmount === 0) {
+            setIsError({ value: true, msg: 'Please Fill in All the Fields' });
             return false;
         }
         return true;
     }
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(isDonationDataValid()){
+        if (isDonationDataValid()) {
             setIsLoading(true);
             //const walletProvider = provider();
             var web3 = new Web3(ethereum); // walletProvider in case you use Ganache
             var account = ethereum.account //await web3.eth.getAccounts(); in case you are using Ganache
             web3.eth.transactionBlockTimeout = 200;
             web3.eth.transactionPollingTimeout = 10000;
-    
+
             web3.eth.sendTransaction(
-                { to: smartContractAddress, value: donationAmount * Math.pow(10, 18), from: account }).on('error', (error)=> {
+                { to: smartContractAddress, value: donationAmount * Math.pow(10, 18), from: account }).on('error', (error) => {
                     setIsError({ value: true, msg: 'Error: Cannot Donate to the Campaign... Try Again Later' });
                     alert('Error while Donating Amount.');
                     console.log(error);
                     setIsLoading(true);
                 }).on('transactionHash', (transactionHash) => {
                     console.log('Transaction Hash: ', transactionHash);
-                }).on('receipt', async(receipt) => {
+                }).on('receipt', async (receipt) => {
                     console.log('Txn. Receipt: ', receipt);
                     const formData = new FormData();
                     formData.append('userId', user.id);
@@ -72,17 +72,20 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
     }
 
     return <>
-        <Modal show={show} onHide={handleClose} size="lg" aria-labelledby="contained-modal-title-center" centered>
-            <Modal.Header closeButton>
-                <Modal.Title>
+        <Modal show={show} onHide={handleClose} size="md" aria-labelledby="contained-modal-title-center" centered>
+            <Modal.Header>
+                <Modal.Title className="font-weight-bold">
                     Donation Form
                 </Modal.Title>
+                <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={handleClose}>
+                    <span aria-hidden="true">&#10006;</span>
+                </button>
             </Modal.Header>
             <Modal.Body>
-                <h1 className='text-center'>{campaignName}</h1>
+                <h3 className='text-center font-weight-bold'>{campaignName}</h3>
                 <form>
                     <div className="form-group">
-                        <label htmlFor="donation-amount">Donation Amount <span className='text-danger'>*</span></label>
+                        <label htmlFor="donation-amount" className="font-weight-bold">Donation Amount <span className='text-danger'>*</span></label>
                         <input type="number" className="form-control" id="donation-amount" name='donationAmount' placeholder="Enter Donation Amount (ETH)" min={1} value={donationAmount === 0 ? null : donationAmount} onChange={(e) => setDonationAmount(e.target.value)} required />
                     </div>
                 </form>
@@ -90,10 +93,10 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
             <Modal.Footer>
                 {isLoading && <h6>Loading...</h6>}
                 {isError.value ?
-                    <Button variant="secondary" onClick={handleSubmit} disabled>
+                    <Button variant="secondary" className="btn btn-custom font-weight-bold" onClick={handleSubmit} disabled>
                         Submit Request
                     </Button> :
-                    <Button variant="primary" onClick={handleSubmit}>
+                    <Button variant="primary" className="btn btn-custom font-weight-bold" onClick={handleSubmit}>
                         Submit Request
                     </Button>
                 }

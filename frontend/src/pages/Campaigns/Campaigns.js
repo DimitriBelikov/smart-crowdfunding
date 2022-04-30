@@ -3,7 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 
 //Components
 import Pagination from "../../components/Pagination/Pagination";
-import CampaignCard from "./CampaignCard/CampaignCard";
+import CampaignCard from "../../components/CampaignCard/CampaignCard";
 import CampaignDescriptionList from "../../components/CampaignDescriptionList/CampaignDescriptionList";
 import Navigationbar from "../../components/Navigationbar/Navigationbar";
 
