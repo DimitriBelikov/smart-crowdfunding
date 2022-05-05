@@ -97,11 +97,7 @@ const CampaignHeader = ({ campaignHeaderData }) => {
         else {
             // let isAccountConnected = await isAccountConnected();
             console.log(ethereum.account !== undefined);
-            if (
-                !isMetamaskInstalled() ||
-                !window.ethereum.isConnected() ||
-                !(ethereum.account !== undefined)
-            )
+            if (!isMetamaskInstalled() || !window.ethereum.isConnected() || !(ethereum.account !== undefined))
                 handleShowMetamaskConnect();
             else {
                 console.log(ethereum.account);

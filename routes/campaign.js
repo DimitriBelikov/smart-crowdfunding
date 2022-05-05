@@ -12,12 +12,15 @@ const User = require('../models/User');
 const { dirxml } = require('console');
 const rootDocumentPath = 'documents'
 
+//Middleware
+const auth = require('../middlewares/auth');
+
 //Configurations
 const { campaignUpload, requestUpload } = require('../config/multerConfig');
 const updateHandler = require('../middlewares/updateHandler');
 
 // GET('/') - Get list of all Campaigns
-router.get("/", (req, res) => {
+router.get("/", auth, (req, res) => {
     Campaign.find().then(
         campaigns => {
             res.status(200).json(campaigns)
@@ -28,7 +31,7 @@ router.get("/", (req, res) => {
 });
 
 //GET('/featured-campaigns') - Get list of top 3 featured campaigns
-router.get("/featured-campaigns", (req, res) => {
+router.get("/featured-campaigns", auth, (req, res) => {
     Campaign.find().limit(3).then(
         campaigns => {
             res.status(200).json(campaigns)
@@ -41,7 +44,7 @@ router.get("/featured-campaigns", (req, res) => {
 
 // POST('/') - Create a new Campaign (Deploy Smart Contract for this campaign ang get its address)
 const cpUpload = campaignUpload.fields([{ name: 'campaignCoverMedia', maxCount: 1 }, { name: 'campaignResources', maxCount: 15 }])
-router.post("/", cpUpload, (req, res) => {
+router.post("/", auth, cpUpload, (req, res) => {
     console.log(req.body);
     console.log(req.files);
     const { campaignId, campaignName, campaignDescription, campaignCategory, campaignOrganiser, requiredFunding, smartContractAddress } = req.body;
@@ -107,7 +110,7 @@ router.post("/", cpUpload, (req, res) => {
 
 
 // GET('/:id') - Get Details of a Particular Campaign
-router.get('/:id', (req, res) => {
+router.get('/:id', auth, (req, res) => {
     Campaign.findById(req.params.id).then(
         campaignData => res.status(200).json(campaignData)
     ).catch(
@@ -117,7 +120,7 @@ router.get('/:id', (req, res) => {
 
 
 // PUT('/:id') - Update a Particular Campaign
-router.put('/:id', cpUpload, (req, res, next) => {
+router.put('/:id', auth, cpUpload, (req, res, next) => {
     const { campaignId, campaignName, campaignDescription, campaignCoverMediaPath, campaignCategory, filePath, fileSize } = req.body;
     var updatedCampaignResources = [];
     console.log(req.body);
@@ -187,7 +190,7 @@ router.delete('/:id', (req, res) => {
 
 // POST('/:id/request') - Create a New Request for a particular Campaign
 const rqUpload = requestUpload.fields([{ name: 'requestResources', maxCount: 5 }])
-router.post('/:id/request', rqUpload, (req, res, next) => {
+router.post('/:id/request', auth, rqUpload, (req, res, next) => {
     const { requestNumber, requestTitle, requestDescription, requestAmount, deadline } = req.body;
     const requestResources = req.files.requestResources.map(({ originalname, size }) => {
         if (size / 1024 < 1000)
@@ -230,7 +233,7 @@ router.post('/:id/request', rqUpload, (req, res, next) => {
 
 
 // PUT('/:id/request/current') - Update Details of a current Request for a Particular Campaign
-router.put('/:id/request/current', rqUpload, (req, res, next) => {
+router.put('/:id/request/current', auth, rqUpload, (req, res, next) => {
     console.log(req.body);
     console.log(req.files);
 
@@ -325,7 +328,7 @@ router.post('/:id/request/current/:status', cpUpload, (req, res) => {
 
 
 // POST('/:id/vote') - Add's a Contributor's Vote for a Particular Request for a Particular Campaign
-router.post('/:id/vote', cpUpload, (req, res) => {
+router.post('/:id/vote', auth, cpUpload, (req, res) => {
     const { userId, vote } = req.body;
     console.log(req.body);
     Campaign.findById(req.params.id).then(campaign => {
@@ -346,7 +349,7 @@ router.post('/:id/vote', cpUpload, (req, res) => {
 
 
 // POST('/:id/donate') - Let a Contributor gets added to the Donors List and Interact with Smart Contract to add Donation amount
-router.post('/:id/donate', cpUpload, (req, res) => {
+router.post('/:id/donate', auth, cpUpload, (req, res) => {
     const { userId, amount } = req.body;
     console.log(req.body);
     const donationAmount = amount * Math.pow(10, 18);

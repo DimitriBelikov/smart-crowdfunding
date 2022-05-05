@@ -18,32 +18,33 @@ import { Spin } from 'antd';
 
 
 const Campaign = () => {
-  const { id } = useParams();
-  const { loading, data: campaignData } = useFetch(`http://localhost:4545/api/campaign/${id}`)
+    window.scrollTo(0, 0);
+    const { id } = useParams();
+    const { loading, data: campaignData } = useFetch(`http://localhost:4545/api/campaign/${id}`)
 
-  const descriptionList = ['Campaign', 'Updates', 'Request History', 'Documents'];
-  const [selectedTab, setSelectedTab] = useState('Campaign');
-  const changeTab = (tabName) => {
-    setSelectedTab(tabName);
-  }
+    const descriptionList = ['Campaign', 'Updates', 'Request History', 'Documents'];
+    const [selectedTab, setSelectedTab] = useState('Campaign');
+    const changeTab = (tabName) => {
+        setSelectedTab(tabName);
+    }
 
-  if (loading) {
-    return (
-      <div  style={{display: 'flex',  justifyContent:'center', alignItems:'center', height: '100vh'}}>
-        <Spin size='large'/>
-      </div>
-    )
-  }
+    if (loading) {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Spin size='large' />
+            </div>
+        )
+    }
 
-  return <>
-    <Navigationbar />
-    <CampaignHeader campaignHeaderData={campaignData} />
-    <CampaignDescriptionList itemsList={descriptionList} currentActive={selectedTab} clickFunction={changeTab} />
-    {selectedTab === 'Campaign' && <CampaignDescription campaignDescription={campaignData.campaignDescription} />}
-    {selectedTab === 'Updates' && <CampaignUpdates updates={campaignData.updates} />}
-    {selectedTab === 'Request History' && <CampaignRequestHistory currentRequest={campaignData.campaignRequest} requestVotingHistory={campaignData.requestVotingHistory} votersList={campaignData.currentVote} donors={campaignData.donors} campaignId={campaignData._id} />}
-    {selectedTab === 'Documents' && <CampaignDocumentList documents={campaignData.campaignResources} />}
-  </>;
+    return <>
+        <Navigationbar />
+        <CampaignHeader campaignHeaderData={campaignData} />
+        <CampaignDescriptionList itemsList={descriptionList} currentActive={selectedTab} clickFunction={changeTab} />
+        {selectedTab === 'Campaign' && <CampaignDescription campaignDescription={campaignData.campaignDescription} />}
+        {selectedTab === 'Updates' && <CampaignUpdates updates={campaignData.updates} />}
+        {selectedTab === 'Request History' && <CampaignRequestHistory currentRequest={campaignData.campaignRequest} requestVotingHistory={campaignData.requestVotingHistory} votersList={campaignData.currentVote} donors={campaignData.donors} campaignId={campaignData._id} />}
+        {selectedTab === 'Documents' && <CampaignDocumentList documents={campaignData.campaignResources} />}
+    </>;
 };
 
 export default Campaign;

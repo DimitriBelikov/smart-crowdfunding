@@ -4,12 +4,25 @@ import Web3 from 'web3';
 import Cookies from 'js-cookie';
 import jsonwebtoken from 'jsonwebtoken';
 
+//Components
+import NotificationModal from '../../../../components/NotificationModal/NotificationModal';
+
 const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContractAddress, amountCollected, requiredFunding }) => {
     const { ethereum } = window;
     const [donationAmount, setDonationAmount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState({ value: false, msg: '' });
     const [user, setUser] = useState({});
+    const [showNotificationModal, setNotificationModal] = useState(false);
+
+    const handleShowNotificationModal = () => {
+        setNotificationModal(true);
+    };
+
+    const handleCloseNotificationModal = () => {
+        setNotificationModal(false);
+        window.location.reload(true);
+    };
 
     useEffect(() => {
         const cookie = Cookies.get('jwt');
@@ -26,6 +39,7 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
             setIsError({ value: true, msg: 'Please Fill in All the Fields' });
             return false;
         }
+        setIsError({ value: false, msg: "" });
         return true;
     }
     const handleSubmit = async (e) => {
@@ -40,10 +54,9 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
 
             web3.eth.sendTransaction(
                 { to: smartContractAddress, value: donationAmount * Math.pow(10, 18), from: account }).on('error', (error) => {
-                    setIsError({ value: true, msg: 'Error: Cannot Donate to the Campaign... Try Again Later' });
-                    alert('Error while Donating Amount.');
+                    setIsError({ value: true, msg: 'Cannot Donate to the Campaign. Try Again Later' });
                     console.log(error);
-                    setIsLoading(true);
+                    setIsLoading(false);
                 }).on('transactionHash', (transactionHash) => {
                     console.log('Transaction Hash: ', transactionHash);
                 }).on('receipt', async (receipt) => {
@@ -56,16 +69,17 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
                     }
                     const requestOptions = {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        withCredentials: true,
+                        credentials: "include"
                     };
                     const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/donate`, requestOptions);
                     if (response.status !== 200) {
                         setIsError({ value: true, msg: 'Error: Cannot Donate to the Campaign... Try Again Later' });
-                        alert('Error: while Donating Amount.');
                         setIsLoading(false);
                     } else {
-                        alert('Amount Donated Successfully');
-                        window.location.reload(true);
+                        handleClose();
+                        handleShowNotificationModal();
                     }
                 });
         }
@@ -91,17 +105,14 @@ const DonationForm = ({ show, handleClose, campaignId, campaignName, smartContra
                 </form>
             </Modal.Body>
             <Modal.Footer>
-                {isLoading && <h6>Loading...</h6>}
-                {isError.value ?
-                    <Button variant="secondary" className="btn btn-custom font-weight-bold" onClick={handleSubmit} disabled>
-                        Submit Request
-                    </Button> :
-                    <Button variant="primary" className="btn btn-custom font-weight-bold" onClick={handleSubmit}>
-                        Submit Request
-                    </Button>
-                }
+                {isLoading && <h6>Processing Transaction...</h6>}
+                {isError.value && <h6> {isError.msg}</h6>}
+                <Button variant="primary" className="btn btn-custom font-weight-bold" onClick={handleSubmit}>
+                    Donate
+                </Button>
             </Modal.Footer>
         </Modal>
+        <NotificationModal show={showNotificationModal} handleClose={handleCloseNotificationModal} notificationMessage={donationAmount + " ETH has been Donated Successfully to the " + campaignName + ". Thank you for your contribution."} notificationHeader={"Donation Successful"} />
     </>
 }
 

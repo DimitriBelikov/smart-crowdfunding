@@ -115,7 +115,9 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
 
         const requestOptions = {
             method: 'PUT',
-            body: formData
+            body: formData,
+            withCredentials: true,
+            credentials: "include"
         };
         const response = await fetch(`http://localhost:4545/api/campaign/${campaignData._id}`, requestOptions);
         if (response.status !== 200) {
@@ -293,7 +295,7 @@ const UpdateCampaignForm = ({ show, handleClose, campaignData }) => {
                         Submit Request
                     </Button> :
                     <Button variant="primary" className="btn-custom font-weight-bold" onClick={handleSubmit}>
-                        Submit Request
+                        Update Campaign
                     </Button>
                 }
             </Modal.Footer>

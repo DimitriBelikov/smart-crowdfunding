@@ -20,7 +20,7 @@ const Footer = () => {
                                 <li className="footer-item">
                                     <Link to="create-campaign">Create Your Campaign </Link>
                                 </li>
-                                <li className="footer-item">Donate</li>
+                                <li className="footer-item"><Link to="/campaigns">Donate</Link></li>
                                 <li className="footer-item">User Guide</li>
                             </ul>
                         </div>
@@ -29,7 +29,7 @@ const Footer = () => {
                         <ul className="no-bullet-list">
                             <li className="footer-section mb-2">About</li>
                             <li className="footer-item">Contact Us</li>
-                            <li className="footer-item">Get to Know us</li>
+                            <li className="footer-item"><Link to="/about">Get to Know us</Link></li>
                             <li className="footer-item">White Paper</li>
                         </ul>
                     </div>

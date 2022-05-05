@@ -65,7 +65,9 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId, amountColle
 
             const requestOptions = {
                 method: 'POST',
-                body: formData
+                body: formData,
+                withCredentials: true,
+                credentials: "include"
             };
 
             const response = await fetch(`http://localhost:4545/api/campaign/${campaignId}/request`, requestOptions);
@@ -116,7 +118,6 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId, amountColle
                     <div className="form-group">
                         <label htmlFor="request-deadline" style={{ "font-size": "17px", "font-weight": "bold" }}>Deadline <span className='text-danger'>*</span></label> <br />
                         <input type="datetime-local" className="form-control form-textbox" name="deadline" id='request-deadline' value={request.deadline} onChange={handleChange} required min={new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('.')[0]} max={new Date(Date.now() + 3 * 30 * 24 * 60 * 60 * 1000).toISOString().split('.')[0]} />
-                        {isError.value && <h6 className='text-danger'>{isError.msg}</h6>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="request-resources" style={{ "font-size": "17px", "font-weight": "bold" }}>Request Resources</label> <br />
@@ -135,7 +136,7 @@ const RequestForm = ({ show, handleClose, requestNumber, campaignId, amountColle
                         className="btn btn-custom font-weight-bold"
                         onClick={handleSubmit}
                     >
-                        Create Campaign
+                        Create Request
                     </button>
                 </div>
             </Modal.Footer>

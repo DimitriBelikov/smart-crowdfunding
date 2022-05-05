@@ -23,7 +23,7 @@ const CampaignRequestHistory = ({ currentRequest, requestVotingHistory, votersLi
                 <HistoryRequestTile request={request} key={index} />
             ))}
         </div>
-    </>;
+    </>
 };
 
 export default CampaignRequestHistory;

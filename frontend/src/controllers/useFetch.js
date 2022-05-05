@@ -1,11 +1,15 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 export const useFetch = (url) => {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
 
     const getData = useCallback(async () => {
-        const response = await fetch(url);
+        const requestOptions = {
+            withCredentials: true,
+            credentials: "include"
+        };
+        const response = await fetch(url, requestOptions);
         const jsonData = await response.json();
         //console.log(response);
         setData(jsonData);

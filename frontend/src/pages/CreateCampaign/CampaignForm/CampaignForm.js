@@ -105,7 +105,9 @@ const CampaignForm = ({ campaignOrganiser }) => {
 
                     const requestOptions = {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        withCredentials: true,
+                        credentials: "include"
                     };
 
                     const response = await fetch('http://localhost:4545/api/campaign', requestOptions);
