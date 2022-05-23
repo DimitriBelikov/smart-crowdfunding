@@ -392,8 +392,8 @@ router.post('/:id/donate', auth, cpUpload, (req, res) => {
     );
 });
 
-// Get campaigns with currently running request and with deadline within next 36hrs
-// GET('/request/end') - Let a Contributor gets added to the Donors List and Interact with Smart Contract to add Donation amount
+
+// GET('/request/end') - Get campaigns with currently running request and with deadline within next 36hrs
 router.get('/request/end', (req, res) => {
     Campaign.find({ "campaignRequest.deadline": { $lt: new Date(Date.now() + 1.5 * 24 * 60 * 60 * 1000) } }).then(
         campaigns => {

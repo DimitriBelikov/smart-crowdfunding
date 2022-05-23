@@ -47,7 +47,7 @@ const Home = () => {
     return (
         <>
             <Navigationbar />
-            <div class="container-fluid">
+            <div className="container-fluid">
                 <div className="row">
                     <div className="col p-0">
                         <Carousel>

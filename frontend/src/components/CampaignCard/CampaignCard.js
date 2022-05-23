@@ -58,22 +58,27 @@ const CampaignCard = ({ campaign }) => {
                             }}
                         ></div>
                     </div>
-                    <div classname="row">
-                        <div className="float-left">
-                            <h6 style={{ "font-weight": "bold" }}>
-                                {campaign.amountCollected / Math.pow(10, 18)} ETH
-                            </h6>
-                            <h6 style={{ "font-weight": "bold", "font-size": "14px" }}>
-                                raised of {campaign.requiredFunding / Math.pow(10, 18)} ETH
-                            </h6>
+                    <div className="row">
+                        <div className="col">
+                            <div className="float-left">
+                                <h6 style={{ "fontWeight": "bold" }}>
+                                    {campaign.amountCollected / Math.pow(10, 18)} ETH
+                                </h6>
+                                <h6 style={{ "fontWeight": "bold", "fontSize": "14px" }}>
+                                    raised of {campaign.requiredFunding / Math.pow(10, 18)} ETH
+                                </h6>
+                            </div>
                         </div>
-                        <div className="float-right">
-                            <h6 style={{ "font-weight": "bold" }}>
-                                {Math.round(
-                                    (campaign.amountCollected / campaign.requiredFunding) * 100
-                                )}
-                                %
-                            </h6>
+
+                        <div className="col">
+                            <div className="float-right">
+                                <h6 style={{ "fontWeight": "bold" }}>
+                                    {Math.round(
+                                        (campaign.amountCollected / campaign.requiredFunding) * 100
+                                    )}
+                                    %
+                                </h6>
+                            </div>
                         </div>
                     </div>
                 </div>

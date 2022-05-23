@@ -28,9 +28,6 @@ const createPriorityRequests = async () => {
     priorityRequests = await response.json();
     console.log("Inside create priority request: ");
     console.log(priorityRequests);
-    const infura = `https://ropsten.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`;
-    const web3 = new Web3(new Web3.providers.HttpProvider(infura));
-    console.log(await web3.eth.getGasPrice());
     // checkRequestAndExecute();
 };
 
@@ -41,28 +38,23 @@ const checkRequestAndExecute = () => {
         var success = false;
         // console.log("Current Time" + new Date(DBDate.getTime() + DBDate.getTimezoneOffset() * 60000));
         // console.log("Deadline" + new Date(now.getTime() + now.getTimezoneOffset() * 60000));
-        // console.log(new Date(DBDate.getTime() + DBDate.getTimezoneOffset() * 60000) - new Date(now.getTime() + now.getTimezoneOffset() * 60000))
+        console.log(new Date(DBDate.getTime() + DBDate.getTimezoneOffset() * 60000) - new Date(now.getTime() + now.getTimezoneOffset() * 60000))
 
-        if (
-            new Date(DBDate.getTime() + DBDate.getTimezoneOffset() * 60000) -
-            new Date(now.getTime() + now.getTimezoneOffset() * 60000) <=
-            0
-        ) {
-            console.log("Inside If");
-            var notVoted =
-                request.donors.length -
-                (request.currentVote.yes.length + request.currentVote.no.length);
-            var upVotePercentage =
-                ((notVoted + request.currentVote.yes.length) / request.donors.length) *
-                100;
+        if (new Date(DBDate.getTime() + DBDate.getTimezoneOffset() * 60000) - new Date(now.getTime() + now.getTimezoneOffset() * 60000) <= 0) {
+            console.log("Campaign Deadline reached");
+            var notVoted = request.donors.length - (request.currentVote.yes.length + request.currentVote.no.length);
+            var upVotePercentage = ((notVoted + request.currentVote.yes.length) / request.donors.length) * 100;
+            console.log("UpVote Percentage = " + upVotePercentage);
 
             if (upVotePercentage >= 66) {
                 const infura = `https://ropsten.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`;
+                var defaultAccount = process.env.REACT_APP_INFURA_DEFAULT_ACCOUNT;
+                var privateKey = process.env.REACT_APP_METAMASK_PRIVATEKEY;
                 const web3 = new Web3(new Web3.providers.HttpProvider(infura));
-                var defaultAccount = "0x7a7cC4CE2f66AdDbF1A52D8536565F3deE535327";
+                web3.eth.transactionBlockTimeout = 200;
+                web3.eth.transactionPollingTimeout = 10000;
                 const common = new Common({ chain: Chain.Ropsten });
                 var contractABI = compiledContract.campaignContract.abi;
-                var privateKey = process.env.REACT_APP_METAMASK_PRIVATEKEY;
 
                 console.log(defaultAccount);
 
@@ -80,38 +72,56 @@ const checkRequestAndExecute = () => {
                             ._sendRequestedMoney(String(0.1 * Math.pow(10, 18)))
                             .encodeABI();
 
-                        var transactionDetails = {
-                            nonce: nonce,
-                            to: request.smartContractAddress,
-                            gasPrice: "0x" + (await web3.eth.getGasPrice()).toString(16),
-                            gasLimit: "0x" + (30000).toString(16),
-                            data: functionABI,
-                        };
-                        const transaction = Transaction.fromTxData(transactionDetails, {
-                            common,
-                        });
-                        var signedTx = transaction.sign(Buffer.from(privateKey, "hex"));
-                        var rawdata = "0x" + signedTx.serialize().toString("hex");
-                        await web3.eth
-                            .sendSignedTransaction(rawdata)
-                            .on("transactionHash", (hash) => {
-                                console.log(hash);
+                        contractObject.methods._sendRequestedMoney(String(0.1 * Math.pow(10, 18))).estimateGas({ from: defaultAccount })
+                            .then(async (gasAmount) => {
+                                var transactionDetails = {
+                                    nonce: nonce,
+                                    to: request.smartContractAddress,
+                                    gasPrice: "0x" + (await web3.eth.getGasPrice()).toString(16),
+                                    gasLimit: "0x" + (gasAmount + 10000).toString(16),
+                                    data: functionABI,
+                                };
+
+                                const transaction = Transaction.fromTxData(transactionDetails, {
+                                    common,
+                                });
+                                var signedTx = transaction.sign(Buffer.from(privateKey, "hex"));
+                                var rawdata = "0x" + signedTx.serialize().toString("hex");
+                                await web3.eth
+                                    .sendSignedTransaction(rawdata)
+                                    .on("transactionHash", (hash) => {
+                                        console.log(hash);
+                                    })
+                                    .on("receipt", async (receipt) => {
+                                        console.log(["transferToStaging Receipt:", receipt]);
+                                        var requestStatus = "FundsDisbursed";
+                                        var response = await updateDatabase(
+                                            upVotePercentage,
+                                            request,
+                                            requestStatus
+                                        );
+                                        if (response.status == 200) {
+                                            object.splice(index, 1);
+                                            console.log(
+                                                `${requestStatus} for Campaign with name: `,
+                                                request.campaignName
+                                            );
+                                        }
+                                        else {
+                                            console.log(
+                                                `Error Occured while Interacting with Smart Contract for Campaign with name: `,
+                                                request.campaignName
+                                            );
+                                        }
+                                    })
+                                    .on("error", (error) => {
+                                        console.log('Transaction Error: ', error);
+                                    });
                             })
-                            .on("receipt", async (receipt) => {
-                                console.log(["transferToStaging Receipt:", receipt]);
-                                var requestStatus = "FundsDisbursed";
-                                var response = await updateDatabase(
-                                    upVotePercentage,
-                                    request,
-                                    requestStatus
-                                );
-                                if (response.status == 200) success = true;
-                            })
-                            .on("error", (error) => {
+                            .catch(function (error) {
                                 console.log(error);
                             });
-                    }
-                );
+                    });
             } else {
                 var requestStatus = "FundsDenied";
                 var response = await updateDatabase(
@@ -119,24 +129,22 @@ const checkRequestAndExecute = () => {
                     request,
                     requestStatus
                 );
-                if (response.status == 200) success = true;
-            }
-
-            if (success) {
-                object.splice(index, 1);
-                console.log(
-                    `${requestStatus} for Campaign with name: `,
-                    request.campaignName
-                );
-            } else {
-                console.log(
-                    `Error Occured while Interacting with Smart Contract for Campaign with name: `,
-                    request.campaignName
-                );
+                if (response.status == 200) {
+                    object.splice(index, 1);
+                    console.log(
+                        `${requestStatus} for Campaign with name: `,
+                        request.campaignName
+                    );
+                }
+                else {
+                    console.log(
+                        `Error Occured while Interacting with Smart Contract for Campaign with name: `,
+                        request.campaignName
+                    );
+                }
             }
             console.log(priorityRequests);
         }
-        //console.log(request.campaignName + " deadline has arrived at " + new Date(Date.now()));
     });
 };
 
@@ -163,12 +171,7 @@ const updateDatabase = async (upVotePercentage, campaign, requestStatus) => {
     return response;
 };
 
-//createPriorityRequests();
+createPriorityRequests();
 // setInterval(createPriorityRequests, 24*60*60*1000);
 // setTimeout(checkRequestAndExecute, 10*1000);
 // setInterval(checkRequestAndExecute, 10*1000);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-//reportWebVitals();
