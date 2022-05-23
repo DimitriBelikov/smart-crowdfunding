@@ -1,5 +1,3 @@
-
-![Site Image](https://github.com/DimitriBelikov/smart-crowdfunding/blob/main/frontend/public/logo.png)
 # Smart CrowdFunding Using Blockchain
 
 As of today, crowdfunding platforms have accountability and trust problems. In many
@@ -14,9 +12,11 @@ blockchain until the campaign organizer makes progress in the campaign.
 - The organizers would not be able to spend the money without informing to the donors about the details of spending.
 - We aim to accomplish decentralized crowdfunding application using blockchain and smart contracts.
 
-![Old v/s Blochain Based Implementaion](https://drive.google.com/file/d/1Tx8Hc_zgVcTSzBZ2fmGJZLOB8gx1LnCL/view?usp=sharing)
+![Current vs Proposed Model](https://user-images.githubusercontent.com/44198993/166906047-3671110d-e956-42b2-88f9-197016b9c007.jpg)
+
 ## System Model
-![System Model Here](https://drive.google.com/file/d/1Tx8Hc_zgVcTSzBZ2fmGJZLOB8gx1LnCL/view?usp=sharing)
+![Project Diagrams-System Architecture drawio](https://user-images.githubusercontent.com/44198993/166906082-7e6ddc81-2e37-419f-9ffd-54a5cb18e8ed.png)
+
 ## Tech Stack
 
 **Client:** React, HTML, CSS, Bootstrap(v4.0)
