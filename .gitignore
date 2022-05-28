@@ -153,5 +153,6 @@ dist
 
 # Test Scripts
 /frontend/src/ETHBackend/Sample-Tests/
+
 package-lock.json
-# End of https://www.toptal.com/developers/gitignore/api/node,visualstudiocode
+/Application SS
