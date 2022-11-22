@@ -152,7 +152,6 @@ dist
 !.vscode/*.code-snippets
 
 # Test Scripts
-/frontend/src/ETHBackend/Sample-Tests/
 
 package-lock.json
 /Application SS
